@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import eu.dety.burp.joseph.gui.UITab;
+import eu.dety.burp.joseph.scanner.Marker;
+import eu.dety.burp.joseph.utilities.Logger;
 
 /**
  * The Burp Extender to register the JOSEPH extension
@@ -33,7 +35,9 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         // Obtain streams
         stdout = new PrintWriter(callbacks.getStdout(), true);
         stderr = new PrintWriter(callbacks.getStderr(), true);
+        Logger loggerInstance = Logger.getInstance();
 
+        // Get current time
         Calendar calObj = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         String time = dateFormat.format(calObj.getTime());
@@ -44,8 +48,13 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         stdout.println("+---------------------------------------------------------+");
 
         // Register JOSEPH tab
-        UITab josephMainTab = new UITab(callbacks);
+        final UITab josephMainTab = new UITab(callbacks);
+        loggerInstance.log(getClass(), "Main tab registered.", Logger.INFO);
 
+        // Register HTTP listener
+        final Marker marker = new Marker(callbacks);
+        callbacks.registerHttpListener(marker);
+        loggerInstance.log(getClass(), "HTTPListener registered.", Logger.INFO);
     }
 
     /**
