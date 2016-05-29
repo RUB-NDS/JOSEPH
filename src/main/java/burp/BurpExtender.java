@@ -7,13 +7,13 @@ import java.util.Calendar;
 import eu.dety.burp.joseph.gui.UITab;
 
 /**
- * The Burp Extender to register the JOSEPH Extension
+ * The Burp Extender to register the JOSEPH extension
  * @author Dennis Detering
  * @version 1.0
  */
 
 public class BurpExtender implements IBurpExtender, IExtensionStateListener {
-	public static final String EXTENSION_NAME = "JOSEPH";
+    private static final String EXTENSION_NAME = "JOSEPH";
 
     private IBurpExtenderCallbacks callbacks;
 
@@ -24,7 +24,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
      * Set the extension name and print loading information to standard output.
      */
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
-        // keep a reference to our callbacks object
+        // Keep a reference to callbacks object
         this.callbacks = callbacks;
 
         // Set extension name
@@ -42,10 +42,10 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         stdout.println("|                     Version 1.0.0                       |");
         stdout.println("|                   Started @ "+time+"                    |");
         stdout.println("+---------------------------------------------------------+");
-        
-        // Register new JOSEPH Tab
+
+        // Register JOSEPH tab
         UITab josephMainTab = new UITab(callbacks);
-        
+
     }
 
     /**
