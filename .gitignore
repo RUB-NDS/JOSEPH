@@ -8,3 +8,8 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .DS_Store
+JOSEPH.iml
+.project
+.settings/
+.idea/
+.classpath

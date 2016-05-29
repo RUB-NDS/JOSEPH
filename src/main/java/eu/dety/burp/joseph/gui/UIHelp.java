@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Help tab with information about this Extension
+ * Help tab with information about this extension
  *
  * @author Dennis Detering
  * @version 1.0
