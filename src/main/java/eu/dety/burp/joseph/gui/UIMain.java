@@ -16,6 +16,7 @@ public class UIMain extends JTabbedPane {
 
     // Sub tabs within JOSEPH main tab
     private UIHelp helpTab;
+    private UIPreferences preferencesTab;
 
     /**
      * Construct the main UI.
@@ -36,12 +37,22 @@ public class UIMain extends JTabbedPane {
     }
 
     /**
+     * Getter for the preferences sub tab
+     * @return {@link UIPreferences} object.
+     */
+    public UIPreferences getPreferencesTab() {
+        return preferencesTab;
+    }
+
+    /**
      * Initialize all necessary components
      */
     private void initComponents(){
         // Help sub tab
         helpTab = new UIHelp();
+        preferencesTab = new UIPreferences();
 
+        this.addTab(bundle.getString("PREFERENCES"), preferencesTab);
         this.addTab(bundle.getString("HELP"), helpTab);
 
         // Customize UI components

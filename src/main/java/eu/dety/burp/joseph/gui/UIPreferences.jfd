@@ -1,0 +1,41 @@
+JFDML JFormDesigner: "5.2.3.0.281" Java: "1.8.0_76-release" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "eu.dety.burp.joseph.resources"
+	"i18n.bundleName": "JOSEPH"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {comp logLevelLabel:::p:72:p, space :::p, comp logLevelCombo:::p:86:p, space ::236:x}, comp loggingSeparator::::400:x, comp loggingHeadlineLabel::l::400:x}"
+			"$verticalGroup": "par l {seq l {comp loggingHeadlineLabel:::p::p, space :::p, comp loggingSeparator:::p::p, space :::p, par l {comp logLevelLabel:::p:26:p, comp logLevelCombo:::p::p}, space ::234:x}}"
+		} ) {
+			name: "this"
+			"componentOrientation": sfield java.awt.ComponentOrientation LEFT_TO_RIGHT
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "loggingHeadlineLabel"
+				"text": new FormMessage( null, "LOGGING_HEADLINE" )
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "logLevelCombo"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "ERROR"
+					addElement( "ERROR" )
+					addElement( "INFO" )
+					addElement( "DEBUG" )
+				}
+				"selectedIndex": 2
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "logLevelComboActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JSeparator" ) {
+				name: "loggingSeparator"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "logLevelLabel"
+				"text": new FormMessage( null, "LOGLEVEL" )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}
