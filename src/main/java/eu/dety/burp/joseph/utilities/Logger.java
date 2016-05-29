@@ -17,16 +17,21 @@ public class Logger {
     private static PrintWriter stdout = null;
     private static PrintWriter stderr = null;
 
-    public static final String ERROR = "ERROR";
-    public static final String INFO = "INFO";
-    public static final String DEBUG = "DEBUG";
+    // TODO: Temporary constant, until client configurations are implemented
+    private static final int logLevel = 3;
+
+    public static final int ERROR = 1;
+    public static final int INFO = 2;
+    public static final int DEBUG = 3;
 
     private Logger(){
         stdout = BurpExtender.getStdOut();
         stderr = BurpExtender.getStdErr();
     }
 
-    // Singleton pattern to ensure a single instance
+    /**
+     * Singleton pattern to ensure a single instance
+     */
     private static class SingletonHolder {
         private static final Logger INSTANCE = new Logger();
     }
@@ -45,7 +50,7 @@ public class Logger {
      * @param message The message to log.
      * @param logType The logging type.
      */
-    public void log(Class callingClass, String message, String logType){
+    public void log(Class callingClass, String message, int logType){
         // Get current time
         Calendar calObj = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -55,8 +60,26 @@ public class Logger {
         PrintWriter outputStream;
         outputStream = (Objects.equals(logType, ERROR)) ? stderr : stdout;
 
-        // Print log message
-        String logOutput = String.format("[%s] %s - [%s]: %s ", logType, time, callingClass.getName(), message);
-        outputStream.println(logOutput);
+        // Check if message should be logged based on current log level preference
+        if (logType <= logLevel) {
+
+            String logTypeName = "UNKNOWN";
+            // TODO: Easier way to get constant name (by value)?
+            switch(logType) {
+                case ERROR:
+                    logTypeName = "ERROR";
+                    break;
+                case INFO:
+                    logTypeName = "INFO";
+                    break;
+                case DEBUG:
+                    logTypeName = "DEBUG";
+                    break;
+            }
+
+            // Print log message
+            String logOutput = String.format("[%s] %s - [%s]: %s ", logTypeName, time, callingClass.getName(), message);
+            outputStream.println(logOutput);
+        }
     }
 }

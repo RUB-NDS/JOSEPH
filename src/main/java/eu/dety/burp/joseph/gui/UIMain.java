@@ -29,7 +29,7 @@ public class UIMain extends JTabbedPane {
 
     /**
      * Getter for the help sub tab
-     * @return Get the help tab.
+     * @return {@link UIHelp} object.
      */
     public UIHelp getHelpTab() {
         return helpTab;
