@@ -3,6 +3,7 @@ package burp;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.ResourceBundle;
 
 import eu.dety.burp.joseph.gui.UITab;
 import eu.dety.burp.joseph.scanner.Marker;
@@ -21,6 +22,8 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
     private static PrintWriter stdout;
     private static PrintWriter stderr;
+
+    ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
     /**
      * Set the extension name and print loading information to standard output.
@@ -49,12 +52,12 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
         // Register JOSEPH tab
         final UITab josephMainTab = new UITab(callbacks);
-        loggerInstance.log(getClass(), "Main tab registered.", Logger.INFO);
+        loggerInstance.log(getClass(), bundle.getString("REGISTERED_MAINTAB"), Logger.INFO);
 
         // Register HTTP listener
         final Marker marker = new Marker(callbacks);
         callbacks.registerHttpListener(marker);
-        loggerInstance.log(getClass(), "HTTPListener registered.", Logger.INFO);
+        loggerInstance.log(getClass(), bundle.getString("REGISTERED_HTTPLISTENER"), Logger.INFO);
     }
 
     /**
@@ -62,7 +65,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
      */
     @Override
     public void extensionUnloaded() {
-        stdout.println("Extension JOSEPH is now unloaded.");
+        stdout.println(bundle.getString("EXTENSION_UNLOADED"));
     }
     
     /**

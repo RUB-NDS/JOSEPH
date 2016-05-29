@@ -22,6 +22,11 @@
     </properties>
     
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java/eu/dety/burp/joseph/resources/</directory>
+            </resource>
+        </resources>
         <plugins>
             <!-- Use a Licence Header -->
             <plugin>

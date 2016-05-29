@@ -2,6 +2,7 @@ package eu.dety.burp.joseph.gui;
 
 import burp.IBurpExtenderCallbacks;
 import javax.swing.JTabbedPane;
+import java.util.ResourceBundle;
 
 /**
  * The main window, the parent window for all tabs.
@@ -10,9 +11,11 @@ import javax.swing.JTabbedPane;
  */
 public class UIMain extends JTabbedPane {
     private IBurpExtenderCallbacks callbacks;
+    ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
+
 
     // Sub tabs within JOSEPH main tab
-    private UIHelp help;
+    private UIHelp helpTab;
 
     /**
      * Construct the main UI.
@@ -28,8 +31,8 @@ public class UIMain extends JTabbedPane {
      * Getter for the help sub tab
      * @return Get the help tab.
      */
-    public UIHelp getHelp() {
-        return help;
+    public UIHelp getHelpTab() {
+        return helpTab;
     }
 
     /**
@@ -37,9 +40,9 @@ public class UIMain extends JTabbedPane {
      */
     private void initComponents(){
         // Help sub tab
-        help = new UIHelp();
+        helpTab = new UIHelp();
 
-        this.addTab("Help", help);
+        this.addTab(bundle.getString("HELP"), helpTab);
 
         // Customize UI components
         callbacks.customizeUiComponent(this);

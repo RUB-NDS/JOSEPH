@@ -1,12 +1,9 @@
 package eu.dety.burp.joseph.scanner;
 
-import burp.BurpExtender;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpListener;
 import burp.IHttpRequestResponse;
 import eu.dety.burp.joseph.utilities.Logger;
-
-import java.io.PrintWriter;
 
 /**
  * HTTP listener to recognize and mark JOSE parameter

@@ -5,6 +5,7 @@ import burp.BurpExtender;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Objects;
 
 /**
  * Internal logger for the extension
@@ -42,9 +43,9 @@ public class Logger {
      * Log a specific message on a logging level.
      * @param callingClass The calling class.
      * @param message The message to log.
-     * @param log_type The logging type.
+     * @param logType The logging type.
      */
-    public void log(Class callingClass, String message, String log_type){
+    public void log(Class callingClass, String message, String logType){
         // Get current time
         Calendar calObj = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -52,12 +53,10 @@ public class Logger {
 
         // Choose correct output stream
         PrintWriter outputStream;
-        outputStream = (log_type == ERROR) ? stderr : stdout;
+        outputStream = (Objects.equals(logType, ERROR)) ? stderr : stdout;
 
         // Print log message
-        String logOutput = String.format("[%s] %s - [%s]: %s ", log_type, time, callingClass.getName(), message);
+        String logOutput = String.format("[%s] %s - [%s]: %s ", logType, time, callingClass.getName(), message);
         outputStream.println(logOutput);
-
-        //"[" + log_type + "] " + time + " - [" + callingClass.getName() + "]: " + message
     }
 }
