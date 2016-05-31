@@ -7,21 +7,60 @@ package eu.dety.burp.joseph.gui;
 import java.awt.*;
 import eu.dety.burp.joseph.utilities.Logger;
 
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
 import javax.swing.*;
-import javax.swing.GroupLayout;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
+ * Preference tab to customize some behaviour
  * @author Dennis Detering
+ * @version 1.0
  */
 public class UIPreferences extends JPanel {
-    private static Logger loggerInstance = Logger.getInstance();
-    private static int logLevel = 2;
+    private static final Logger loggerInstance = Logger.getInstance();
+    private static final String configFilePath = System.getProperty("user.home") + "/.joseph/config.json";
 
-    public UIPreferences() {
+    // Configuration options
+    private static int logLevel = 2;
+    private static List<String> parameterNames = Arrays.asList("access_token", "token");
+
+    UIPreferences() {
         initComponents();
-        // logLevelCombo.setSelectedIndex(logLevel);
+
+        // Load or create config file
+        try {
+            File configFile = new File(configFilePath);
+
+            // Check if directory exists, if not create it
+            if (!configFile.getParentFile().exists()) {
+                loggerInstance.log(getClass(), "Config file directory not found! Creating it...", Logger.DEBUG);
+                configFile.getParentFile().mkdir();
+            }
+
+            // Check if config file exists, if not create it
+            if (!configFile.exists()) {
+                loggerInstance.log(getClass(), "Config file not found! Creating it...", Logger.DEBUG);
+                configFile.createNewFile();
+                saveConfig();
+            } else {
+                loggerInstance.log(getClass(), "Loading config file.", Logger.DEBUG);
+                loadConfig();
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, e.toString(), "Error loading config file", JOptionPane.ERROR_MESSAGE);
+            loggerInstance.log(getClass(), e.toString(), Logger.ERROR);
+        }
     }
 
     /**
@@ -37,8 +76,107 @@ public class UIPreferences extends JPanel {
      * Set the logging level
      * 0 = ERROR, 1 = INFO, 2 = DEBUG
      */
-    public void setLogLevel(int logLvl){
+    private void setLogLevel(int logLvl){
         logLevel = logLvl;
+    }
+
+    /**
+     * Get the parameter names
+     * @return The parameter names string array.
+     */
+    public static List<String> getParameterNames(){
+        return parameterNames;
+    }
+
+    /**
+     * Set the parameter names
+     */
+    private void setParameterNames(List<String> paramNames){
+        parameterNames = paramNames;
+    }
+
+    /**
+     * Save all configurations to the system.
+     */
+    @SuppressWarnings("unchecked")
+    private void saveConfig() {
+        File configFile = new File(configFilePath);
+
+        if (!configFile.exists()) {
+            loggerInstance.log(getClass(), "Config file does not exist!", Logger.ERROR);
+            return;
+        }
+
+        if (!configFile.isDirectory() && configFile.canWrite()){
+
+            JSONObject configObj = new JSONObject();
+            configObj.put("logLevel", logLevel);
+            configObj.put("parameterNames", getParameterNames());
+
+            try {
+                FileWriter configFileWriter = new FileWriter(configFile);
+
+                try {
+                    configFileWriter.write(configObj.toJSONString());
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "The config file can not be written!\n\nError:\n" + e.toString(), "Error writing config file", JOptionPane.ERROR_MESSAGE);
+                    loggerInstance.log(getClass(), "Config file can not be written!\n" + e.toString(), Logger.ERROR);
+                }
+
+                configFileWriter.flush();
+                configFileWriter.close();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "The config file can not be written!\n\nError:\n" + e.toString(), "Error writing config file", JOptionPane.ERROR_MESSAGE);
+                loggerInstance.log(getClass(), "Config file can not be written!\n" + e.toString(), Logger.ERROR);
+            } catch (Exception e) {
+                loggerInstance.log(getClass(), e.toString(), Logger.ERROR);
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(this, "The config file is not writable: " + configFilePath, "Error writing config file", JOptionPane.ERROR_MESSAGE);
+            loggerInstance.log(getClass(), "Config file is not writable: " + configFilePath, Logger.ERROR);
+        }
+    }
+
+    /**
+     * Load the configuration file and apply values to the UI.
+     */
+    @SuppressWarnings("unchecked")
+    private void loadConfig() {
+        File configFile = new File(configFilePath);
+
+        if (!configFile.exists()) {
+            loggerInstance.log(getClass(), "Config file does not exist!", Logger.ERROR);
+            return;
+        }
+
+        if (!configFile.isDirectory() && configFile.canRead()) {
+
+            JSONParser jsonParser = new JSONParser();
+
+            try {
+                FileReader configFileReader = new FileReader(configFile);
+                JSONObject configObj = (JSONObject)jsonParser.parse(configFileReader);
+
+                setLogLevel(((Long)configObj.get("logLevel")).intValue());
+                logLevelCombo.setSelectedIndex(getLogLevel());
+
+                setParameterNames(((List<String>)configObj.get("parameterNames")));
+
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "The config file can not be read!\n\nError:\n" + e.toString(), "Error reading config file", JOptionPane.ERROR_MESSAGE);
+                loggerInstance.log(getClass(), "Config file can not be read!\n" + e.toString(), Logger.ERROR);
+            } catch (ParseException e) {
+                JOptionPane.showMessageDialog(this, "The config file can not be parsed!\n\nError:\n" + e.toString(), "Error parsing config file", JOptionPane.ERROR_MESSAGE);
+                loggerInstance.log(getClass(), "Config file can not be parsed!\n" + e.toString(), Logger.ERROR);
+            } catch (Exception e) {
+                loggerInstance.log(getClass(), e.toString(), Logger.ERROR);
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(this, "The config file is not readable or a directory: " + configFilePath, "Config file not readable", JOptionPane.ERROR_MESSAGE);
+            loggerInstance.log(getClass(), "The config file is not readable or a directory: " + configFilePath, Logger.ERROR);
+        }
     }
 
     private void logLevelComboActionPerformed(ActionEvent evt) {

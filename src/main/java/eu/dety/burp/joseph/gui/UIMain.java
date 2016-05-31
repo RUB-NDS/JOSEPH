@@ -10,8 +10,8 @@ import java.util.ResourceBundle;
  * @version 1.0
  */
 public class UIMain extends JTabbedPane {
-    private IBurpExtenderCallbacks callbacks;
-    ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
+    private final IBurpExtenderCallbacks callbacks;
+    private final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
 
     // Sub tabs within JOSEPH main tab
