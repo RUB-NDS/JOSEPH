@@ -5,6 +5,7 @@
 package eu.dety.burp.joseph.gui;
 
 import java.awt.*;
+import java.awt.event.*;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import java.awt.event.ActionEvent;
@@ -33,10 +34,21 @@ public class UIPreferences extends JPanel {
 
     // Configuration options
     private static int logLevel = 2;
-    private static List<String> parameterNames = Arrays.asList("access_token", "token");
+    private static boolean highlighting = true;
+    private static final List<String> defaultParameterNames = Arrays.asList("access_token", "token");
 
+    private static DefaultListModel<String> parameterNamesListModel = new DefaultListModel<>();
+
+    @SuppressWarnings("unchecked")
     UIPreferences() {
         initComponents();
+
+        // Set ListModel for parameterNamesList
+        parameterNamesList.setModel(parameterNamesListModel);
+        // Add default parameter
+        for (String param : defaultParameterNames) {
+            parameterNamesListModel.addElement(param);
+        }
 
         // Load or create config file
         try {
@@ -81,18 +93,26 @@ public class UIPreferences extends JPanel {
     }
 
     /**
-     * Get the parameter names
-     * @return The parameter names string array.
+     * Get the highlighting option value
+     * @return The highlighting option value.
      */
-    public static List<String> getParameterNames(){
-        return parameterNames;
+    public static boolean getHighlighting(){
+        return highlighting;
     }
 
     /**
-     * Set the parameter names
+     * Set the highlighting option
      */
-    private void setParameterNames(List<String> paramNames){
-        parameterNames = paramNames;
+    private void setHighlighting(boolean highlight){
+        highlighting = highlight;
+    }
+
+    /**
+     * Get the parameter names
+     * @return The parameter names string list.
+     */
+    public static List<Object> getParameterNames(){
+        return Arrays.asList(parameterNamesListModel.toArray());
     }
 
     /**
@@ -110,7 +130,8 @@ public class UIPreferences extends JPanel {
         if (!configFile.isDirectory() && configFile.canWrite()){
 
             JSONObject configObj = new JSONObject();
-            configObj.put("logLevel", logLevel);
+            configObj.put("logLevel", getLogLevel());
+            configObj.put("highlighting", getHighlighting());
             configObj.put("parameterNames", getParameterNames());
 
             try {
@@ -154,6 +175,7 @@ public class UIPreferences extends JPanel {
 
             JSONParser jsonParser = new JSONParser();
 
+            // TODO: Check if exists before calling get() to prevent NullPointerException
             try {
                 FileReader configFileReader = new FileReader(configFile);
                 JSONObject configObj = (JSONObject)jsonParser.parse(configFileReader);
@@ -161,7 +183,13 @@ public class UIPreferences extends JPanel {
                 setLogLevel(((Long)configObj.get("logLevel")).intValue());
                 logLevelCombo.setSelectedIndex(getLogLevel());
 
-                setParameterNames(((List<String>)configObj.get("parameterNames")));
+                setHighlighting(((boolean)configObj.get("highlighting")));
+                highlightCheckbox.setSelected(getHighlighting());
+
+                parameterNamesListModel.clear();
+                for (String param : (List<String>)configObj.get("parameterNames")) {
+                    parameterNamesListModel.addElement(param);
+                }
 
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "The config file can not be read!\n\nError:\n" + e.toString(), "Error reading config file", JOptionPane.ERROR_MESSAGE);
@@ -169,6 +197,9 @@ public class UIPreferences extends JPanel {
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(this, "The config file can not be parsed!\n\nError:\n" + e.toString(), "Error parsing config file", JOptionPane.ERROR_MESSAGE);
                 loggerInstance.log(getClass(), "Config file can not be parsed!\n" + e.toString(), Logger.ERROR);
+            } catch (NullPointerException e) {
+                JOptionPane.showMessageDialog(this, "The config file needs to contain any option values!\n\nError:\n" + e.toString(), "Error parsing config file", JOptionPane.ERROR_MESSAGE);
+                loggerInstance.log(getClass(), "The config file needs to contain any option values!\n" + e.toString(), Logger.ERROR);
             } catch (Exception e) {
                 loggerInstance.log(getClass(), e.toString(), Logger.ERROR);
             }
@@ -184,6 +215,41 @@ public class UIPreferences extends JPanel {
         setLogLevel(logLevel);
     }
 
+    private void highlightCheckboxActionPerformed(ActionEvent evt) {
+        boolean highlighting= highlightCheckbox.isSelected();
+        setHighlighting(highlighting);
+    }
+
+    private void parameterNamesAddButtonActionPerformed(ActionEvent evt) {
+        String newParameter = parameterNamesTextField.getText();
+
+        if (!newParameter.equals("")) {
+            parameterNamesListModel.addElement(newParameter);
+            parameterNamesTextField.setText("");
+        }
+    }
+
+    private void parameterNamesRemoveButtonActionPerformed(ActionEvent evt) {
+        for(int paramIndex : parameterNamesList.getSelectedIndices()) {
+            parameterNamesListModel.removeElementAt(paramIndex);
+        }
+    }
+
+    private void parameterNamesTextFieldKeyPressed(KeyEvent evt) {
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String newParameter = parameterNamesTextField.getText();
+
+            if (!newParameter.equals("")) {
+                parameterNamesListModel.addElement(newParameter);
+                parameterNamesTextField.setText("");
+            }
+        }
+    }
+
+    private void saveConfigButtonActionPerformed(ActionEvent e) {
+        saveConfig();
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - Dennis Detering
@@ -192,6 +258,15 @@ public class UIPreferences extends JPanel {
         logLevelCombo = new JComboBox<>();
         loggingSeparator = new JSeparator();
         logLevelLabel = new JLabel();
+        highlightingSeparator = new JSeparator();
+        highlightCheckbox = new JCheckBox();
+        scrollPane1 = new JScrollPane();
+        parameterNamesList = new JList();
+        parameterNamesTextField = new JTextField();
+        parameterNamesAddButton = new JButton();
+        parameterNamesRemoveButton = new JButton();
+        label1 = new JLabel();
+        saveConfigButton = new JButton();
 
         //======== this ========
         setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
@@ -214,6 +289,7 @@ public class UIPreferences extends JPanel {
             "DEBUG"
         }));
         logLevelCombo.setSelectedIndex(2);
+        logLevelCombo.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
         logLevelCombo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -223,18 +299,91 @@ public class UIPreferences extends JPanel {
 
         //---- logLevelLabel ----
         logLevelLabel.setText(bundle.getString("LOGLEVEL"));
+        logLevelLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+
+        //---- highlightCheckbox ----
+        highlightCheckbox.setText(bundle.getString("HIGHLIGHTING"));
+        highlightCheckbox.setSelected(true);
+        highlightCheckbox.setHorizontalTextPosition(SwingConstants.LEFT);
+        highlightCheckbox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                highlightCheckboxActionPerformed(e);
+            }
+        });
+
+        //======== scrollPane1 ========
+        {
+            scrollPane1.setViewportView(parameterNamesList);
+        }
+
+        //---- parameterNamesTextField ----
+        parameterNamesTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                parameterNamesTextFieldKeyPressed(e);
+            }
+        });
+
+        //---- parameterNamesAddButton ----
+        parameterNamesAddButton.setText(bundle.getString("ADD"));
+        parameterNamesAddButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parameterNamesAddButtonActionPerformed(e);
+            }
+        });
+
+        //---- parameterNamesRemoveButton ----
+        parameterNamesRemoveButton.setText(bundle.getString("REMOVE"));
+        parameterNamesRemoveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parameterNamesRemoveButtonActionPerformed(e);
+            }
+        });
+
+        //---- label1 ----
+        label1.setText(bundle.getString("PARAMETER_NAMES_LABEL"));
+        label1.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+
+        //---- saveConfigButton ----
+        saveConfigButton.setText(bundle.getString("SAVE_CONFIGURATION"));
+        saveConfigButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveConfigButtonActionPerformed(e);
+            }
+        });
 
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup()
+                .addComponent(loggingSeparator)
+                .addComponent(loggingHeadlineLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(highlightingSeparator)
+                .addComponent(highlightCheckbox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createSequentialGroup()
-                    .addComponent(logLevelLabel, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(logLevelCombo, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(236, Short.MAX_VALUE))
-                .addComponent(loggingSeparator, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                .addComponent(loggingHeadlineLabel, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup()
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(logLevelLabel, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(logLevelCombo, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
+                            .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup()
+                                .addComponent(saveConfigButton)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(scrollPane1, GroupLayout.PREFERRED_SIZE, 256, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(parameterNamesRemoveButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(parameterNamesAddButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(label1, GroupLayout.PREFERRED_SIZE, 447, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(parameterNamesTextField, GroupLayout.PREFERRED_SIZE, 256, GroupLayout.PREFERRED_SIZE))
+                            .addContainerGap(17, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup()
@@ -244,9 +393,26 @@ public class UIPreferences extends JPanel {
                     .addComponent(loggingSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup()
-                        .addComponent(logLevelLabel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(logLevelCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(234, Short.MAX_VALUE))
+                        .addComponent(logLevelCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(logLevelLabel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
+                    .addGap(18, 18, 18)
+                    .addComponent(highlightCheckbox)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(highlightingSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(label1)
+                    .addGap(5, 5, 5)
+                    .addGroup(layout.createParallelGroup()
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(parameterNamesAddButton)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(parameterNamesRemoveButton))
+                        .addComponent(scrollPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(parameterNamesTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                    .addComponent(saveConfigButton)
+                    .addContainerGap())
         );
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
@@ -257,5 +423,14 @@ public class UIPreferences extends JPanel {
     private JComboBox<String> logLevelCombo;
     private JSeparator loggingSeparator;
     private JLabel logLevelLabel;
+    private JSeparator highlightingSeparator;
+    private JCheckBox highlightCheckbox;
+    private JScrollPane scrollPane1;
+    private JList parameterNamesList;
+    private JTextField parameterNamesTextField;
+    private JButton parameterNamesAddButton;
+    private JButton parameterNamesRemoveButton;
+    private JLabel label1;
+    private JButton saveConfigButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

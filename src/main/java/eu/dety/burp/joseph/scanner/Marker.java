@@ -28,8 +28,8 @@ public class Marker implements IHttpListener {
 
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse httpRequestResponse) {
-        // Only flag messages sent/received by the proxy
-        if (toolFlag == IBurpExtenderCallbacks.TOOL_PROXY) {
+        // Only flag messages if highlighting option is set to true and if sent/received by the proxy
+        if (UIPreferences.getHighlighting() && toolFlag == IBurpExtenderCallbacks.TOOL_PROXY) {
             checkForJwtLocations(httpRequestResponse);
         }
     }
