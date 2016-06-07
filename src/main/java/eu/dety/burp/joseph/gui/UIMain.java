@@ -19,8 +19,9 @@
 package eu.dety.burp.joseph.gui;
 
 import burp.IBurpExtenderCallbacks;
-import javax.swing.JTabbedPane;
+
 import java.util.ResourceBundle;
+import javax.swing.JTabbedPane;
 
 /**
  * The main window, the parent window for all tabs.
