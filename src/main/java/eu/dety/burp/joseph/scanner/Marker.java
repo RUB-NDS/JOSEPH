@@ -73,6 +73,8 @@ public class Marker implements IHttpListener {
      * @param jwtCandidate String containing the JWT candidate value.
      * @return boolean whether regex pattern matched or not.
      */
+    // TODO: Outsource to utilities
+    // TODO: Perform more checks (JWE, ...)
     private boolean checkForJwtPattern(String jwtCandidate) {
         Pattern jwtPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?([a-zA-Z0-9\\-_\\.]+)*)", Pattern.CASE_INSENSITIVE);
         Matcher jwtMatcher = jwtPattern.matcher(jwtCandidate);
