@@ -19,6 +19,7 @@
 package eu.dety.burp.joseph.utilities;
 
 import burp.BurpExtender;
+
 import eu.dety.burp.joseph.gui.UIPreferences;
 
 import java.io.PrintWriter;

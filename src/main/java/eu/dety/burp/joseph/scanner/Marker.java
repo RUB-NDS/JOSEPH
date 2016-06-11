@@ -18,14 +18,19 @@
  */
 package eu.dety.burp.joseph.scanner;
 
-import burp.*;
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import burp.IParameter;
+import burp.IHttpListener;
+import burp.IHttpRequestResponse;
+import burp.IRequestInfo;
 
 import eu.dety.burp.joseph.gui.UIPreferences;
 import eu.dety.burp.joseph.utilities.Logger;
+import eu.dety.burp.joseph.utilities.Finder;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 
 /**
@@ -35,6 +40,7 @@ import java.util.regex.Pattern;
  */
 public class Marker implements IHttpListener {
     private static final Logger loggerInstance = Logger.getInstance();
+    private static final Finder finder = new Finder();
     private final IExtensionHelpers helpers;
     private final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
@@ -64,7 +70,7 @@ public class Marker implements IHttpListener {
         for (String header : requestInfo.getHeaders()) {
             if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER")) {
                 loggerInstance.log(getClass(), "Authorization HTTP Header with type bearer found.", Logger.DEBUG);
-                jwtFound = checkForJwtPattern(header);
+                jwtFound = finder.checkJWTPattern(header);
                 break;
             }
         }
@@ -74,7 +80,7 @@ public class Marker implements IHttpListener {
             for (IParameter param : requestInfo.getParameters()) {
                 if(UIPreferences.getParameterNames().contains(param.getName())) {
                     loggerInstance.log(getClass(), String.format("Possible JWT parameter found: %s.", param.getName()), Logger.DEBUG);
-                    jwtFound = checkForJwtPattern(param.getValue());
+                    jwtFound = finder.checkJWTPattern(param.getValue());
                     if (jwtFound) break;
                 }
             }
@@ -84,20 +90,6 @@ public class Marker implements IHttpListener {
             markRequestResponse(httpRequestResponse, bundle.getString("REQUEST_RESPONSE_MARKER"));
             loggerInstance.log(getClass(), "JSON Web Token found!", Logger.DEBUG);
         }
-    }
-
-    /**
-     * Checks whether given JWT candidate matches regex pattern
-     * @param jwtCandidate String containing the JWT candidate value.
-     * @return boolean whether regex pattern matched or not.
-     */
-    // TODO: Outsource to utilities
-    // TODO: Perform more checks (JWE, ...)
-    private boolean checkForJwtPattern(String jwtCandidate) {
-        Pattern jwtPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?([a-zA-Z0-9\\-_\\.]+)*)", Pattern.CASE_INSENSITIVE);
-        Matcher jwtMatcher = jwtPattern.matcher(jwtCandidate);
-
-        return jwtMatcher.find();
     }
 
     /**
