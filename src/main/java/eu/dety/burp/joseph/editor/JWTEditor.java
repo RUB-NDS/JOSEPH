@@ -137,7 +137,7 @@ public class JWTEditor implements IMessageEditorTabFactory {
                 sourceViewerRaw.setText(parameter.getValue().getBytes());
                 sourceViewerRaw.setEditable(editable);
 
-                String[] joseParts = joseDecoder.getComponents(parameter.getValue());
+                String[] joseParts = joseDecoder.getComponents(parameter.getValue(), 3);
 
                 sourceViewerHeader.setEditable(editable);
                 sourceViewerPayload.setEditable(editable);

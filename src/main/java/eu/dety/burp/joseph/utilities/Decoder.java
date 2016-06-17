@@ -25,6 +25,8 @@ import org.apache.commons.codec.binary.Base64;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
+
 /**
  * Decoder.
  * Help functions to decode JOSE values from different representations.
@@ -62,14 +64,35 @@ public class Decoder {
     }
 
     /**
+     * Split JOSE value into its separate parts
+     * @param input Compact serialization JOSE value
+     * @param assureLength Assure a certain length of the returned string array
+     * @return string array with the separate parts
+     */
+    public String[] getComponents(String input, int assureLength) {
+        String [] components = input.split("\\.");
+
+        // If length is already correct return the components
+        if (components.length == assureLength) {
+            return components;
+        }
+
+        String [] output = new String[assureLength];
+        Arrays.fill(output, "");
+
+        for(int i = 0; i < components.length; i++) {
+            output[i] = components[i];
+        }
+
+        return output;
+    }
+
+    /**
      * Join separate parts to JOSE value
      * @param input Compact serialization JOSE value
      * @return string array with the separate parts
      */
     public String concatComponents(String[] input) {
-        for(String foo: input) {
-            loggerInstance.log(getClass(), foo, Logger.DEBUG);
-        }
         return StringUtils.join(input, ".");
     }
 
