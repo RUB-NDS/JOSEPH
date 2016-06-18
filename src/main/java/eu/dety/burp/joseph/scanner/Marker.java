@@ -29,6 +29,7 @@ import eu.dety.burp.joseph.gui.UIPreferences;
 import eu.dety.burp.joseph.utilities.Logger;
 import eu.dety.burp.joseph.utilities.Finder;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -105,6 +106,14 @@ public class Marker implements IHttpListener {
         String comment = (oldComment != null && !oldComment.isEmpty() && !Objects.equals(oldComment, message)) ? String.format("%s, %s", oldComment, message) : message;
 
         httpRequestResponse.setComment(comment);
+    }
+
+    /**
+     * Get highlight color
+     * @return Get the highlight color constant.
+     */
+    public static String getHighlightColor() {
+        return HIGHLIGHT_COLOR;
     }
 
 }

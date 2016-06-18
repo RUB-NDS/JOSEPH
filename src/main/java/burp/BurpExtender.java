@@ -73,6 +73,10 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         final UITab josephMainTab = new UITab(callbacks);
         loggerInstance.log(getClass(), bundle.getString("REGISTERED_MAINTAB"), Logger.INFO);
 
+        // Register Context Menu
+        callbacks.registerContextMenuFactory(josephMainTab);
+        loggerInstance.log(getClass(), bundle.getString("REGISTERED_CONTEXTMENU"), Logger.INFO);
+
         // Register HTTP listener
         final Marker marker = new Marker(callbacks);
         callbacks.registerHttpListener(marker);
@@ -82,6 +86,8 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         final JWTEditor jwtEditor = new JWTEditor(callbacks);
         callbacks.registerMessageEditorTabFactory(jwtEditor);
         loggerInstance.log(getClass(), bundle.getString("REGISTERED_JWTEDITOR"), Logger.INFO);
+
+
     }
 
     /**

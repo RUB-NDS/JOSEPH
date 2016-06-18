@@ -18,19 +18,30 @@
  */
 package eu.dety.burp.joseph.gui;
 
-import burp.IBurpExtenderCallbacks;
-import burp.ITab;
+import burp.*;
+import eu.dety.burp.joseph.scanner.Marker;
+import eu.dety.burp.joseph.utilities.Logger;
+
+import javax.swing.*;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 /**
  * An additional tab in Burp
  * @author Dennis Detering
  * @version 1.0
  */
-public class UITab implements ITab {
+public class UITab implements ITab, IContextMenuFactory {
     
     private UIMain mainTab;
     private final IBurpExtenderCallbacks callbacks;
+    private static final Logger loggerInstance = Logger.getInstance();
+    ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
     /**
      * Create a new tab.
@@ -61,11 +72,46 @@ public class UITab implements ITab {
     }
 
     /**
-     * 
+     *
      * @return Get the headline for the tab.
      */
     @Override
     public String getTabCaption() {
         return "JOSEPH";
+    }
+
+    @Override
+    public List<JMenuItem> createMenuItems(IContextMenuInvocation iContextMenuInvocation) {
+        IHttpRequestResponse[] messages = iContextMenuInvocation.getSelectedMessages();
+        if (messages != null && messages.length == 1) {
+
+            IHttpRequestResponse message = messages[0];
+
+            // Check if message has been marked by our extension
+            if(!Objects.equals(message.getHighlight(), Marker.getHighlightColor())) {
+                return null;
+            }
+
+            List<JMenuItem> list = new ArrayList<JMenuItem>();
+            // final IHttpService service = messages[0].getHttpService();
+            // final byte[] selectedRequest = messages[0].getRequest();
+            JMenuItem menuItem = new JMenuItem(bundle.getString("SEND2JOSEPH"));
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    try {
+                        // IExtensionHelpers helpers = callbacks.getHelpers();
+                        // IRequestInfo request = helpers.analyzeRequest(service, selectedRequest);
+                        loggerInstance.log(getClass(), "Send to JOSEPH context menu item clicked", Logger.DEBUG);
+                    } catch (Exception e) {
+                        loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+                    }
+                }
+            });
+            list.add(menuItem);
+            return list;
+        }
+
+        return null;
     }
 }
