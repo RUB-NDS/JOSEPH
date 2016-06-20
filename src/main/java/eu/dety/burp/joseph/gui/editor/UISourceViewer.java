@@ -18,8 +18,14 @@
  */
 package eu.dety.burp.joseph.gui.editor;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import burp.ITextEditor;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -30,17 +36,24 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * @author Dennis Detering
  * @version 1.0
  */
-public class UISourceViewer extends JPanel {
+public class UISourceViewer extends JPanel implements ITextEditor {
+    private IBurpExtenderCallbacks callbacks;
+    private IExtensionHelpers helpers;
+
     private String sourceCode = "[EMPTY]";
     private String codeStyle = SyntaxConstants.SYNTAX_STYLE_JSON;
     private boolean editable = false;
     private RSyntaxTextArea textArea;
+    private boolean isModified = true;
 
     /**
      * Create new Source Viewer instance.
+     * @param callbacks {@link IBurpExtenderCallbacks}.
      */
-    public UISourceViewer(){
+    public UISourceViewer(IBurpExtenderCallbacks callbacks){
         super(new BorderLayout());
+        this.callbacks = callbacks;
+        this.helpers = callbacks.getHelpers();
         initComponent();
     }
 
@@ -62,6 +75,28 @@ public class UISourceViewer extends JPanel {
         textArea = new RSyntaxTextArea(20, 60);
         RTextScrollPane scrollPane = new RTextScrollPane(textArea);
         this.add(scrollPane);
+
+        textArea.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void removeUpdate(DocumentEvent evt) {
+                isModified = true;
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent evt) {
+                isModified = true;
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent evt) {
+                isModified = true;
+            }
+        });
+    }
+
+    @Override
+    public Component getComponent() {
+        return textArea;
     }
 
     /**
@@ -69,6 +104,50 @@ public class UISourceViewer extends JPanel {
      */
     public void setEditable(boolean editable){
         this.editable = editable;
+        textArea.setEditable(editable);
+    }
+
+    @Override
+    public void setText(byte[] input) {
+        setViewerContent(helpers.bytesToString(input));
+    }
+
+    @Override
+    public byte[] getText() {
+        return helpers.stringToBytes(textArea.getText());
+    }
+
+    @Override
+    public boolean isTextModified() {
+        return isModified;
+    }
+
+    @Override
+    public byte[] getSelectedText() {
+        return helpers.stringToBytes(textArea.getSelectedText());
+    }
+
+    @Override
+    public int[] getSelectionBounds() {
+        return new int[0];
+    }
+
+    @Override
+    public void setSearchExpression(String s) {
+
+    }
+
+    /**
+     * Set the source code and highlighting.
+     * @param sourceCode The Code that should be highlighted.
+     */
+    public void setViewerContent(String sourceCode){
+        this.sourceCode = sourceCode;
+        textArea.setSyntaxEditingStyle(this.codeStyle);
+        textArea.setCodeFoldingEnabled(true);
+        textArea.setEditable(this.editable);
+        textArea.setText(this.sourceCode);
+        this.updateUI();
     }
 
     /**

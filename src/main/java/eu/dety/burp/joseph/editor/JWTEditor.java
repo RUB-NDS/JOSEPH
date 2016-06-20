@@ -130,7 +130,7 @@ public class JWTEditor implements IMessageEditorTabFactory {
                 // Clear display
                 sourceViewerRaw.setText(null);
                 sourceViewerRaw.setEditable(false);
-            } else {
+            } else if (joseParameterName != null) {
                 // Retrieve JOSE parameter
                 IParameter parameter = helpers.getRequestParameter(content, joseParameterName);
 
@@ -159,7 +159,7 @@ public class JWTEditor implements IMessageEditorTabFactory {
                 byte[] text = sourceViewerRaw.getText();
 
                 // Update the request with the new parameter value
-                return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, text.toString(), IParameter.PARAM_URL));
+                return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, helpers.bytesToString(text), IParameter.PARAM_URL));
             } else if (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified()) {
                 String[] components = {
                     joseDecoder.getEncoded(sourceViewerHeader.getText()),
