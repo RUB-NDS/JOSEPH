@@ -97,10 +97,11 @@ public class Decoder {
         return StringUtils.join(input, ".");
     }
 
+
     /**
-     * Decode from base64url representation to JSON string
+     * Decode from base64url representation to string
      * @param input base64url encoded value
-     * @return string representation of the base64 decoded and JSON parsed value
+     * @return string representation of the base64 decoded value
      */
     public String getDecoded(String input) {
         String output = "[ERROR]";
@@ -114,6 +115,11 @@ public class Decoder {
         return output;
     }
 
+    /**
+     * Decode from base64url representation to JSONObject
+     * @param input base64url encoded value
+     * @return JSONObject of the parsed value
+     */
     public JSONObject getDecodedJSON(String input) {
         String decoded = getDecoded(input);
         JSONObject output = new JSONObject();
@@ -123,7 +129,24 @@ public class Decoder {
         try {
             output = new JSONObject(decoded);
         } catch (Exception e) {
-            loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+            // decoded is no valid JSON string
+            // loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+        }
+
+        return output;
+    }
+
+    /**
+     * Decode from jose value to JSONObject array
+     * @param input base64url encoded jose value string
+     * @return JSONObject array of the parsed value
+     */
+    public JSONObject[] getJSONComponents(String input) {
+        String[] components = this.getComponents(input);
+        JSONObject[] output = new JSONObject[components.length];
+
+        for(int i = 0; i < components.length; i++) {
+            output[i] = this.getDecodedJSON(components[i]);
         }
 
         return output;

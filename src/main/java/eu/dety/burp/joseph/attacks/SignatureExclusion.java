@@ -19,9 +19,37 @@
 package eu.dety.burp.joseph.attacks;
 
 
+import burp.IHttpRequestResponse;
+import burp.IParameter;
+import burp.IRequestInfo;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Signature Exclusion Attack
+ *
+ * Performs a signature exclusion attack by
+ * changing the algorithm value of the header to
+ * the "none" algorithm and cutting away the signature
+ * value.
+ *
+ * @author Dennis Detering
+ * @version 1.0
+ */
 public class SignatureExclusion implements IAttack {
+    // Unique identifier for the attack class
+    private static final String id = "signature_exclusion";
+    // Full name of the attack
+    private static final String name = "Signature Exclusion";
+    // List of types this attack is suitable for
+    // Available: jwt, jws, jwe
+    private static final List<String> suitableTypes = Arrays.asList("jwt", "jws");
+    // Amount of requests needed
+    private static final int amountRequests = 4;
+
     @Override
-    public void prepareAttack() {
+    public void prepareAttack(IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) {
 
     }
 
@@ -29,4 +57,36 @@ public class SignatureExclusion implements IAttack {
     public void performAttack() {
 
     }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public List<String> getSuitableTypes() {
+        return suitableTypes;
+    }
+
+    @Override
+    public int getAmountRequests() {
+        return amountRequests;
+    }
+
+    @Override
+    public boolean isSuitable(String type, String algorithm) {
+        if(type != null && !type.equals("")) {
+            return this.getSuitableTypes().contains(type.toLowerCase());
+        }
+
+        // TODO: Guessing / further checks if type is null
+        return false;
+    }
+
+
 }

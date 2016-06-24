@@ -18,7 +18,58 @@
  */
 package eu.dety.burp.joseph.attacks;
 
+import burp.IHttpRequestResponse;
+import burp.IParameter;
+import burp.IRequestInfo;
+
+import java.util.List;
+
+/**
+ * Interface defining necessary methods for attack classes
+ * @author Dennis Detering
+ * @version 1.0
+ */
 public interface IAttack {
-    void prepareAttack();
+    /**
+     * Prepare the attack with loading all necessary parameter
+     * @param requestResponse {@link IHttpRequestResponse} requestResponse message
+     * @param requestInfo {@link IRequestInfo} analyzed request
+     * @param parameter {@link IParameter} JOSE parameter
+     */
+    void prepareAttack(IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter);
+
+    /**
+     * Perform the attack
+     */
     void performAttack();
+
+    /**
+     * Get unique attack ID
+     * @return Unique identifier
+     */
+    String getId();
+
+    /**
+     * Get attack name
+     * @return Attack name
+     */
+    String getName();
+
+    /**
+     * Get list of suitable JOSE types
+     * @return List of suitable JOSE types
+     */
+    List<String> getSuitableTypes();
+
+    /**
+     * Get the amount of requests performed (guess)
+     * @return Amount of requests needed
+     */
+    int getAmountRequests();
+
+    /**
+     * Check whether attack is suitable based on algorithm and type
+     * @return boolean if attack is suitable
+     */
+    boolean isSuitable(String type, String algorithm);
 }

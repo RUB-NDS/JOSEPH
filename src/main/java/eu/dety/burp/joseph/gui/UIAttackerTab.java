@@ -21,13 +21,17 @@ package eu.dety.burp.joseph.gui;
 
 import burp.*;
 
+import eu.dety.burp.joseph.attacks.IAttack;
+import eu.dety.burp.joseph.attacks.SignatureExclusion;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.Logger;
-import org.json.JSONObject;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
+import java.util.*;
+import org.json.JSONObject;
+
 
 /**
  * Attacker tab showing a single message and related attacks
@@ -37,22 +41,46 @@ import javax.swing.JPanel;
 public class UIAttackerTab extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final Finder finder = new Finder();
+    private List<IAttack> registeredAttacks = new ArrayList<>();
     private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
     private final IExtensionHelpers helpers;
 
-    private IHttpRequestResponse request;
+    private IHttpRequestResponse requestResponse;
     private IRequestInfo requestInfo;
     private IParameter parameter = null;
     private String type = "?";
     private String algorithm = "?";
 
+    /**
+     * Register Attacks
+     *
+     * Method called on construction to register all available attacks.
+     * Extend this method to extend with your attack.
+     */
+    private void registerAttacks() {
+        registeredAttacks.add(new SignatureExclusion());
+        loggerInstance.log(getClass(), "Attack registered: Signature Exclusion", Logger.INFO);
+    }
 
-    // TODO: Make closable
+    /**
+     * UIAttackerTab constructor
+     *
+     * Register available attacks, extract "alg" and "typ" header fields and
+     * generate attackListModel based on type and suitableness of the attack.
+     *
+     * @param callbacks {@link IBurpExtenderCallbacks} extender callbacks
+     * @param message {@link IHttpRequestResponse} requestResponse message
+     */
     public UIAttackerTab(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
+        // TODO: Make closable
+
         Decoder joseDecoder = new Decoder(callbacks);
         this.helpers = callbacks.getHelpers();
-        this.request = message;
+        this.requestResponse = message;
         this.requestInfo = helpers.analyzeRequest(message);
+
+        // Register all available attacks
+        registerAttacks();
 
         // Find the JOSE parameter
         for (IParameter param : requestInfo.getParameters()) {
@@ -68,19 +96,25 @@ public class UIAttackerTab extends JPanel {
         initComponents();
 
         // Parse the JOSE value to an JSONObject
-        JSONObject paramJSON = joseDecoder.getDecodedJSON(parameter.getValue());
+        JSONObject[] joseJSONComponents = joseDecoder.getJSONComponents(parameter.getValue());
+
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
-        if(paramJSON.has("alg")) algorithm = paramJSON.getString("alg");
-        if(paramJSON.has("typ")) type = paramJSON.getString("typ");
+        if(joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
+        if(joseJSONComponents[0].has("typ")) type = joseJSONComponents[0].getString("typ");
         typeValue.setText(type);
         algorithmValue.setText(algorithm);
 
         loggerInstance.log(getClass(), "JOSE Parameter Name: " + parameter.getName(), Logger.DEBUG);
-        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + paramJSON.toString(), Logger.DEBUG);
+        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . " + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.DEBUG);
 
         // Build available attacks list
-        attackListModel.addElement( "Signature Exclusion");
+        for(IAttack attack : this.registeredAttacks) {
+            // If attack is suitable for given JOSE type, add it to attackListModel
+            if(attack.isSuitable(type, algorithm)) {
+                attackListModel.addElement(attack.getName());
+            }
+        }
     }
 
     /**
