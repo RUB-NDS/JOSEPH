@@ -42,8 +42,8 @@ import java.util.ResourceBundle;
 public class Marker implements IHttpListener {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final Finder finder = new Finder();
+    private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
     private final IExtensionHelpers helpers;
-    private final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
     private static final String HIGHLIGHT_COLOR = "cyan";
 

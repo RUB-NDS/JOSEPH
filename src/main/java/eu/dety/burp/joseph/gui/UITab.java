@@ -23,7 +23,7 @@ import eu.dety.burp.joseph.scanner.Marker;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class UITab implements ITab, IContextMenuFactory {
     private UIMain mainTab;
     private final IBurpExtenderCallbacks callbacks;
     private static final Logger loggerInstance = Logger.getInstance();
-    ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
+    private static ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
     /**
      * Create a new tab.
@@ -62,7 +62,8 @@ public class UITab implements ITab, IContextMenuFactory {
     public Component getUiComponent() {
         return mainTab;
     }
-    
+
+
     /**
      *
      * @return Get the main tab.
@@ -85,26 +86,32 @@ public class UITab implements ITab, IContextMenuFactory {
         IHttpRequestResponse[] messages = iContextMenuInvocation.getSelectedMessages();
         if (messages != null && messages.length == 1) {
 
-            IHttpRequestResponse message = messages[0];
+            final IHttpRequestResponse message = messages[0];
 
             // Check if message has been marked by our extension
             if(!Objects.equals(message.getHighlight(), Marker.getHighlightColor())) {
                 return null;
             }
 
-            List<JMenuItem> list = new ArrayList<JMenuItem>();
-            // final IHttpService service = messages[0].getHttpService();
-            // final byte[] selectedRequest = messages[0].getRequest();
+            List<JMenuItem> list = new ArrayList<>();
             JMenuItem menuItem = new JMenuItem(bundle.getString("SEND2JOSEPH"));
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
                     try {
-                        // IExtensionHelpers helpers = callbacks.getHelpers();
-                        // IRequestInfo request = helpers.analyzeRequest(service, selectedRequest);
-                        loggerInstance.log(getClass(), "Send to JOSEPH context menu item clicked", Logger.DEBUG);
+                        loggerInstance.log(UITab.class, "Send to JOSEPH context menu item clicked", Logger.DEBUG);
+
+                        UIAttacker attacker = mainTab.getAttackerTab();
+                        UIAttackerTab attackerTab = new UIAttackerTab(callbacks, message);
+
+                        int newTabIndex = attacker.getNewTabIndex();
+                        attacker.addTab(Integer.toString(newTabIndex), attackerTab);
+                        attacker.setSelectedIndex(newTabIndex - 1);
+
+                        // TODO: Highlight
+
                     } catch (Exception e) {
-                        loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+                        loggerInstance.log(UITab.class, e.getMessage(), Logger.ERROR);
                     }
                 }
             });

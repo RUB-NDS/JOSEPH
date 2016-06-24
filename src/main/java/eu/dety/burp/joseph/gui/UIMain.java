@@ -30,12 +30,13 @@ import javax.swing.JTabbedPane;
  */
 public class UIMain extends JTabbedPane {
     private final IBurpExtenderCallbacks callbacks;
-    private final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
+    private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
 
     // Sub tabs within JOSEPH main tab
     private UIHelp helpTab;
     private UIPreferences preferencesTab;
+    private UIAttacker attackerTab;
 
     /**
      * Construct the main UI.
@@ -64,13 +65,23 @@ public class UIMain extends JTabbedPane {
     }
 
     /**
+     * Getter for the attacker sub tab
+     * @return {@link UIAttacker} object.
+     */
+    public UIAttacker getAttackerTab() {
+        return attackerTab;
+    }
+
+    /**
      * Initialize all necessary components
      */
     private void initComponents(){
         // Help sub tab
         helpTab = new UIHelp();
         preferencesTab = new UIPreferences();
+        attackerTab = new UIAttacker();
 
+        this.addTab(bundle.getString("ATTACKER"), attackerTab);
         this.addTab(bundle.getString("PREFERENCES"), preferencesTab);
         this.addTab(bundle.getString("HELP"), helpTab);
 

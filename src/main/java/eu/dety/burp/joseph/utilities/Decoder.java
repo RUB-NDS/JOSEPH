@@ -24,6 +24,7 @@ import burp.IExtensionHelpers;
 import org.apache.commons.codec.binary.Base64;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -107,6 +108,21 @@ public class Decoder {
         try {
             output = helpers.bytesToString(Base64.decodeBase64(input));
         } catch(Exception e){
+            loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+        }
+
+        return output;
+    }
+
+    public JSONObject getDecodedJSON(String input) {
+        String decoded = getDecoded(input);
+        JSONObject output = new JSONObject();
+
+        if (decoded.equals("[ERROR]")) return output;
+
+        try {
+            output = new JSONObject(decoded);
+        } catch (Exception e) {
             loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
         }
 
