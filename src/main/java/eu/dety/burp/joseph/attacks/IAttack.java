@@ -31,7 +31,7 @@ import java.util.List;
  */
 public interface IAttack {
     /**
-     * Prepare the attack with loading all necessary parameter
+     * Prepare the attack by loading all necessary parameter
      * @param requestResponse {@link IHttpRequestResponse} requestResponse message
      * @param requestInfo {@link IRequestInfo} analyzed request
      * @param parameter {@link IParameter} JOSE parameter
@@ -62,14 +62,14 @@ public interface IAttack {
     List<String> getSuitableTypes();
 
     /**
-     * Get the amount of requests performed (guess)
+     * Get the amount of requests performed
      * @return Amount of requests needed
      */
     int getAmountRequests();
 
     /**
-     * Check whether attack is suitable based on algorithm and type
-     * @return boolean if attack is suitable
+     * Check whether attack is suitable based on algorithm and type values
+     * @return Boolean if attack is suitable
      */
     boolean isSuitable(String type, String algorithm);
 }
