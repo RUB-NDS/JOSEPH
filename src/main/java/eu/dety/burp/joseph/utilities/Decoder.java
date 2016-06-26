@@ -58,10 +58,10 @@ public class Decoder {
     }
 
     /**
-     * Split JOSE value into its separate parts
+     * Split JOSE value into its separate parts with fixed length
      * @param input Compact serialization JOSE value
      * @param assureLength Assure a certain length of the returned string array
-     * @return string array with the separate parts
+     * @return string array with the separate fixed amount of parts
      */
     public String[] getComponents(String input, int assureLength) {
         String [] components = input.split("\\.");
@@ -74,9 +74,7 @@ public class Decoder {
         String [] output = new String[assureLength];
         Arrays.fill(output, "");
 
-        for(int i = 0; i < assureLength; i++) {
-            output[i] = components[i];
-        }
+        System.arraycopy(components, 0, output, 0, Math.min(components.length, assureLength));
 
         return output;
     }

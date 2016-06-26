@@ -39,7 +39,6 @@ public interface IAttack {
      * @param requestResponse {@link IHttpRequestResponse} requestResponse message
      * @param requestInfo {@link IRequestInfo} analyzed request
      * @param parameter {@link IParameter} JOSE parameter
-     * @return true if attack preparation was successful
      */
     void prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException;
 

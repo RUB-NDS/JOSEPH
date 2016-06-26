@@ -60,6 +60,22 @@ public class DecoderTest {
         assertArrayEquals(joseDecoder.getComponents(token), expected);
     }
 
+    @Test
+    public void getComponentsWithTwoComponentJwtAndAssureLengthInputReturnsStringArrayWithThreeComponents() {
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
+        String[] expected = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", ""};
+
+        assertArrayEquals(joseDecoder.getComponents(token, 3), expected);
+    }
+
+    @Test
+    public void getComponentsWithFiveComponentJwtAndAssureLengthInputReturnsStringArrayWithThreeComponents() {
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
+        String[] expected = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
+
+        assertArrayEquals(joseDecoder.getComponents(token, 3), expected);
+    }
+
 
 
 }
