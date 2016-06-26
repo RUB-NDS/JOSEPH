@@ -40,7 +40,7 @@ import java.awt.Component;
  * @author Dennis Detering
  * @version 1.0
  */
-public class JWTEditor implements IMessageEditorTabFactory {
+public class JwtEditor implements IMessageEditorTabFactory {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final Decoder joseDecoder = new Decoder();
     private static final Finder finder = new Finder();
@@ -52,7 +52,7 @@ public class JWTEditor implements IMessageEditorTabFactory {
      * Create new Source Viewer instance.
      * @param callbacks {@link IBurpExtenderCallbacks}.
      */
-    public JWTEditor(IBurpExtenderCallbacks callbacks) {
+    public JwtEditor(IBurpExtenderCallbacks callbacks) {
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
     }
@@ -65,10 +65,10 @@ public class JWTEditor implements IMessageEditorTabFactory {
      */
     @Override
     public IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable) {
-        return new UIJWTEditorTab(controller, editable);
+        return new UIJwtEditorTab(controller, editable);
     }
 
-    class UIJWTEditorTab implements IMessageEditorTab {
+    class UIJwtEditorTab implements IMessageEditorTab {
         private JTabbedPane UIJWTEditorTabPanel;
         private boolean editable;
         private byte[] currentMessage;
@@ -78,7 +78,7 @@ public class JWTEditor implements IMessageEditorTabFactory {
         private ITextEditor sourceViewerPayload;
         private ITextEditor sourceViewerSignature;
 
-        UIJWTEditorTab(IMessageEditorController controller, boolean editable) {
+        UIJwtEditorTab(IMessageEditorController controller, boolean editable) {
             this.editable = editable;
             this.UIJWTEditorTabPanel = new JTabbedPane();
 
@@ -112,9 +112,9 @@ public class JWTEditor implements IMessageEditorTabFactory {
             // Enable this tab for requests containing a JOSE parameter
             if(isRequest) {
                 for(Object param: UIPreferences.getParameterNames().toArray()) {
-                    if(helpers.getRequestParameter(content, param.toString()) != null && finder.checkJWTPattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
+                    if(helpers.getRequestParameter(content, param.toString()) != null && finder.checkJwtPattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
                         joseParameterName = helpers.getRequestParameter(content, param.toString()).getName();
-                        loggerInstance.log(getClass(), "JWT value found, enable JWTEditor.", Logger.DEBUG);
+                        loggerInstance.log(getClass(), "JWT value found, enable JwtEditor.", Logger.DEBUG);
                         return true;
                     }
                 }

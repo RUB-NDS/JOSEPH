@@ -113,7 +113,7 @@ public class Decoder {
      * @param input base64url encoded value
      * @return JSONObject of the parsed value
      */
-    public JSONObject getDecodedJSON(String input) {
+    public JSONObject getDecodedJson(String input) {
         String decoded = getDecoded(input);
         JSONObject output = new JSONObject();
 
@@ -134,12 +134,12 @@ public class Decoder {
      * @param input base64url encoded jose value string
      * @return JSONObject array of the parsed value
      */
-    public JSONObject[] getJSONComponents(String input) {
+    public JSONObject[] getJsonComponents(String input) {
         String[] components = this.getComponents(input);
         JSONObject[] output = new JSONObject[components.length];
 
         for(int i = 0; i < components.length; i++) {
-            output[i] = this.getDecodedJSON(components[i]);
+            output[i] = this.getDecodedJson(components[i]);
         }
 
         return output;

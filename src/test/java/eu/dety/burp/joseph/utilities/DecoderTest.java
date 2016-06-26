@@ -25,35 +25,35 @@ public class DecoderTest {
     private static final Decoder joseDecoder = new Decoder();
 
     @Test
-    public void testGetEncodedBytes() {
+    public void getEncodedWithBytesInputReturnsCorrectBase64UrlEncodedString() {
         byte[] input = new byte[] {84, 101, 115, 116, 32, 73, 110, 112, 117, 116};
 
         assertEquals(joseDecoder.getEncoded(input), "VGVzdCBJbnB1dA");
     }
 
     @Test
-    public void testGetEncodedString() {
+    public void getEncodedWithStringInputReturnsCorrectBase64UrlEncodedString() {
         String input = "Test Input";
 
         assertEquals(joseDecoder.getEncoded(input), "VGVzdCBJbnB1dA");
     }
 
     @Test
-    public void testGetDecoded() {
+    public void getDecodedWithBase64UrlStringInputReturnsCorrectDecodedString() {
         String input = "VGVzdCBJbnB1dA";
 
         assertEquals(joseDecoder.getDecoded(input), "Test Input");
     }
 
     @Test
-    public void testGetDecodedGetEncoded() {
+    public void getDecodedGetEncodedWithStringInputReturnsSameString() {
         String input = "Test Input";
 
         assertEquals(joseDecoder.getDecoded(joseDecoder.getEncoded(input)), "Test Input");
     }
 
     @Test
-    public void testGetComponents() {
+    public void getComponentsWithJwtInputReturnsStringArrayWithThreeComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
         String[] expected = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
 

@@ -19,7 +19,6 @@
 package eu.dety.burp.joseph.utilities;
 
 import static org.junit.Assert.*;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -27,43 +26,43 @@ public class FinderTest {
     private static final Finder finder = new Finder();
 
     @Test
-    public void testJwtHs() {
+    public void checkJwtPatternWithValidHmacJwtInputReturnsTrue() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
-        assertTrue(finder.checkJWTPattern(token));
+        assertTrue(finder.checkJwtPattern(token));
     }
 
     @Test
-    public void testJwtRs() {
+    public void checkJwtPatternWithValidRsaJwtInputReturnsTrue() {
         String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.kICC_hdjv5FXzfiU-2F4QDMb9N71L_fiUlgwk_cwPUWG3Fn6FweKG4jSlbgVJGHTbp-sF34n79TiLbjK1IP31KS3rxWaHzO0enB6QZe9nktzSLx2H-rnyYtRZZ0o4KfaCh03TuhMdBtL2UpekkyjTwBsb1hULZPSt2xx_gsY5GwpK3XeaqpoMxFGNopgpg7IQ1C0QbQHDNPzld-PqsnPIIOt6VG0f4LWFyWJOlpz0ZXy06VXjFY3ALix9GVUbRJQ4sDHg5FK7gl2P1ovow1b7JysTgl_HeD8CpbIUUy5Gxa8nIdPmb4eKoG3dM-J_AaxewqFuvHMfqSey_cIdFsxtw";
 
-        assertTrue(finder.checkJWTPattern(token));
+        assertTrue(finder.checkJwtPattern(token));
     }
 
     @Test
-    public void testInvalidHeader() {
+    public void checkJwtPatternWithInvalidEncodedHeaderJwtInputReturnsFalse() {
         String token = "SW52YWxpZCBIZWFkZXI.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
-        assertFalse(finder.checkJWTPattern(token));
+        assertFalse(finder.checkJwtPattern(token));
     }
 
     @Test
-    public void testTooFewComponents() {
+    public void checkJwtPatternWithTwoComponentJwtInputReturnsFalse() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
 
-        assertFalse(finder.checkJWTPattern(token));
+        assertFalse(finder.checkJwtPattern(token));
     }
 
     /* TODO: Implement if different checker for JWT and JWE exist */
     @Ignore
-    public void testInvalidPayload() {
+    public void checkJwtPatternWithInvalidEncodedPayloadJwtInputReturnsFalse() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.SW52YWxpZCBQYXlsb2Fk.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        assertFalse(finder.checkJWTPattern(token));
+        assertFalse(finder.checkJwtPattern(token));
     }
 
     @Ignore
-    public void testTooManyComponents() {
+    public void checkJwtPatternWithFourComponentJwtInputReturnsFalse() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
-        assertFalse(finder.checkJWTPattern(token));
+        assertFalse(finder.checkJwtPattern(token));
     }
 }

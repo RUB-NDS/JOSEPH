@@ -87,7 +87,7 @@ public class UIAttackerTab extends JPanel {
         // Find the JOSE parameter
         for (IParameter param : requestInfo.getParameters()) {
             if(UIPreferences.getParameterNames().contains(param.getName())) {
-                if (finder.checkJWTPattern(param.getValue())) {
+                if (finder.checkJwtPattern(param.getValue())) {
                     parameter = param;
                     break;
                 }
@@ -98,7 +98,7 @@ public class UIAttackerTab extends JPanel {
         initComponents();
 
         // Parse the JOSE value to an JSONObject
-        JSONObject[] joseJSONComponents = joseDecoder.getJSONComponents(parameter.getValue());
+        JSONObject[] joseJSONComponents = joseDecoder.getJsonComponents(parameter.getValue());
 
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
