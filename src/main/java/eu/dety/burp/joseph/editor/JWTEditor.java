@@ -42,6 +42,7 @@ import java.awt.Component;
  */
 public class JWTEditor implements IMessageEditorTabFactory {
     private static final Logger loggerInstance = Logger.getInstance();
+    private static final Decoder joseDecoder = new Decoder();
     private static final Finder finder = new Finder();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
@@ -71,7 +72,6 @@ public class JWTEditor implements IMessageEditorTabFactory {
         private JTabbedPane UIJWTEditorTabPanel;
         private boolean editable;
         private byte[] currentMessage;
-        private Decoder joseDecoder;
 
         private ITextEditor sourceViewerRaw;
         private ITextEditor sourceViewerHeader;
@@ -81,8 +81,6 @@ public class JWTEditor implements IMessageEditorTabFactory {
         UIJWTEditorTab(IMessageEditorController controller, boolean editable) {
             this.editable = editable;
             this.UIJWTEditorTabPanel = new JTabbedPane();
-            this.joseDecoder = new Decoder(callbacks);
-
 
             // Create an instance of Burp's text editor to display raw data
             sourceViewerRaw = callbacks.createTextEditor();

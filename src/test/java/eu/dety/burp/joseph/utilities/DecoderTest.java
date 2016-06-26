@@ -22,11 +22,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class DecoderTest {
-    private Decoder joseDecoder;
-
-    public DecoderTest() {
-        this.joseDecoder = new Decoder();
-    }
+    private static final Decoder joseDecoder = new Decoder();
 
     @Test
     public void testGetEncodedBytes() {

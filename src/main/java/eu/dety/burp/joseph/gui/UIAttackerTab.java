@@ -43,6 +43,7 @@ import org.json.JSONObject;
 public class UIAttackerTab extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final Finder finder = new Finder();
+    private static final Decoder joseDecoder = new Decoder();
     private List<IAttack> registeredAttacks = new ArrayList<>();
     private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
     private final IExtensionHelpers helpers;
@@ -76,7 +77,6 @@ public class UIAttackerTab extends JPanel {
     public UIAttackerTab(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
         // TODO: Make closable
 
-        Decoder joseDecoder = new Decoder(callbacks);
         this.helpers = callbacks.getHelpers();
         this.requestResponse = message;
         this.requestInfo = helpers.analyzeRequest(message);

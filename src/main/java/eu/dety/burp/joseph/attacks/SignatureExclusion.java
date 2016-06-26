@@ -42,7 +42,7 @@ import java.util.List;
  */
 public class SignatureExclusion implements IAttack, Runnable {
     private static final Logger loggerInstance = Logger.getInstance();
-    private Decoder joseDecoder;
+    private static final Decoder joseDecoder = new Decoder();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
@@ -66,7 +66,6 @@ public class SignatureExclusion implements IAttack, Runnable {
 
     @Override
     public void prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
-        this.joseDecoder = new Decoder(callbacks);
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
         this.requestResponse = requestResponse;

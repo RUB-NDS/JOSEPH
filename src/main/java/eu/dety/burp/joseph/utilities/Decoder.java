@@ -18,14 +18,11 @@
  */
 package eu.dety.burp.joseph.utilities;
 
-import burp.IBurpExtenderCallbacks;
-
-import burp.IExtensionHelpers;
 import org.apache.commons.codec.binary.Base64;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
@@ -36,16 +33,12 @@ import java.util.Arrays;
  */
 public class Decoder {
     private static final Logger loggerInstance = Logger.getInstance();
-    private IBurpExtenderCallbacks callbacks;
-    private IExtensionHelpers helpers;
 
     /**
      * Create new Decoder instance
-     * @param callbacks {@link IBurpExtenderCallbacks}.
      */
-    public Decoder(IBurpExtenderCallbacks callbacks) {
-        this.callbacks = callbacks;
-        this.helpers = callbacks.getHelpers();
+    public Decoder() {
+
     }
 
     /**
@@ -107,7 +100,7 @@ public class Decoder {
         String output = "[ERROR]";
 
         try {
-            output = helpers.bytesToString(Base64.decodeBase64(input));
+            output = new String(Base64.decodeBase64(input), Charset.forName("UTF-8"));
         } catch(Exception e){
             loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
         }
@@ -178,7 +171,7 @@ public class Decoder {
         String output = "[ERROR]";
 
         try {
-            output = base64UrlEncode(helpers.stringToBytes(input));
+            output = base64UrlEncode(input.getBytes(Charset.forName("UTF-8")));
         } catch(Exception e){
             loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
         }
