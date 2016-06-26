@@ -18,9 +18,6 @@
  */
 package eu.dety.burp.joseph.gui;
 
-import eu.dety.burp.joseph.utilities.Logger;
-
-import java.util.ResourceBundle;
 import javax.swing.*;
 
 /**

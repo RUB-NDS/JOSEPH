@@ -23,6 +23,8 @@ import burp.*;
 
 import eu.dety.burp.joseph.attacks.IAttack;
 import eu.dety.burp.joseph.attacks.SignatureExclusion;
+import eu.dety.burp.joseph.exceptions.AttackNotPreparedException;
+import eu.dety.burp.joseph.exceptions.AttackPreparationFailedException;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.Logger;
@@ -114,6 +116,27 @@ public class UIAttackerTab extends JPanel {
             if(attack.isSuitable(type, algorithm)) {
                 attackListModel.addElement(attack.getName());
             }
+
+            /* BEGIN TMP! */
+            loggerInstance.log(attack.getClass(), "Preparing attack...", Logger.DEBUG);
+            try {
+                attack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
+            } catch (AttackPreparationFailedException e) {
+                e.printStackTrace();
+            }
+
+            loggerInstance.log(attack.getClass(), "Performing attack...", Logger.DEBUG);
+            try {
+                attack.performAttack();
+            } catch (AttackNotPreparedException e) {
+                e.printStackTrace();
+            }
+
+            for(IHttpRequestResponse foo : attack.getResult()) {
+                byte[] response = foo.getResponse();
+                loggerInstance.log(attack.getClass(),  helpers.bytesToString(response), Logger.DEBUG);
+            }
+            /* END TMP */
         }
     }
 

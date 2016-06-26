@@ -81,7 +81,7 @@ public class Decoder {
         String [] output = new String[assureLength];
         Arrays.fill(output, "");
 
-        for(int i = 0; i < components.length; i++) {
+        for(int i = 0; i < assureLength; i++) {
             output[i] = components[i];
         }
 
@@ -161,9 +161,24 @@ public class Decoder {
         String output = "[ERROR]";
 
         try {
-            String tmp = helpers.bytesToString(input);
-            output = base64UrlEncode(helpers.stringToBytes(tmp));
-            loggerInstance.log(getClass(), output, Logger.DEBUG);
+            output = base64UrlEncode(input);
+        } catch(Exception e){
+            loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+        }
+
+        return output;
+    }
+
+    /**
+     * Encode from JSON string to base64url representation
+     * @param input JSON string
+     * @return base64url representation of the JSON string
+     */
+    public String getEncoded(String input) {
+        String output = "[ERROR]";
+
+        try {
+            output = base64UrlEncode(helpers.stringToBytes(input));
         } catch(Exception e){
             loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
         }

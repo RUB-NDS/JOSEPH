@@ -18,6 +18,10 @@
  */
 package eu.dety.burp.joseph.attacks;
 
+import eu.dety.burp.joseph.exceptions.AttackNotPreparedException;
+import eu.dety.burp.joseph.exceptions.AttackPreparationFailedException;
+
+import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IParameter;
 import burp.IRequestInfo;
@@ -35,23 +39,30 @@ public interface IAttack {
      * @param requestResponse {@link IHttpRequestResponse} requestResponse message
      * @param requestInfo {@link IRequestInfo} analyzed request
      * @param parameter {@link IParameter} JOSE parameter
+     * @return true if attack preparation was successful
      */
-    void prepareAttack(IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter);
+    void prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException;
 
     /**
      * Perform the attack
      */
-    void performAttack();
+    void performAttack() throws AttackNotPreparedException;
+
+    /**
+     * Return the result as list of IHttpRequestResponse objects
+     * @return list of IHttpRequestResponse objects
+     */
+    List<IHttpRequestResponse> getResult();
 
     /**
      * Get unique attack ID
-     * @return Unique identifier
+     * @return Unique identifier string
      */
     String getId();
 
     /**
      * Get attack name
-     * @return Attack name
+     * @return Attack name string
      */
     String getName();
 
@@ -69,7 +80,9 @@ public interface IAttack {
 
     /**
      * Check whether attack is suitable based on algorithm and type values
-     * @return Boolean if attack is suitable
+     * @param type JOSE header type value string
+     * @param algorithm JOSE header algorithm value string
+     * @return true if attack is suitable
      */
     boolean isSuitable(String type, String algorithm);
 }
