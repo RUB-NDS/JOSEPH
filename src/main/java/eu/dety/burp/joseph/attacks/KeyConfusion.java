@@ -18,16 +18,11 @@
  */
 package eu.dety.burp.joseph.attacks;
 
-/**
- * Interface defining necessary methods for attack classes
- * @author Dennis Detering
- * @version 1.0
- */
-public interface IAttack {
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-    /**
-     * Perform the attack
-     */
-    void performAttack();
-
+public class KeyConfusion implements IAttack {
+    @Override
+    public void performAttack() {
+        throw new NotImplementedException();
+    }
 }

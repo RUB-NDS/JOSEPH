@@ -21,9 +21,7 @@ package eu.dety.burp.joseph.gui;
 
 import burp.*;
 
-import eu.dety.burp.joseph.attacks.IAttack;
-import eu.dety.burp.joseph.attacks.SignatureExclusion;
-import eu.dety.burp.joseph.exceptions.AttackNotPreparedException;
+import eu.dety.burp.joseph.attacks.*;
 import eu.dety.burp.joseph.exceptions.AttackPreparationFailedException;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
@@ -43,8 +41,9 @@ import org.json.JSONObject;
 public class UIAttackerTab extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final Finder finder = new Finder();
-    private List<IAttack> registeredAttacks = new ArrayList<>();
+    private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
     private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
+    private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
 
     private IHttpRequestResponse requestResponse;
@@ -60,8 +59,13 @@ public class UIAttackerTab extends JPanel {
      * Extend this method to extend with your attack.
      */
     private void registerAttacks() {
-        registeredAttacks.add(new SignatureExclusion());
+        SignatureExclusionInfo signatureExclusionInfo = new SignatureExclusionInfo();
+        registeredAttacks.put(signatureExclusionInfo.getName(), signatureExclusionInfo);
         loggerInstance.log(getClass(), "Attack registered: Signature Exclusion", Logger.INFO);
+
+        KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo();
+        registeredAttacks.put(keyConfusionInfo.getName(), keyConfusionInfo);
+        loggerInstance.log(getClass(), "Attack registered: Key Confusion", Logger.INFO);
     }
 
     /**
@@ -77,6 +81,7 @@ public class UIAttackerTab extends JPanel {
         // TODO: Make closable
 
         Decoder joseDecoder = new Decoder(callbacks);
+        this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
         this.requestResponse = message;
         this.requestInfo = helpers.analyzeRequest(message);
@@ -100,7 +105,6 @@ public class UIAttackerTab extends JPanel {
         // Parse the JOSE value to an JSONObject
         JSONObject[] joseJSONComponents = joseDecoder.getJSONComponents(parameter.getValue());
 
-
         // If the keys "alg" and "typ" exist, get their value and update informational fields
         if(joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
         if(joseJSONComponents[0].has("typ")) type = joseJSONComponents[0].getString("typ");
@@ -111,32 +115,11 @@ public class UIAttackerTab extends JPanel {
         loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . " + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.DEBUG);
 
         // Build available attacks list
-        for(IAttack attack : this.registeredAttacks) {
+        for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
             // If attack is suitable for given JOSE type, add it to attackListModel
-            if(attack.isSuitable(type, algorithm)) {
-                attackListModel.addElement(attack.getName());
+            if (attack.getValue().isSuitable(type, algorithm)) {
+                attackListModel.addElement(attack.getKey());
             }
-
-            /* BEGIN TMP! */
-            loggerInstance.log(attack.getClass(), "Preparing attack...", Logger.DEBUG);
-            try {
-                attack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
-            } catch (AttackPreparationFailedException e) {
-                e.printStackTrace();
-            }
-
-            loggerInstance.log(attack.getClass(), "Performing attack...", Logger.DEBUG);
-            try {
-                attack.performAttack();
-            } catch (AttackNotPreparedException e) {
-                e.printStackTrace();
-            }
-
-            for(IHttpRequestResponse foo : attack.getResult()) {
-                byte[] response = foo.getResponse();
-                loggerInstance.log(attack.getClass(),  helpers.bytesToString(response), Logger.DEBUG);
-            }
-            /* END TMP */
         }
     }
 
@@ -217,9 +200,19 @@ public class UIAttackerTab extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void attackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attackButtonActionPerformed
-        loggerInstance.log(getClass(), "Load button clicked", Logger.DEBUG);
-    }//GEN-LAST:event_attackButtonActionPerformed
+        loggerInstance.log(getClass(), "Load button clicked, chosen attack: " + attackListModel.getSelectedItem(), Logger.DEBUG);
+        IAttackInfo selectedAttack = registeredAttacks.get(attackListModel.getSelectedItem());
 
+        try {
+            loggerInstance.log(selectedAttack.getClass(), "Preparing attack...", Logger.DEBUG);
+            IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
+            loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.DEBUG);
+            attack.performAttack();
+        } catch (AttackPreparationFailedException e) {
+            loggerInstance.log(selectedAttack.getClass(), e.getMessage(), Logger.ERROR);
+        }
+
+    }//GEN-LAST:event_attackButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel algorithmLabel;
