@@ -54,7 +54,7 @@ public class Decoder {
      * @return string array with the separate parts
      */
     public String[] getComponents(String input) {
-        return input.split("\\.");
+        return input.split("\\.", -1);
     }
 
     /**
@@ -134,8 +134,8 @@ public class Decoder {
      */
     public JSONObject[] getJsonComponents(String input) {
         String[] components = this.getComponents(input);
-        JSONObject[] output = new JSONObject[components.length];
 
+        JSONObject[] output = new JSONObject[components.length];
         for(int i = 0; i < components.length; i++) {
             output[i] = this.getDecodedJson(components[i]);
         }
