@@ -163,5 +163,21 @@ public class DecoderTest {
         }
     }
 
+    @Test
+    public void getJsonComponentsWithFourComponentBase64StringInputReturnsArrayWithFourJsonObjects() {
+        JSONObject[] expected = new JSONObject[4];
+        expected[0] = new JSONObject().put("alg", "HS256").put("typ", "JWT");
+        expected[1] = new JSONObject().put("some", "payload");
+        expected[2] = new JSONObject().put("another", "payload");
+        expected[3] = new JSONObject().put("and even", "more");
+
+        JSONObject[] result = joseDecoder.getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.eyJhbm90aGVyIjoicGF5bG9hZCJ9.eyJhbmQgZXZlbiI6Im1vcmUifQ");
+        assertEquals(expected.length, result.length);
+
+        for (int i = 0; i < result.length; i++ ) {
+            JSONAssert.assertEquals(expected[i], result[i], true);
+        }
+    }
+
 
 }
