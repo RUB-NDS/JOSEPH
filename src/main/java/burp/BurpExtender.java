@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
-import eu.dety.burp.joseph.editor.JWTEditor;
+import eu.dety.burp.joseph.editor.JwtEditor;
 import eu.dety.burp.joseph.gui.UITab;
 import eu.dety.burp.joseph.scanner.Marker;
 import eu.dety.burp.joseph.utilities.Logger;
@@ -83,7 +83,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         loggerInstance.log(getClass(), bundle.getString("REGISTERED_HTTPLISTENER"), Logger.INFO);
 
         // Register JWT Editor
-        final JWTEditor jwtEditor = new JWTEditor(callbacks);
+        final JwtEditor jwtEditor = new JwtEditor(callbacks);
         callbacks.registerMessageEditorTabFactory(jwtEditor);
         loggerInstance.log(getClass(), bundle.getString("REGISTERED_JWTEDITOR"), Logger.INFO);
 

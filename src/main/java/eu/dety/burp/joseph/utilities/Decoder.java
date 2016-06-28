@@ -18,14 +18,11 @@
  */
 package eu.dety.burp.joseph.utilities;
 
-import burp.IBurpExtenderCallbacks;
-
-import burp.IExtensionHelpers;
 import org.apache.commons.codec.binary.Base64;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
@@ -36,16 +33,12 @@ import java.util.Arrays;
  */
 public class Decoder {
     private static final Logger loggerInstance = Logger.getInstance();
-    private IBurpExtenderCallbacks callbacks;
-    private IExtensionHelpers helpers;
 
     /**
      * Create new Decoder instance
-     * @param callbacks {@link IBurpExtenderCallbacks}.
      */
-    public Decoder(IBurpExtenderCallbacks callbacks) {
-        this.callbacks = callbacks;
-        this.helpers = callbacks.getHelpers();
+    public Decoder() {
+
     }
 
     /**
@@ -61,14 +54,14 @@ public class Decoder {
      * @return string array with the separate parts
      */
     public String[] getComponents(String input) {
-        return input.split("\\.");
+        return input.split("\\.", -1);
     }
 
     /**
-     * Split JOSE value into its separate parts
+     * Split JOSE value into its separate parts with fixed length
      * @param input Compact serialization JOSE value
      * @param assureLength Assure a certain length of the returned string array
-     * @return string array with the separate parts
+     * @return string array with the separate fixed amount of parts
      */
     public String[] getComponents(String input, int assureLength) {
         String [] components = input.split("\\.");
@@ -81,9 +74,7 @@ public class Decoder {
         String [] output = new String[assureLength];
         Arrays.fill(output, "");
 
-        for(int i = 0; i < assureLength; i++) {
-            output[i] = components[i];
-        }
+        System.arraycopy(components, 0, output, 0, Math.min(components.length, assureLength));
 
         return output;
     }
@@ -107,7 +98,7 @@ public class Decoder {
         String output = "[ERROR]";
 
         try {
-            output = helpers.bytesToString(Base64.decodeBase64(input));
+            output = new String(Base64.decodeBase64(input), Charset.forName("UTF-8"));
         } catch(Exception e){
             loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
         }
@@ -120,7 +111,7 @@ public class Decoder {
      * @param input base64url encoded value
      * @return JSONObject of the parsed value
      */
-    public JSONObject getDecodedJSON(String input) {
+    public JSONObject getDecodedJson(String input) {
         String decoded = getDecoded(input);
         JSONObject output = new JSONObject();
 
@@ -141,12 +132,12 @@ public class Decoder {
      * @param input base64url encoded jose value string
      * @return JSONObject array of the parsed value
      */
-    public JSONObject[] getJSONComponents(String input) {
+    public JSONObject[] getJsonComponents(String input) {
         String[] components = this.getComponents(input);
-        JSONObject[] output = new JSONObject[components.length];
 
+        JSONObject[] output = new JSONObject[components.length];
         for(int i = 0; i < components.length; i++) {
-            output[i] = this.getDecodedJSON(components[i]);
+            output[i] = this.getDecodedJson(components[i]);
         }
 
         return output;
@@ -178,7 +169,7 @@ public class Decoder {
         String output = "[ERROR]";
 
         try {
-            output = base64UrlEncode(helpers.stringToBytes(input));
+            output = base64UrlEncode(input.getBytes(Charset.forName("UTF-8")));
         } catch(Exception e){
             loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
         }

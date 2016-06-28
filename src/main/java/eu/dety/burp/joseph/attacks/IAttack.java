@@ -24,7 +24,6 @@ package eu.dety.burp.joseph.attacks;
  * @version 1.0
  */
 public interface IAttack {
-
     /**
      * Perform the attack
      */

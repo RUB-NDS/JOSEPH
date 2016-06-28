@@ -47,7 +47,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
     @Override
     public SignatureExclusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
-        this.joseDecoder = new Decoder(callbacks);
+        this.joseDecoder = new Decoder();
         this.helpers = callbacks.getHelpers();
         this.requestResponse = requestResponse;
         this.parameter = parameter;

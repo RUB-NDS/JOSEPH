@@ -29,7 +29,6 @@ import eu.dety.burp.joseph.gui.UIPreferences;
 import eu.dety.burp.joseph.utilities.Logger;
 import eu.dety.burp.joseph.utilities.Finder;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -71,7 +70,7 @@ public class Marker implements IHttpListener {
         for (String header : requestInfo.getHeaders()) {
             if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER")) {
                 loggerInstance.log(getClass(), "Authorization HTTP Header with type bearer found.", Logger.DEBUG);
-                jwtFound = finder.checkJWTPattern(header);
+                jwtFound = finder.checkJwtPattern(header);
                 break;
             }
         }
@@ -81,7 +80,7 @@ public class Marker implements IHttpListener {
             for (IParameter param : requestInfo.getParameters()) {
                 if(UIPreferences.getParameterNames().contains(param.getName())) {
                     loggerInstance.log(getClass(), String.format("Possible JWT parameter found: %s.", param.getName()), Logger.DEBUG);
-                    jwtFound = finder.checkJWTPattern(param.getValue());
+                    jwtFound = finder.checkJwtPattern(param.getValue());
                     if (jwtFound) break;
                 }
             }

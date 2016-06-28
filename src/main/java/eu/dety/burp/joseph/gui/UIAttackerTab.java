@@ -80,7 +80,7 @@ public class UIAttackerTab extends JPanel {
     public UIAttackerTab(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
         // TODO: Make closable
 
-        Decoder joseDecoder = new Decoder(callbacks);
+        Decoder joseDecoder = new Decoder();
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
         this.requestResponse = message;
@@ -92,7 +92,7 @@ public class UIAttackerTab extends JPanel {
         // Find the JOSE parameter
         for (IParameter param : requestInfo.getParameters()) {
             if(UIPreferences.getParameterNames().contains(param.getName())) {
-                if (finder.checkJWTPattern(param.getValue())) {
+                if (finder.checkJwtPattern(param.getValue())) {
                     parameter = param;
                     break;
                 }
@@ -103,7 +103,7 @@ public class UIAttackerTab extends JPanel {
         initComponents();
 
         // Parse the JOSE value to an JSONObject
-        JSONObject[] joseJSONComponents = joseDecoder.getJSONComponents(parameter.getValue());
+        JSONObject[] joseJSONComponents = joseDecoder.getJsonComponents(parameter.getValue());
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
         if(joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
