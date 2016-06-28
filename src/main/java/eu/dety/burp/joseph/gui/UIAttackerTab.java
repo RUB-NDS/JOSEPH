@@ -201,11 +201,16 @@ public class UIAttackerTab extends JPanel {
 
     private void attackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attackButtonActionPerformed
         loggerInstance.log(getClass(), "Load button clicked, chosen attack: " + attackListModel.getSelectedItem(), Logger.DEBUG);
+
+        // Get selected Attack
         IAttackInfo selectedAttack = registeredAttacks.get(attackListModel.getSelectedItem());
 
         try {
+            // Prepare the selected attack
             loggerInstance.log(selectedAttack.getClass(), "Preparing attack...", Logger.DEBUG);
             IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
+
+            // Perform the selected attack
             loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.DEBUG);
             attack.performAttack();
         } catch (AttackPreparationFailedException e) {

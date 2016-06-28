@@ -54,6 +54,8 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
         for (String noneAlgVariation : noneAlgVariations) {
             try {
+                // Change the "alg" header value for each of the noneAlgVariation entries
+                // and rebuild a valid request
                 byte[] tmpRequest = requestResponse.getRequest();
                 String[] tmpComponents = joseDecoder.getComponents(this.parameter.getValue());
                 String tmpDecodedHeader = joseDecoder.getDecoded(tmpComponents[0]);
