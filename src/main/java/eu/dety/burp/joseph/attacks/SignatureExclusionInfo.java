@@ -22,8 +22,8 @@ import burp.*;
 import eu.dety.burp.joseph.exceptions.AttackPreparationFailedException;
 import eu.dety.burp.joseph.utilities.Decoder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class SignatureExclusionInfo implements IAttackInfo {
@@ -43,7 +43,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
     // Amount of requests needed
     private static final int amountRequests = noneAlgVariations.length;
 
-    private List<byte[]> requests = new ArrayList<>();
+    private HashMap<String, byte[]> requests = new HashMap<>();
 
     @Override
     public SignatureExclusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
@@ -56,7 +56,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
             try {
                 // Change the "alg" header value for each of the noneAlgVariation entries
                 // and rebuild a valid request
-                byte[] tmpRequest = requestResponse.getRequest();
+                byte[] tmpRequest = this.requestResponse.getRequest();
                 String[] tmpComponents = joseDecoder.getComponents(this.parameter.getValue());
                 String tmpDecodedHeader = joseDecoder.getDecoded(tmpComponents[0]);
                 String tmpReplaced = tmpDecodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + noneAlgVariation + "\"");
@@ -66,7 +66,8 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
                 IParameter tmpParameter = helpers.buildParameter(this.parameter.getName(), tmpParameterValue, this.parameter.getType());
                 tmpRequest = helpers.updateParameter(tmpRequest, tmpParameter);
-                requests.add(tmpRequest);
+
+                requests.put(noneAlgVariation, tmpRequest);
             } catch (Exception e) {
                 throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
             }
@@ -117,7 +118,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
      * Get list of prepared requests
      * @return Byte array list of requests
      */
-    List<byte[]> getRequests() {
+    HashMap<String, byte[]> getRequests() {
         return this.requests;
     }
 }

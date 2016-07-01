@@ -34,18 +34,15 @@ import java.util.ArrayList;
 public class Table extends JTable {
     private TableHelper tableHelper;
     private ArrayList<TableEntry> tableEntries;
-    private String name;
 
     /**
      * Create a new Table.
      * @param tableHelper The helper to organise the table entries.
-     * @param name The table name.
      */
-    public Table(TableHelper tableHelper, String name) {
+    public Table(TableHelper tableHelper) {
         super(tableHelper);
         this.tableHelper = tableHelper;
         this.tableEntries = tableHelper.getTableEntries();
-        this.name = name;
 
         // Add mouseListener to select row on mouse click
         final Table parent = this;
@@ -63,14 +60,6 @@ public class Table extends JTable {
         sorter.setModel(this.getModel());
         this.setRowSorter(sorter);
         this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-    }
-
-    /**
-     * Get the name.
-     * @return The name of the table.
-     */
-    public String getName() {
-        return name;
     }
 
     /**

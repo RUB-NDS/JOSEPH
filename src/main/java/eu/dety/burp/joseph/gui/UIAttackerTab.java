@@ -27,8 +27,7 @@ import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.Logger;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.util.*;
 import org.json.JSONObject;
 
@@ -56,7 +55,7 @@ public class UIAttackerTab extends JPanel {
      * Register Attacks
      *
      * Method called on construction to register all available attacks.
-     * Extend this method to extend with your attack.
+     * Extend this method to add your custom attack.
      */
     private void registerAttacks() {
         SignatureExclusionInfo signatureExclusionInfo = new SignatureExclusionInfo();
