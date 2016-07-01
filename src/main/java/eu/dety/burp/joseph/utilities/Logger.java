@@ -37,9 +37,17 @@ public class Logger {
     private static PrintWriter stdout = null;
     private static PrintWriter stderr = null;
 
-    public static final int ERROR = 0;
-    public static final int INFO = 1;
-    public static final int DEBUG = 2;
+    /**
+     * LogLevel enum defining the log types
+     */
+    public enum LogLevel {
+        ERROR(0), INFO(1), DEBUG(2);
+        private int value;
+
+        LogLevel(int value) {
+            this.value = value;
+        }
+    }
 
     private Logger(){
         stdout = BurpExtender.getStdOut();
@@ -67,7 +75,7 @@ public class Logger {
      * @param message The message to log.
      * @param logType The logging type.
      */
-    public void log(Class callingClass, String message, int logType){
+    public void log(Class callingClass, String message, LogLevel logType){
         // Get current time
         Calendar calObj = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -75,23 +83,11 @@ public class Logger {
 
         // Choose correct output stream
         PrintWriter outputStream;
-        outputStream = (Objects.equals(logType, ERROR)) ? stderr : stdout;
+        outputStream = (Objects.equals(logType, LogLevel.ERROR)) ? stderr : stdout;
 
         // Check if message should be logged based on current log level preference
-        if (logType <= UIPreferences.getLogLevel()) {
-            String logTypeName = "UNKNOWN";
-            // TODO: Easier way to get constant name (by value)?
-            switch(logType) {
-                case ERROR:
-                    logTypeName = "ERROR";
-                    break;
-                case INFO:
-                    logTypeName = "INFO";
-                    break;
-                case DEBUG:
-                    logTypeName = "DEBUG";
-                    break;
-            }
+        if (logType.value <= UIPreferences.getLogLevel()) {
+            String logTypeName = logType.name();
 
             // Print log message
             String logOutput = String.format("[%s] %s - [%s]: %s ", logTypeName, time, callingClass.getSimpleName(), message);

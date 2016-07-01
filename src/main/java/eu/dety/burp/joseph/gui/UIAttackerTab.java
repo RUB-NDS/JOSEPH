@@ -61,11 +61,11 @@ public class UIAttackerTab extends JPanel {
     private void registerAttacks() {
         SignatureExclusionInfo signatureExclusionInfo = new SignatureExclusionInfo();
         registeredAttacks.put(signatureExclusionInfo.getName(), signatureExclusionInfo);
-        loggerInstance.log(getClass(), "Attack registered: Signature Exclusion", Logger.INFO);
+        loggerInstance.log(getClass(), "Attack registered: Signature Exclusion", Logger.LogLevel.INFO);
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo();
         registeredAttacks.put(keyConfusionInfo.getName(), keyConfusionInfo);
-        loggerInstance.log(getClass(), "Attack registered: Key Confusion", Logger.INFO);
+        loggerInstance.log(getClass(), "Attack registered: Key Confusion", Logger.LogLevel.INFO);
     }
 
     /**
@@ -111,8 +111,8 @@ public class UIAttackerTab extends JPanel {
         typeValue.setText(type);
         algorithmValue.setText(algorithm);
 
-        loggerInstance.log(getClass(), "JOSE Parameter Name: " + parameter.getName(), Logger.DEBUG);
-        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . " + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.DEBUG);
+        loggerInstance.log(getClass(), "JOSE Parameter Name: " + parameter.getName(), Logger.LogLevel.DEBUG);
+        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . " + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.LogLevel.DEBUG);
 
         // Build available attacks list
         for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
@@ -200,21 +200,21 @@ public class UIAttackerTab extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void attackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attackButtonActionPerformed
-        loggerInstance.log(getClass(), "Load button clicked, chosen attack: " + attackListModel.getSelectedItem(), Logger.DEBUG);
+        loggerInstance.log(getClass(), "Load button clicked, chosen attack: " + attackListModel.getSelectedItem(), Logger.LogLevel.DEBUG);
 
         // Get selected Attack
         IAttackInfo selectedAttack = registeredAttacks.get(attackListModel.getSelectedItem());
 
         try {
             // Prepare the selected attack
-            loggerInstance.log(selectedAttack.getClass(), "Preparing attack...", Logger.DEBUG);
+            loggerInstance.log(selectedAttack.getClass(), "Preparing attack...", Logger.LogLevel.DEBUG);
             IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
 
             // Perform the selected attack
-            loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.DEBUG);
+            loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.LogLevel.DEBUG);
             attack.performAttack();
         } catch (AttackPreparationFailedException e) {
-            loggerInstance.log(selectedAttack.getClass(), e.getMessage(), Logger.ERROR);
+            loggerInstance.log(selectedAttack.getClass(), e.getMessage(), Logger.LogLevel.ERROR);
         }
 
     }//GEN-LAST:event_attackButtonActionPerformed

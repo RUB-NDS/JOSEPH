@@ -114,7 +114,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
                 for(Object param: UIPreferences.getParameterNames().toArray()) {
                     if(helpers.getRequestParameter(content, param.toString()) != null && finder.checkJwtPattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
                         joseParameterName = helpers.getRequestParameter(content, param.toString()).getName();
-                        loggerInstance.log(getClass(), "JWT value found, enable JwtEditor.", Logger.DEBUG);
+                        loggerInstance.log(getClass(), "JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
                         return true;
                     }
                 }

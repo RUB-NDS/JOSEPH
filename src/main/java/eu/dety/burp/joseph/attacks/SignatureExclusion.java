@@ -67,7 +67,7 @@ public class SignatureExclusion extends SwingWorker<Integer, Integer> implements
 
     @Override
     protected void done() {
-        loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.DEBUG);
+        loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
     }
 
 }

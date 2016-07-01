@@ -65,22 +65,22 @@ public class UIPreferences extends javax.swing.JPanel {
 
             // Check if directory exists, if not create it
             if (!configFile.getParentFile().exists()) {
-                loggerInstance.log(getClass(), "Config file directory not found! Creating it...", Logger.DEBUG);
+                loggerInstance.log(getClass(), "Config file directory not found! Creating it...", Logger.LogLevel.DEBUG);
                 configFile.getParentFile().mkdir();
             }
 
             // Check if config file exists, if not create it
             if (!configFile.exists()) {
-                loggerInstance.log(getClass(), "Config file not found! Creating it...", Logger.DEBUG);
+                loggerInstance.log(getClass(), "Config file not found! Creating it...", Logger.LogLevel.DEBUG);
                 configFile.createNewFile();
                 saveConfig();
             } else {
-                loggerInstance.log(getClass(), "Loading config file.", Logger.DEBUG);
+                loggerInstance.log(getClass(), "Loading config file.", Logger.LogLevel.DEBUG);
                 loadConfig();
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, e.toString(), "Error loading config file", JOptionPane.ERROR_MESSAGE);
-            loggerInstance.log(getClass(), e.toString(), Logger.ERROR);
+            loggerInstance.log(getClass(), e.toString(), Logger.LogLevel.ERROR);
         }
     }
     
@@ -132,7 +132,7 @@ public class UIPreferences extends javax.swing.JPanel {
         File configFile = new File(configFilePath);
 
         if (!configFile.exists()) {
-            loggerInstance.log(getClass(), "Config file does not exist!", Logger.ERROR);
+            loggerInstance.log(getClass(), "Config file does not exist!", Logger.LogLevel.ERROR);
             return;
         }
 
@@ -150,21 +150,21 @@ public class UIPreferences extends javax.swing.JPanel {
                     configFileWriter.write(configObj.toJSONString());
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, "The config file can not be written!\n\nError:\n" + e.toString(), "Error writing config file", JOptionPane.ERROR_MESSAGE);
-                    loggerInstance.log(getClass(), "Config file can not be written!\n" + e.toString(), Logger.ERROR);
+                    loggerInstance.log(getClass(), "Config file can not be written!\n" + e.toString(), Logger.LogLevel.ERROR);
                 }
 
                 configFileWriter.flush();
                 configFileWriter.close();
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "The config file can not be written!\n\nError:\n" + e.toString(), "Error writing config file", JOptionPane.ERROR_MESSAGE);
-                loggerInstance.log(getClass(), "Config file can not be written!\n" + e.toString(), Logger.ERROR);
+                loggerInstance.log(getClass(), "Config file can not be written!\n" + e.toString(), Logger.LogLevel.ERROR);
             } catch (Exception e) {
-                loggerInstance.log(getClass(), e.toString(), Logger.ERROR);
+                loggerInstance.log(getClass(), e.toString(), Logger.LogLevel.ERROR);
             }
 
         } else {
             JOptionPane.showMessageDialog(this, "The config file is not writable: " + configFilePath, "Error writing config file", JOptionPane.ERROR_MESSAGE);
-            loggerInstance.log(getClass(), "Config file is not writable: " + configFilePath, Logger.ERROR);
+            loggerInstance.log(getClass(), "Config file is not writable: " + configFilePath, Logger.LogLevel.ERROR);
         }
     }
 
@@ -176,7 +176,7 @@ public class UIPreferences extends javax.swing.JPanel {
         File configFile = new File(configFilePath);
 
         if (!configFile.exists()) {
-            loggerInstance.log(getClass(), "Config file does not exist!", Logger.ERROR);
+            loggerInstance.log(getClass(), "Config file does not exist!", Logger.LogLevel.ERROR);
             return;
         }
 
@@ -202,20 +202,20 @@ public class UIPreferences extends javax.swing.JPanel {
 
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "The config file can not be read!\n\nError:\n" + e.toString(), "Error reading config file", JOptionPane.ERROR_MESSAGE);
-                loggerInstance.log(getClass(), "Config file can not be read!\n" + e.toString(), Logger.ERROR);
+                loggerInstance.log(getClass(), "Config file can not be read!\n" + e.toString(), Logger.LogLevel.ERROR);
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(this, "The config file can not be parsed!\n\nError:\n" + e.toString(), "Error parsing config file", JOptionPane.ERROR_MESSAGE);
-                loggerInstance.log(getClass(), "Config file can not be parsed!\n" + e.toString(), Logger.ERROR);
+                loggerInstance.log(getClass(), "Config file can not be parsed!\n" + e.toString(), Logger.LogLevel.ERROR);
             } catch (NullPointerException e) {
                 JOptionPane.showMessageDialog(this, "The config file needs to contain any option values!\n\nError:\n" + e.toString(), "Error parsing config file", JOptionPane.ERROR_MESSAGE);
-                loggerInstance.log(getClass(), "The config file needs to contain any option values!\n" + e.toString(), Logger.ERROR);
+                loggerInstance.log(getClass(), "The config file needs to contain any option values!\n" + e.toString(), Logger.LogLevel.ERROR);
             } catch (Exception e) {
-                loggerInstance.log(getClass(), e.toString(), Logger.ERROR);
+                loggerInstance.log(getClass(), e.toString(), Logger.LogLevel.ERROR);
             }
 
         } else {
             JOptionPane.showMessageDialog(this, "The config file is not readable or a directory: " + configFilePath, "Config file not readable", JOptionPane.ERROR_MESSAGE);
-            loggerInstance.log(getClass(), "The config file is not readable or a directory: " + configFilePath, Logger.ERROR);
+            loggerInstance.log(getClass(), "The config file is not readable or a directory: " + configFilePath, Logger.LogLevel.ERROR);
         }
     }
 

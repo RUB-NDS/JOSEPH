@@ -69,7 +69,7 @@ public class Marker implements IHttpListener {
         // Search for authorization header
         for (String header : requestInfo.getHeaders()) {
             if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER")) {
-                loggerInstance.log(getClass(), "Authorization HTTP Header with type bearer found.", Logger.DEBUG);
+                loggerInstance.log(getClass(), "Authorization HTTP Header with type bearer found.", Logger.LogLevel.DEBUG);
                 jwtFound = finder.checkJwtPattern(header);
                 break;
             }
@@ -79,7 +79,7 @@ public class Marker implements IHttpListener {
             // Search for (specific) parameter
             for (IParameter param : requestInfo.getParameters()) {
                 if(UIPreferences.getParameterNames().contains(param.getName())) {
-                    loggerInstance.log(getClass(), String.format("Possible JWT parameter found: %s.", param.getName()), Logger.DEBUG);
+                    loggerInstance.log(getClass(), String.format("Possible JWT parameter found: %s.", param.getName()), Logger.LogLevel.DEBUG);
                     jwtFound = finder.checkJwtPattern(param.getValue());
                     if (jwtFound) break;
                 }
@@ -88,7 +88,7 @@ public class Marker implements IHttpListener {
 
         if (jwtFound) {
             markRequestResponse(httpRequestResponse, bundle.getString("REQUEST_RESPONSE_MARKER"));
-            loggerInstance.log(getClass(), "JSON Web Token found!", Logger.DEBUG);
+            loggerInstance.log(getClass(), "JSON Web Token found!", Logger.LogLevel.DEBUG);
         }
     }
 

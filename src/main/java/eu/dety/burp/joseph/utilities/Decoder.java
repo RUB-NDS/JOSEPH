@@ -100,7 +100,7 @@ public class Decoder {
         try {
             output = new String(Base64.decodeBase64(input), Charset.forName("UTF-8"));
         } catch(Exception e){
-            loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+            loggerInstance.log(getClass(), e.getMessage(), Logger.LogLevel.ERROR);
         }
 
         return output;
@@ -154,7 +154,7 @@ public class Decoder {
         try {
             output = base64UrlEncode(input);
         } catch(Exception e){
-            loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+            loggerInstance.log(getClass(), e.getMessage(), Logger.LogLevel.ERROR);
         }
 
         return output;
@@ -171,7 +171,7 @@ public class Decoder {
         try {
             output = base64UrlEncode(input.getBytes(Charset.forName("UTF-8")));
         } catch(Exception e){
-            loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+            loggerInstance.log(getClass(), e.getMessage(), Logger.LogLevel.ERROR);
         }
 
         return output;

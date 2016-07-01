@@ -99,7 +99,7 @@ public class UITab implements ITab, IContextMenuFactory {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
                     try {
-                        loggerInstance.log(UITab.class, "Send to JOSEPH context menu item clicked", Logger.DEBUG);
+                        loggerInstance.log(UITab.class, "Send to JOSEPH context menu item clicked", Logger.LogLevel.DEBUG);
 
                         UIAttacker attacker = mainTab.getAttackerTab();
                         UIAttackerTab attackerTab = new UIAttackerTab(callbacks, message);
@@ -111,7 +111,7 @@ public class UITab implements ITab, IContextMenuFactory {
                         // TODO: Highlight
 
                     } catch (Exception e) {
-                        loggerInstance.log(UITab.class, e.getMessage(), Logger.ERROR);
+                        loggerInstance.log(UITab.class, e.getMessage(), Logger.LogLevel.ERROR);
                     }
                 }
             });
