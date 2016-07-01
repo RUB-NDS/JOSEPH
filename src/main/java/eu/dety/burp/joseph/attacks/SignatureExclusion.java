@@ -31,8 +31,8 @@ import java.util.Map;
 
 /**
  * Signature Exclusion Attack
- *
- * Performs a signature exclusion attack by
+ * <p>
+ * Perform a signature exclusion attack by
  * changing the algorithm value of the header to
  * the "none" algorithm and cutting away the signature
  * value.

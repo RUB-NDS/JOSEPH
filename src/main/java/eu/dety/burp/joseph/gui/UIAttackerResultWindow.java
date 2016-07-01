@@ -32,8 +32,8 @@ import java.util.ArrayList;
 
 /**
  * Attacker Result Window
- *
- * Window holding a table with every requestResponse entry of the attack.
+ * <p>
+ * Window holding a table with every {@link burp.IHttpRequestResponse} entry of the attack.
  *
  * @author Dennis Detering
  * @version 1.0

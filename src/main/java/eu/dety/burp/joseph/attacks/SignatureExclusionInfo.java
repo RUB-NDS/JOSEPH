@@ -26,6 +26,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Signature Exclusion Attack Info
+ * <p>
+ * Class holding meta data for the Signature Exclusion attack
+ * and for preparing all necessary parameter for the actual attack.
+ *
+ * @author Dennis Detering
+ * @version 1.0
+ */
 public class SignatureExclusionInfo implements IAttackInfo {
     private Decoder joseDecoder;
     private IExtensionHelpers helpers;
@@ -108,7 +117,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
     /**
      * Get IHttpRequestResponse object used for this attack
-     * @return IHttpRequestResponse object
+     * @return {@link burp.IHttpRequestResponse} object
      */
     IHttpRequestResponse getRequestResponse() {
         return this.requestResponse;
