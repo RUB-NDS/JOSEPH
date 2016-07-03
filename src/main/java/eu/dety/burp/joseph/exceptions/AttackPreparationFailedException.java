@@ -21,9 +21,8 @@ package eu.dety.burp.joseph.exceptions;
 
 /**
  * AttackPreparationFailedException
- *
- * Throw new exception if {@link eu.dety.burp.joseph.attacks.IAttack#prepareAttack(burp.IBurpExtenderCallbacks,
- * burp.IHttpRequestResponse, burp.IRequestInfo, burp.IParameter)} fails.
+ * <p>
+ * Throw new exception if the preparation of an {@link eu.dety.burp.joseph.attacks.IAttackInfo} fails.
  *
  * @author Dennis Detering
  * @version 1.0

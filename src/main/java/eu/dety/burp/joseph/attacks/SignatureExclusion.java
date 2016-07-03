@@ -19,16 +19,20 @@
 package eu.dety.burp.joseph.attacks;
 
 import burp.*;
+import eu.dety.burp.joseph.gui.UIAttackerResultWindow;
+import eu.dety.burp.joseph.gui.table.TableEntry;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Signature Exclusion Attack
- *
- * Performs a signature exclusion attack by
+ * <p>
+ * Perform a signature exclusion attack by
  * changing the algorithm value of the header to
  * the "none" algorithm and cutting away the signature
  * value.
@@ -40,7 +44,7 @@ public class SignatureExclusion extends SwingWorker<Integer, Integer> implements
     private static final Logger loggerInstance = Logger.getInstance();
     private SignatureExclusionInfo attackInfo;
     private IBurpExtenderCallbacks callbacks;
-
+    private UIAttackerResultWindow attackerResultWindow;
     private List<IHttpRequestResponse> responses = new ArrayList<>();
 
     public SignatureExclusion(IBurpExtenderCallbacks callbacks, SignatureExclusionInfo attackInfo) {
@@ -50,6 +54,12 @@ public class SignatureExclusion extends SwingWorker<Integer, Integer> implements
 
     @Override
     public  void performAttack() {
+        // Create attacker result window
+        attackerResultWindow = new UIAttackerResultWindow(attackInfo.getName(), callbacks);
+
+        // Add original message to result table
+        attackerResultWindow.addEntry(new TableEntry(0, "", attackInfo.getRequestResponse(), callbacks));
+
         this.execute();
     }
 
@@ -58,10 +68,13 @@ public class SignatureExclusion extends SwingWorker<Integer, Integer> implements
         IHttpService httpService = this.attackInfo.getRequestResponse().getHttpService();
 
         // Fire each prepared request and store responses in IHttpRequestResponse list
-        for (byte[] request : this.attackInfo.getRequests()) {
-            this.responses.add(callbacks.makeHttpRequest(httpService, request));
-        }
+        for (Map.Entry<String, byte[]> request : this.attackInfo.getRequests().entrySet()) {
+            IHttpRequestResponse requestResponse = callbacks.makeHttpRequest(httpService, request.getValue());
+            this.responses.add(requestResponse);
 
+            // Add new entry to result table
+            attackerResultWindow.addEntry(new TableEntry(this.responses.size(), "Alg: " + request.getKey(), requestResponse, callbacks));
+        }
         return null;
     }
 
@@ -69,5 +82,4 @@ public class SignatureExclusion extends SwingWorker<Integer, Integer> implements
     protected void done() {
         loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
     }
-
 }
