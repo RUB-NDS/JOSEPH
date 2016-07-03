@@ -61,7 +61,7 @@ public class UIAttackerResultWindow extends JFrame {
         // Add selection changed listener to update request and response viewer editors
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent evt) {
-                loggerInstance.log(table.getClass(), "Selection changed", Logger.DEBUG);
+                loggerInstance.log(table.getClass(), "Selection changed", Logger.LogLevel.DEBUG);
 
                 TableEntry entry = table.getTableList().get(table.getSelectedRow());
 

@@ -109,7 +109,7 @@ public class TableHelper extends AbstractTableModel {
         try {
             return columnName[columnIndex];
         } catch (Exception e) {
-            loggerInstance.log(getClass(), e.getMessage(), Logger.ERROR);
+            loggerInstance.log(getClass(), e.getMessage(), Logger.LogLevel.ERROR);
             return "";
         }
     }

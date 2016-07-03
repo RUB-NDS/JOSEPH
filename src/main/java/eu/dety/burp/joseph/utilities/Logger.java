@@ -41,12 +41,7 @@ public class Logger {
      * LogLevel enum defining the log types
      */
     public enum LogLevel {
-        ERROR(0), INFO(1), DEBUG(2);
-        private int value;
-
-        LogLevel(int value) {
-            this.value = value;
-        }
+        ERROR, INFO, DEBUG
     }
 
     private Logger(){
@@ -86,7 +81,7 @@ public class Logger {
         outputStream = (Objects.equals(logType, LogLevel.ERROR)) ? stderr : stdout;
 
         // Check if message should be logged based on current log level preference
-        if (logType.value <= UIPreferences.getLogLevel()) {
+        if (logType.ordinal() <= UIPreferences.getLogLevel()) {
             String logTypeName = logType.name();
 
             // Print log message
