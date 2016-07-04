@@ -19,7 +19,6 @@
 package eu.dety.burp.joseph.attacks;
 
 import burp.*;
-import eu.dety.burp.joseph.exceptions.AttackPreparationFailedException;
 import eu.dety.burp.joseph.utilities.Decoder;
 
 import java.util.Arrays;

@@ -22,7 +22,7 @@ package eu.dety.burp.joseph.gui;
 import burp.*;
 
 import eu.dety.burp.joseph.attacks.*;
-import eu.dety.burp.joseph.exceptions.AttackPreparationFailedException;
+import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.Logger;
