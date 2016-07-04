@@ -23,6 +23,7 @@ import burp.IHttpRequestResponse;
 import burp.IParameter;
 import burp.IRequestInfo;
 
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -54,16 +55,29 @@ public interface IAttackInfo {
     String getName();
 
     /**
-     * Get list of suitable JOSE types
-     * @return List of suitable JOSE types
+     * Get attack description
+     * @return Attack description string
      */
-    List<String> getSuitableTypes();
+    String getDescription();
 
     /**
      * Get the amount of requests to be performed
      * @return Amount of requests needed
      */
     int getAmountRequests();
+
+
+    /**
+     * Get additional UI components if further data is needed to perform the attack
+     * @return {@link JPanel} with additional UI components
+     */
+    boolean getExtraUI(JPanel extraPanel);
+
+    /**
+     * Get list of suitable JOSE types
+     * @return List of suitable JOSE types
+     */
+    List<String> getSuitableTypes();
 
     /**
      * Check whether attack is suitable based on algorithm and type values

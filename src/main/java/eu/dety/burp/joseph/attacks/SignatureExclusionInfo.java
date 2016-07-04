@@ -21,6 +21,7 @@ package eu.dety.burp.joseph.attacks;
 import burp.*;
 import eu.dety.burp.joseph.utilities.Decoder;
 
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,10 @@ public class SignatureExclusionInfo implements IAttackInfo {
     private static final String id = "signature_exclusion";
     // Full name of the attack
     private static final String name = "Signature Exclusion";
+    // Attack description
+    private static final String description = "<html>The <em>Signature Exclusion</em> attack tries to get the token mistakenly verified " +
+            "by using the <em>None</em> algorithm and removing the signature.<br/>" +
+            "In order to perform filter evasion, different capitalization is used as algorithm value.</html>";
     // List of types this attack is suitable for
     private static final List<String> suitableTypes = Arrays.asList("jwt", "jws");
     // Array of "none" algorithm type variations
@@ -95,6 +100,11 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
     public List<String> getSuitableTypes() {
         return suitableTypes;
     }
@@ -102,6 +112,11 @@ public class SignatureExclusionInfo implements IAttackInfo {
     @Override
     public int getAmountRequests() {
         return amountRequests;
+    }
+
+    @Override
+    public boolean getExtraUI(JPanel extraPanel) {
+        return false;
     }
 
     @Override

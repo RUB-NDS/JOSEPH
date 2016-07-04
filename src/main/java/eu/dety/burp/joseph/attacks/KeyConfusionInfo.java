@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.swing.*;
+
 public class KeyConfusionInfo implements IAttackInfo {
     private Decoder joseDecoder;
     private IExtensionHelpers helpers;
@@ -37,6 +39,8 @@ public class KeyConfusionInfo implements IAttackInfo {
     private static final String id = "key_confusion";
     // Full name of the attack
     private static final String name = "Key Confusion";
+    // Attack description
+    private static final String description = "";
     // List of types this attack is suitable for
     private static final List<String> suitableTypes = Arrays.asList("jwt", "jws");
     // Amount of requests needed
@@ -60,6 +64,11 @@ public class KeyConfusionInfo implements IAttackInfo {
     }
 
     @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
     public List<String> getSuitableTypes() {
         return suitableTypes;
     }
@@ -67,6 +76,12 @@ public class KeyConfusionInfo implements IAttackInfo {
     @Override
     public int getAmountRequests() {
         return amountRequests;
+    }
+
+    @Override
+    public boolean getExtraUI(JPanel extraPanel) {
+        extraPanel.add(new JLabel("Test label"));
+        return true;
     }
 
     @Override

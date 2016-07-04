@@ -50,6 +50,7 @@ public class AttackerPanel extends JPanel {
     private IParameter parameter = null;
     private String type = "?";
     private String algorithm = "?";
+    private IAttackInfo selectedAttack = null;
 
     /**
      * Register Attacks
@@ -135,10 +136,14 @@ public class AttackerPanel extends JPanel {
         typeLabel = new javax.swing.JLabel();
         attackListLabel = new javax.swing.JLabel();
         attackList = new javax.swing.JComboBox<>();
-        attackButton = new javax.swing.JButton();
+        loadButton = new javax.swing.JButton();
         algorithmLabel = new javax.swing.JLabel();
         typeValue = new javax.swing.JLabel();
         algorithmValue = new javax.swing.JLabel();
+        attackInfoName = new javax.swing.JLabel();
+        attackInfoDescription = new javax.swing.JLabel();
+        extraPanel = new javax.swing.JPanel();
+        attackButton = new javax.swing.JButton();
 
         typeLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         typeLabel.setText("Type:");
@@ -148,15 +153,31 @@ public class AttackerPanel extends JPanel {
 
         attackList.setModel(attackListModel);
 
-        attackButton.setText(bundle.getString("LOADBUTTON")); // NOI18N
-        attackButton.addActionListener(new java.awt.event.ActionListener() {
+        loadButton.setText(bundle.getString("LOADBUTTON")); // NOI18N
+        loadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                attackButtonActionPerformed(evt);
+                loadButtonActionPerformed(evt);
             }
         });
 
         algorithmLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         algorithmLabel.setText("Algorithm:");
+
+        attackInfoName.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        attackInfoName.setEnabled(false);
+
+        attackInfoDescription.setEnabled(false);
+
+        extraPanel.setEnabled(false);
+        extraPanel.setLayout(new java.awt.GridLayout(1, 0));
+
+        attackButton.setText(bundle.getString("ATTACKBUTTON")); // NOI18N
+        attackButton.setEnabled(false);
+        attackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                attackButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -177,7 +198,11 @@ public class AttackerPanel extends JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(attackButton)))
+                        .addComponent(loadButton))
+                    .addComponent(attackInfoName)
+                    .addComponent(attackInfoDescription)
+                    .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(attackButton))
                 .addContainerGap(261, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -194,16 +219,52 @@ public class AttackerPanel extends JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(attackButton))
-                .addContainerGap(206, Short.MAX_VALUE))
+                    .addComponent(loadButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(attackInfoName)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(attackInfoDescription)
+                .addGap(18, 18, 18)
+                .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(attackButton)
+                .addContainerGap(120, Short.MAX_VALUE))
         );
+
+        attackInfoName.getAccessibleContext().setAccessibleName("attackInfoName");
     }// </editor-fold>//GEN-END:initComponents
 
-    private void attackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attackButtonActionPerformed
+    private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
+        // TODO: Check if already loaded. Implement onSelectionChanged listener to cleanup UI / instance
         loggerInstance.log(getClass(), "Load button clicked, chosen attack: " + attackListModel.getSelectedItem(), Logger.LogLevel.DEBUG);
 
         // Get selected Attack
-        IAttackInfo selectedAttack = registeredAttacks.get(attackListModel.getSelectedItem());
+        selectedAttack = registeredAttacks.get(attackListModel.getSelectedItem());
+
+        // Set attack information
+        loggerInstance.log(selectedAttack.getClass(), "Loading attack information and additional UI components...", Logger.LogLevel.DEBUG);
+        attackInfoName.setText(selectedAttack.getName());
+        attackInfoName.setEnabled(true);
+
+        attackInfoDescription.setText(selectedAttack.getDescription());
+        attackInfoDescription.setEnabled(true);
+
+        // Check if attack has extra UI components and update UI
+        boolean hasExtraUI = selectedAttack.getExtraUI(extraPanel);
+
+        if(hasExtraUI) {
+            extraPanel.setEnabled(true);
+            extraPanel.revalidate();
+            extraPanel.repaint();
+        }
+
+        // Enable attack button
+        attackButton.setEnabled(true);
+
+    }//GEN-LAST:event_loadButtonActionPerformed
+
+    private void attackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attackButtonActionPerformed
+        loggerInstance.log(getClass(), "Attack button clicked, prepare attack and FIRE!", Logger.LogLevel.DEBUG);
 
         try {
             // Prepare the selected attack
@@ -211,7 +272,6 @@ public class AttackerPanel extends JPanel {
             IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
 
             // Perform the selected attack
-            // TODO: TMP (should not be fired onLoad)
             loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.LogLevel.DEBUG);
             attack.performAttack();
         } catch (AttackPreparationFailedException e) {
@@ -224,8 +284,12 @@ public class AttackerPanel extends JPanel {
     private javax.swing.JLabel algorithmLabel;
     private javax.swing.JLabel algorithmValue;
     private javax.swing.JButton attackButton;
+    private javax.swing.JLabel attackInfoDescription;
+    private javax.swing.JLabel attackInfoName;
     private javax.swing.JComboBox<String> attackList;
     private javax.swing.JLabel attackListLabel;
+    private javax.swing.JPanel extraPanel;
+    private javax.swing.JButton loadButton;
     private javax.swing.JLabel typeLabel;
     private javax.swing.JLabel typeValue;
     // End of variables declaration//GEN-END:variables

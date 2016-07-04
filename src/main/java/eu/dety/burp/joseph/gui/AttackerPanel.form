@@ -32,8 +32,12 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="attackList" min="-2" pref="351" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="attackButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="loadButton" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="attackInfoName" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="attackInfoDescription" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="extraPanel" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="attackButton" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="261" max="32767" attributes="0"/>
           </Group>
@@ -54,9 +58,17 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="attackList" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="attackButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="loadButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="206" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="attackInfoName" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="attackInfoDescription" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="extraPanel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="attackButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="120" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -87,14 +99,14 @@
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JButton" name="attackButton">
+    <Component class="javax.swing.JButton" name="loadButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="eu/dety/burp/joseph/resources/JOSEPH.properties" key="LOADBUTTON" replaceFormat="java.util.ResourceBundle.getBundle(&quot;JOSEPH&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="attackButtonActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadButtonActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="algorithmLabel">
@@ -108,6 +120,43 @@
     <Component class="javax.swing.JLabel" name="typeValue">
     </Component>
     <Component class="javax.swing.JLabel" name="algorithmValue">
+    </Component>
+    <Component class="javax.swing.JLabel" name="attackInfoName">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Lucida Grande" size="13" style="1"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="attackInfoName"/>
+      </AccessibilityProperties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="attackInfoDescription">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Container class="javax.swing.JPanel" name="extraPanel">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+        <Property name="columns" type="int" value="0"/>
+        <Property name="rows" type="int" value="1"/>
+      </Layout>
+    </Container>
+    <Component class="javax.swing.JButton" name="attackButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="eu/dety/burp/joseph/resources/JOSEPH.properties" key="ATTACKBUTTON" replaceFormat="java.util.ResourceBundle.getBundle(&quot;JOSEPH&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="attackButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
