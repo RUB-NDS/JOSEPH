@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class Finder {
 
     /**
-     * Checks whether given JWT candidate matches regex pattern
+     * Check whether given JWT candidate matches regex pattern
      * @param candidate String containing the JWT candidate value.
      * @return boolean whether regex pattern matched or not.
      */
