@@ -24,7 +24,7 @@ import java.util.Calendar;
 import java.util.ResourceBundle;
 
 import eu.dety.burp.joseph.editor.JwtEditor;
-import eu.dety.burp.joseph.gui.UITab;
+import eu.dety.burp.joseph.gui.MainTabGroup;
 import eu.dety.burp.joseph.scanner.Marker;
 import eu.dety.burp.joseph.utilities.Logger;
 
@@ -37,20 +37,15 @@ import eu.dety.burp.joseph.utilities.Logger;
 public class BurpExtender implements IBurpExtender, IExtensionStateListener {
     private static final String EXTENSION_NAME = "JOSEPH";
 
-    private IBurpExtenderCallbacks callbacks;
-
     private static PrintWriter stdout;
     private static PrintWriter stderr;
 
-    ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
+    private ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
     /**
      * Set the extension name and print loading information to standard output.
      */
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
-        // Keep a reference to callbacks object
-        this.callbacks = callbacks;
-
         // Set extension name
         callbacks.setExtensionName(EXTENSION_NAME);
 
@@ -70,7 +65,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         stdout.println("+---------------------------------------------------------+");
 
         // Register JOSEPH tab
-        final UITab josephMainTab = new UITab(callbacks);
+        final MainTabGroup josephMainTab = new MainTabGroup(callbacks);
         loggerInstance.log(getClass(), bundle.getString("REGISTERED_MAINTAB"), Logger.LogLevel.INFO);
 
         // Register Context Menu
@@ -86,7 +81,6 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         final JwtEditor jwtEditor = new JwtEditor(callbacks);
         callbacks.registerMessageEditorTabFactory(jwtEditor);
         loggerInstance.log(getClass(), bundle.getString("REGISTERED_JWTEDITOR"), Logger.LogLevel.INFO);
-
 
     }
 

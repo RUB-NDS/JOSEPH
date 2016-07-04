@@ -21,13 +21,11 @@ package eu.dety.burp.joseph.utilities;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
-
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
- * Decoder.
- * Help functions to decode JOSE values from different representations.
+ * Help functions to encode and decode JOSE values from different representations.
  * @author Dennis Detering
  * @version 1.0
  */
@@ -43,9 +41,11 @@ public class Decoder {
 
     /**
      * Safe URL encode a byte array to a String
+     * @param input byte array input
+     * @return base64url encoded string
      */
-    private String base64UrlEncode(byte[] str) {
-        return new String(Base64.encodeBase64URLSafe(str));
+    private String base64UrlEncode(byte[] input) {
+        return new String(Base64.encodeBase64URLSafe(input));
     }
 
     /**
@@ -81,13 +81,12 @@ public class Decoder {
 
     /**
      * Join separate parts to JOSE value
-     * @param input Compact serialization JOSE value
-     * @return string array with the separate parts
+     * @param input string array of JOSE values in compact serialization
+     * @return single string with concatenated components
      */
     public String concatComponents(String[] input) {
         return StringUtils.join(input, ".");
     }
-
 
     /**
      * Decode from base64url representation to string
@@ -145,7 +144,7 @@ public class Decoder {
 
     /**
      * Encode from JSON string to base64url representation
-     * @param input JSON string
+     * @param input JSON byte array
      * @return base64url representation of the JSON string
      */
     public String getEncoded(byte[] input) {

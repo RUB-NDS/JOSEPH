@@ -25,7 +25,7 @@ import burp.IHttpListener;
 import burp.IHttpRequestResponse;
 import burp.IRequestInfo;
 
-import eu.dety.burp.joseph.gui.UIPreferences;
+import eu.dety.burp.joseph.gui.PreferencesPanel;
 import eu.dety.burp.joseph.utilities.Logger;
 import eu.dety.burp.joseph.utilities.Finder;
 
@@ -53,7 +53,7 @@ public class Marker implements IHttpListener {
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse httpRequestResponse) {
         // Only flag messages if highlighting option is set to true and if sent/received by the proxy
-        if (UIPreferences.getHighlighting() && toolFlag == IBurpExtenderCallbacks.TOOL_PROXY) {
+        if (PreferencesPanel.getHighlighting() && toolFlag == IBurpExtenderCallbacks.TOOL_PROXY) {
             checkForJwtLocations(httpRequestResponse);
         }
     }
@@ -78,7 +78,7 @@ public class Marker implements IHttpListener {
         if (!jwtFound) {
             // Search for (specific) parameter
             for (IParameter param : requestInfo.getParameters()) {
-                if(UIPreferences.getParameterNames().contains(param.getName())) {
+                if(PreferencesPanel.getParameterNames().contains(param.getName())) {
                     loggerInstance.log(getClass(), String.format("Possible JWT parameter found: %s.", param.getName()), Logger.LogLevel.DEBUG);
                     jwtFound = finder.checkJwtPattern(param.getValue());
                     if (jwtFound) break;

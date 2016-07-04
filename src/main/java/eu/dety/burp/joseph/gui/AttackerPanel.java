@@ -22,7 +22,7 @@ package eu.dety.burp.joseph.gui;
 import burp.*;
 
 import eu.dety.burp.joseph.attacks.*;
-import eu.dety.burp.joseph.exceptions.AttackPreparationFailedException;
+import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.Logger;
@@ -33,18 +33,18 @@ import org.json.JSONObject;
 
 
 /**
- * Attacker tab showing a single message and related attacks
+ * Attacker panel showing a single message and related attacks
  * @author Dennis Detering
  * @version 1.0
  */
-public class UIAttackerTab extends JPanel {
+public class AttackerPanel extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final Finder finder = new Finder();
-    private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
-    private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
 
+    private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
+    private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
     private IHttpRequestResponse requestResponse;
     private IRequestInfo requestInfo;
     private IParameter parameter = null;
@@ -53,7 +53,7 @@ public class UIAttackerTab extends JPanel {
 
     /**
      * Register Attacks
-     *
+     * <p>
      * Method called on construction to register all available attacks.
      * Extend this method to add your custom attack.
      */
@@ -68,15 +68,15 @@ public class UIAttackerTab extends JPanel {
     }
 
     /**
-     * UIAttackerTab constructor
-     *
+     * AttackerPanel constructor
+     * <p>
      * Register available attacks, extract "alg" and "typ" header fields and
      * generate attackListModel based on type and suitableness of the attack.
      *
      * @param callbacks {@link IBurpExtenderCallbacks} extender callbacks
      * @param message {@link IHttpRequestResponse} requestResponse message
      */
-    public UIAttackerTab(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
+    public AttackerPanel(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
         // TODO: Make closable
 
         Decoder joseDecoder = new Decoder();
@@ -90,7 +90,7 @@ public class UIAttackerTab extends JPanel {
 
         // Find the JOSE parameter
         for (IParameter param : requestInfo.getParameters()) {
-            if(UIPreferences.getParameterNames().contains(param.getName())) {
+            if(PreferencesPanel.getParameterNames().contains(param.getName())) {
                 if (finder.checkJwtPattern(param.getValue())) {
                     parameter = param;
                     break;
@@ -111,7 +111,8 @@ public class UIAttackerTab extends JPanel {
         algorithmValue.setText(algorithm);
 
         loggerInstance.log(getClass(), "JOSE Parameter Name: " + parameter.getName(), Logger.LogLevel.DEBUG);
-        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . " + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.LogLevel.DEBUG);
+        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . "
+                + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.LogLevel.DEBUG);
 
         // Build available attacks list
         for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
@@ -210,6 +211,7 @@ public class UIAttackerTab extends JPanel {
             IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
 
             // Perform the selected attack
+            // TODO: TMP (should not be fired onLoad)
             loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.LogLevel.DEBUG);
             attack.performAttack();
         } catch (AttackPreparationFailedException e) {

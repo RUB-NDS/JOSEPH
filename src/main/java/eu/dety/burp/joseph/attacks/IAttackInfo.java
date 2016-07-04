@@ -23,8 +23,6 @@ import burp.IHttpRequestResponse;
 import burp.IParameter;
 import burp.IRequestInfo;
 
-import eu.dety.burp.joseph.exceptions.AttackPreparationFailedException;
-
 import java.util.List;
 
 /**

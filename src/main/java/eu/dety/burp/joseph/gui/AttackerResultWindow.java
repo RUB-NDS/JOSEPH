@@ -38,11 +38,11 @@ import java.util.ArrayList;
  * @author Dennis Detering
  * @version 1.0
  */
-public class UIAttackerResultWindow extends JFrame {
+public class AttackerResultWindow extends JFrame {
     private static final Logger loggerInstance = Logger.getInstance();
     private Table table;
 
-    public UIAttackerResultWindow(String caption, IBurpExtenderCallbacks callbacks) {
+    public AttackerResultWindow(String caption, IBurpExtenderCallbacks callbacks) {
         super(caption);
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

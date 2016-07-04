@@ -19,7 +19,7 @@
 package eu.dety.burp.joseph.attacks;
 
 import burp.*;
-import eu.dety.burp.joseph.gui.UIAttackerResultWindow;
+import eu.dety.burp.joseph.gui.AttackerResultWindow;
 import eu.dety.burp.joseph.gui.table.TableEntry;
 import eu.dety.burp.joseph.utilities.Logger;
 
@@ -44,7 +44,7 @@ public class SignatureExclusion extends SwingWorker<Integer, Integer> implements
     private static final Logger loggerInstance = Logger.getInstance();
     private SignatureExclusionInfo attackInfo;
     private IBurpExtenderCallbacks callbacks;
-    private UIAttackerResultWindow attackerResultWindow;
+    private AttackerResultWindow attackerResultWindow;
     private List<IHttpRequestResponse> responses = new ArrayList<>();
 
     public SignatureExclusion(IBurpExtenderCallbacks callbacks, SignatureExclusionInfo attackInfo) {
@@ -55,7 +55,7 @@ public class SignatureExclusion extends SwingWorker<Integer, Integer> implements
     @Override
     public  void performAttack() {
         // Create attacker result window
-        attackerResultWindow = new UIAttackerResultWindow(attackInfo.getName(), callbacks);
+        attackerResultWindow = new AttackerResultWindow(attackInfo.getName(), callbacks);
 
         // Add original message to result table
         attackerResultWindow.addEntry(new TableEntry(0, "", attackInfo.getRequestResponse(), callbacks));
