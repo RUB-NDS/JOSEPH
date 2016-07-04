@@ -22,7 +22,7 @@ import burp.IBurpExtenderCallbacks;
 import burp.IMessageEditor;
 import eu.dety.burp.joseph.gui.table.Table;
 import eu.dety.burp.joseph.gui.table.TableEntry;
-import eu.dety.burp.joseph.gui.table.TableHelper;
+import eu.dety.burp.joseph.gui.table.TableModel;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
@@ -56,7 +56,7 @@ public class AttackerResultWindow extends JFrame {
         responseViewer = callbacks.createMessageEditor(null, false);
 
         // Create result table
-        table = new Table(new TableHelper(new ArrayList<TableEntry>()));
+        table = new Table(new TableModel(new ArrayList<TableEntry>()));
 
         // Add selection changed listener to update request and response viewer editors
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {

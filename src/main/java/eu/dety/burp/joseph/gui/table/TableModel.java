@@ -28,7 +28,7 @@ import javax.swing.table.AbstractTableModel;
  * @author Dennis Detering
  * @version 1.0
  */
-public class TableHelper extends AbstractTableModel {
+public class TableModel extends AbstractTableModel {
     private static final Logger loggerInstance = Logger.getInstance();
     private ArrayList<TableEntry> tableEntries;
     private String[] columnName = {"#", "Payload", "Status", "Length", "Time", "Comment"};
@@ -37,7 +37,7 @@ public class TableHelper extends AbstractTableModel {
      * Construct a new table helper
      * @param tableEntries A list of table entries.
      */
-    public TableHelper(ArrayList<TableEntry> tableEntries) {
+    public TableModel(ArrayList<TableEntry> tableEntries) {
         this.tableEntries = tableEntries;
     }
 
