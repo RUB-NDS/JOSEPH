@@ -37,7 +37,7 @@ import org.json.JSONObject;
  * @author Dennis Detering
  * @version 1.0
  */
-public class UIAttackerTab extends JPanel {
+public class AttackerPanel extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final Finder finder = new Finder();
     private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
@@ -68,7 +68,7 @@ public class UIAttackerTab extends JPanel {
     }
 
     /**
-     * UIAttackerTab constructor
+     * AttackerPanel constructor
      *
      * Register available attacks, extract "alg" and "typ" header fields and
      * generate attackListModel based on type and suitableness of the attack.
@@ -76,7 +76,7 @@ public class UIAttackerTab extends JPanel {
      * @param callbacks {@link IBurpExtenderCallbacks} extender callbacks
      * @param message {@link IHttpRequestResponse} requestResponse message
      */
-    public UIAttackerTab(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
+    public AttackerPanel(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
         // TODO: Make closable
 
         Decoder joseDecoder = new Decoder();
@@ -90,7 +90,7 @@ public class UIAttackerTab extends JPanel {
 
         // Find the JOSE parameter
         for (IParameter param : requestInfo.getParameters()) {
-            if(UIPreferences.getParameterNames().contains(param.getName())) {
+            if(PreferencesPanel.getParameterNames().contains(param.getName())) {
                 if (finder.checkJwtPattern(param.getValue())) {
                     parameter = param;
                     break;

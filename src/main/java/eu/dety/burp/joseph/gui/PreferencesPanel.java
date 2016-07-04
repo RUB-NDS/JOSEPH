@@ -38,7 +38,7 @@ import org.json.simple.parser.ParseException;
  * @author Dennis Detering
  * @version 1.0
  */
-public class UIPreferences extends javax.swing.JPanel {
+public class PreferencesPanel extends javax.swing.JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final String configFilePath = System.getProperty("user.home") + "/.joseph/config.json";
 
@@ -49,7 +49,7 @@ public class UIPreferences extends javax.swing.JPanel {
 
     private static DefaultListModel<String> parameterNamesListModel = new DefaultListModel<>();
     
-    public UIPreferences() {
+    public PreferencesPanel() {
         initComponents();
 
         // Set ListModel for parameterNamesList

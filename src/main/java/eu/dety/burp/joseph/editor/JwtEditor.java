@@ -26,7 +26,7 @@ import burp.IMessageEditorTabFactory;
 import burp.IParameter;
 import burp.ITextEditor;
 
-import eu.dety.burp.joseph.gui.UIPreferences;
+import eu.dety.burp.joseph.gui.PreferencesPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Logger;
 import eu.dety.burp.joseph.utilities.Finder;
@@ -112,7 +112,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
         public boolean isEnabled(byte[] content, boolean isRequest) {
             // Enable this tab for requests containing a JOSE parameter
             if(isRequest) {
-                for(Object param: UIPreferences.getParameterNames().toArray()) {
+                for(Object param: PreferencesPanel.getParameterNames().toArray()) {
                     if(helpers.getRequestParameter(content, param.toString()) != null && finder.checkJwtPattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
                         joseParameterName = helpers.getRequestParameter(content, param.toString()).getName();
                         loggerInstance.log(getClass(), "JWT value found, enable JwtEditor.", Logger.DEBUG);

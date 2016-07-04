@@ -18,14 +18,16 @@
  */
 package eu.dety.burp.joseph.gui;
 
+import javax.swing.JPanel;
+
 /**
  * Help tab with information about this extension
  * @author Dennis Detering
  * @version 1.0
  */
-public class UIHelp extends javax.swing.JPanel {
+public class HelpPanel extends JPanel {
 
-    public UIHelp() {
+    public HelpPanel() {
         initComponents();
     }
 

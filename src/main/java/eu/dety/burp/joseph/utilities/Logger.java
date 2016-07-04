@@ -20,7 +20,7 @@ package eu.dety.burp.joseph.utilities;
 
 import burp.BurpExtender;
 
-import eu.dety.burp.joseph.gui.UIPreferences;
+import eu.dety.burp.joseph.gui.PreferencesPanel;
 
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -78,7 +78,7 @@ public class Logger {
         outputStream = (Objects.equals(logType, ERROR)) ? stderr : stdout;
 
         // Check if message should be logged based on current log level preference
-        if (logType <= UIPreferences.getLogLevel()) {
+        if (logType <= PreferencesPanel.getLogLevel()) {
             String logTypeName = "UNKNOWN";
             // TODO: Easier way to get constant name (by value)?
             switch(logType) {
