@@ -23,10 +23,12 @@ import eu.dety.burp.joseph.scanner.Marker;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import java.awt.*;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.ResourceBundle;
 import javax.swing.*;
 
 /**
@@ -40,15 +42,15 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     private final IBurpExtenderCallbacks callbacks;
     private int tabIndex = 0;
 
-
-    // Sub tabs within JOSEPH main tab
+    // Sub tabs within JOSEPH MainTabGroup
     private HelpPanel helpPanel;
     private PreferencesPanel preferencesPanel;
     private JTabbedPane attackerTabGroup = new JTabbedPane();
 
     /**
      * Construct the main UI.
-     * Calls {@link #initComponents()} to initialize ...
+     * <p>
+     * Calls {@link #initComponents()} to initialize UI components
      * @param callbacks {@link burp.IBurpExtenderCallbacks}.
      */
     public MainTabGroup(IBurpExtenderCallbacks callbacks) {
@@ -67,21 +69,26 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
     /**
      * Get tab caption
-     * @return Get the headline for the tab.
+     * @return Get the title for the tab.
      */
     @Override
     public String getTabCaption() {
         return "JOSEPH";
     }
 
+    /**
+     * Create context menu
+     * <p>
+     * Create context menu for marked messages to create new {@link AttackerPanel} for this message
+     */
     @Override
-    public java.util.List<JMenuItem> createMenuItems(IContextMenuInvocation iContextMenuInvocation) {
+    public List<JMenuItem> createMenuItems(IContextMenuInvocation iContextMenuInvocation) {
         IHttpRequestResponse[] messages = iContextMenuInvocation.getSelectedMessages();
         if (messages != null && messages.length == 1) {
 
             final IHttpRequestResponse message = messages[0];
 
-            // Check if message has been marked by our extension
+            // Check if message has been marked by JOSEPH extension
             if(!Objects.equals(message.getHighlight(), Marker.getHighlightColor())) {
                 return null;
             }
@@ -94,13 +101,14 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                     try {
                         loggerInstance.log(MainTabGroup.class, "Send to JOSEPH context menu item clicked", Logger.DEBUG);
 
+                        // Create new attacker panel for this message
                         AttackerPanel attackerPanel = new AttackerPanel(callbacks, message);
 
                         int newTabIndex = getNewTabIndex();
                         attackerTabGroup.addTab(Integer.toString(newTabIndex), attackerPanel);
                         attackerTabGroup.setSelectedIndex(newTabIndex - 1);
 
-                        // TODO: Highlight
+                        // TODO: Highlight MainTabGroup (like on "send to repeater")
 
                     } catch (Exception e) {
                         loggerInstance.log(MainTabGroup.class, e.getMessage(), Logger.ERROR);
@@ -115,7 +123,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     }
 
     /**
-     * Getter for the help sub tab
+     * Getter for the help pabel
      * @return {@link HelpPanel} object.
      */
     public HelpPanel getHelpPanel() {
@@ -123,7 +131,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     }
 
     /**
-     * Getter for the preferences sub tab
+     * Getter for the preferences panel
      * @return {@link PreferencesPanel} object.
      */
     public PreferencesPanel getPreferencesPanel() {
@@ -139,7 +147,8 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     }
 
     /**
-     * Get increase the tab index and return new value
+     * Increase the tab index and get new value
+     * @return the increased tab index.
      */
     public int getNewTabIndex(){
         tabIndex++;
@@ -150,15 +159,16 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
      * Initialize all necessary components
      */
     private void initComponents(){
-        // Help sub tab
+        // Create panel instances
         helpPanel = new HelpPanel();
         preferencesPanel = new PreferencesPanel();
 
+        // Add panel instances as tabs
         this.addTab(bundle.getString("ATTACKER"), attackerTabGroup);
         this.addTab(bundle.getString("PREFERENCES"), preferencesPanel);
         this.addTab(bundle.getString("HELP"), helpPanel);
 
-        // Customize UI components
+        // Use Burp UI settings and add as extension tab
         callbacks.customizeUiComponent(this);
         callbacks.addSuiteTab(this);
     }

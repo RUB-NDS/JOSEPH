@@ -33,18 +33,18 @@ import org.json.JSONObject;
 
 
 /**
- * Attacker tab showing a single message and related attacks
+ * Attacker panel showing a single message and related attacks
  * @author Dennis Detering
  * @version 1.0
  */
 public class AttackerPanel extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final Finder finder = new Finder();
-    private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
-    private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
 
+    private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
+    private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
     private IHttpRequestResponse requestResponse;
     private IRequestInfo requestInfo;
     private IParameter parameter = null;
@@ -53,7 +53,7 @@ public class AttackerPanel extends JPanel {
 
     /**
      * Register Attacks
-     *
+     * <p>
      * Method called on construction to register all available attacks.
      * Extend this method to add your custom attack.
      */
@@ -69,7 +69,7 @@ public class AttackerPanel extends JPanel {
 
     /**
      * AttackerPanel constructor
-     *
+     * <p>
      * Register available attacks, extract "alg" and "typ" header fields and
      * generate attackListModel based on type and suitableness of the attack.
      *
@@ -111,7 +111,8 @@ public class AttackerPanel extends JPanel {
         algorithmValue.setText(algorithm);
 
         loggerInstance.log(getClass(), "JOSE Parameter Name: " + parameter.getName(), Logger.DEBUG);
-        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . " + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.DEBUG);
+        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . "
+                + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.DEBUG);
 
         // Build available attacks list
         for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
@@ -210,6 +211,7 @@ public class AttackerPanel extends JPanel {
             IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
 
             // Perform the selected attack
+            // TODO: TMP (should not be fired onLoad)
             loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.DEBUG);
             attack.performAttack();
         } catch (AttackPreparationFailedException e) {
