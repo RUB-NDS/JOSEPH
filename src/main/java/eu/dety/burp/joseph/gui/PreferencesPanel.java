@@ -43,7 +43,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
     private static final String configFilePath = System.getProperty("user.home") + "/.joseph/config.json";
 
     // Configuration options
-    private static int logLevel = 2;
+    private static int logLevel = 1;
     private static boolean highlighting = true;
     private static final List<String> defaultParameterNames = Arrays.asList("access_token", "token");
 

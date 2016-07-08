@@ -24,6 +24,7 @@ import burp.IParameter;
 import burp.IRequestInfo;
 
 import javax.swing.*;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -86,4 +87,16 @@ public interface IAttackInfo {
      * @return true if attack is suitable
      */
     boolean isSuitable(String type, String algorithm);
+
+    /**
+     * Get IHttpRequestResponse object used for this attack
+     * @return {@link burp.IHttpRequestResponse} object
+     */
+    IHttpRequestResponse getRequestResponse();
+
+    /**
+     * Get list of prepared requests
+     * @return Byte array list of requests
+     */
+    HashMap<String, byte[]> getRequests();
 }

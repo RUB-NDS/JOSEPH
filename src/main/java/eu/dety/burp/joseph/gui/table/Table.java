@@ -18,7 +18,7 @@
  */
 package eu.dety.burp.joseph.gui.table;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -46,7 +46,7 @@ public class Table extends JTable {
         // Add mouseListener to select row on mouse click
         final Table parent = this;
         this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent event) {
+            public void mouseReleased(MouseEvent event) {
                 // selects the row at which point the mouse is clicked
                 Point point = event.getPoint();
                 int currentRow = parent.rowAtPoint(point);
@@ -79,8 +79,19 @@ public class Table extends JTable {
 
     /**
      * Update the table the full history.
+     * @param entry {@link TableEntry}
      */
     public void addEntry(TableEntry entry) {
         tableModel.addRow(entry);
     }
+
+    /**
+     * Get the {@link TableEntry} at specific index.
+     * @param index The index.
+     * @return {@link TableEntry}
+     */
+    public TableEntry getEntry(int index){
+        return tableEntries.get(index);
+    }
+
 }

@@ -21,15 +21,18 @@ package eu.dety.burp.joseph.attacks;
 import burp.*;
 
 import eu.dety.burp.joseph.utilities.Decoder;
+import eu.dety.burp.joseph.utilities.Logger;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
 
 public class KeyConfusionInfo implements IAttackInfo {
+    private static final Logger loggerInstance = Logger.getInstance();
     private Decoder joseDecoder;
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
@@ -40,17 +43,18 @@ public class KeyConfusionInfo implements IAttackInfo {
     // Full name of the attack
     private static final String name = "Key Confusion";
     // Attack description
-    private static final String description = "";
+    private static final String description = "Description";
     // List of types this attack is suitable for
     private static final List<String> suitableTypes = Arrays.asList("jwt", "jws");
     // Amount of requests needed
     private static final int amountRequests = 0;
 
-    private List<byte[]> requests = new ArrayList<>();
+    // List of prepared requests with payload info
+    private HashMap<String, byte[]> requests = new HashMap<>();
 
     @Override
     public KeyConfusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
-        throw new NotImplementedException();
+        throw new AttackPreparationFailedException("Attack not yet implemented");
     }
 
     @Override
@@ -80,20 +84,45 @@ public class KeyConfusionInfo implements IAttackInfo {
 
     @Override
     public boolean getExtraUI(JPanel extraPanel) {
-        extraPanel.add(new JLabel("Test label"));
+        GridBagConstraints constraints = new GridBagConstraints();
+
+        // Create combobox and textarea to add public key (in different formats)
+        JLabel publicKeyLabel = new JLabel("How to import public key:");
+        JComboBox<String> publicKeySelection = new JComboBox<>();
+        DefaultComboBoxModel<String> publicKeySelectionListModel = new DefaultComboBoxModel<>();
+        JTextArea publicKey = new JTextArea(10, 35);
+
+        publicKeySelectionListModel.addElement("PEM (String)");
+        publicKeySelectionListModel.addElement("JWK (JSON)");
+
+        publicKeySelection.setModel(publicKeySelectionListModel);
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridy = 0;
+        extraPanel.add(publicKeyLabel, constraints);
+
+        constraints.gridy = 1;
+        extraPanel.add(publicKeySelection, constraints);
+
+        constraints.gridy = 2;
+        extraPanel.add(publicKey, constraints);
+
+        return true;
+    }
+
+
+    @Override
+    public boolean isSuitable(String type, String algorithm) {
         return true;
     }
 
     @Override
-    public boolean isSuitable(String type, String algorithm) {
-        return false;
-    }
-
-    IHttpRequestResponse getRequestResponse() {
+    public IHttpRequestResponse getRequestResponse() {
         return this.requestResponse;
     }
 
-    List<byte[]> getRequests() {
+    @Override
+    public HashMap<String, byte[]> getRequests() {
         return this.requests;
     }
 }

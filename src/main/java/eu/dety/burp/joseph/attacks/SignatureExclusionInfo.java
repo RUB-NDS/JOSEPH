@@ -129,19 +129,13 @@ public class SignatureExclusionInfo implements IAttackInfo {
         return false;
     }
 
-    /**
-     * Get IHttpRequestResponse object used for this attack
-     * @return {@link burp.IHttpRequestResponse} object
-     */
-    IHttpRequestResponse getRequestResponse() {
+    @Override
+    public IHttpRequestResponse getRequestResponse() {
         return this.requestResponse;
     }
 
-    /**
-     * Get list of prepared requests
-     * @return Byte array list of requests
-     */
-    HashMap<String, byte[]> getRequests() {
+    @Override
+    public HashMap<String, byte[]> getRequests() {
         return this.requests;
     }
 }

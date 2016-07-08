@@ -74,6 +74,9 @@ public class SignatureExclusion extends SwingWorker<Integer, Integer> implements
 
             // Add new entry to result table
             attackerResultWindow.addEntry(new TableEntry(this.responses.size(), "Alg: " + request.getKey(), requestResponse, callbacks));
+
+            // Update the progress bar
+            attackerResultWindow.setPrograssBarValue(responses.size(), attackInfo.getAmountRequests());
         }
         return null;
     }
