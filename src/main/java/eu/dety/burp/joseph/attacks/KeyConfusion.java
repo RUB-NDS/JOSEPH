@@ -18,11 +18,61 @@
  */
 package eu.dety.burp.joseph.attacks;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import burp.IBurpExtenderCallbacks;
+import burp.IHttpRequestResponse;
+import burp.IHttpService;
+import eu.dety.burp.joseph.gui.AttackerResultWindow;
+import eu.dety.burp.joseph.gui.table.TableEntry;
+import eu.dety.burp.joseph.utilities.Logger;
 
-public class KeyConfusion implements IAttack {
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class KeyConfusion extends SwingWorker<Integer, Integer> implements IAttack {
+    private static final Logger loggerInstance = Logger.getInstance();
+    private KeyConfusionInfo attackInfo;
+    private IBurpExtenderCallbacks callbacks;
+    private AttackerResultWindow attackerResultWindow;
+    private List<IHttpRequestResponse> responses = new ArrayList<>();
+
+    public KeyConfusion(IBurpExtenderCallbacks callbacks, KeyConfusionInfo attackInfo) {
+        this.callbacks = callbacks;
+        this.attackInfo = attackInfo;
+    }
+
     @Override
-    public void performAttack() {
-        throw new NotImplementedException();
+    public  void performAttack() {
+        // Create attacker result window
+        attackerResultWindow = new AttackerResultWindow(attackInfo.getName(), callbacks);
+
+        // Add original message to result table
+        attackerResultWindow.addEntry(new TableEntry(0, "", attackInfo.getRequestResponse(), callbacks));
+
+        this.execute();
+    }
+
+    @Override
+    protected Integer doInBackground() throws Exception {
+        IHttpService httpService = this.attackInfo.getRequestResponse().getHttpService();
+
+        // Fire each prepared request and store responses in IHttpRequestResponse list
+        for (Map.Entry<String, byte[]> request : this.attackInfo.getRequests().entrySet()) {
+            IHttpRequestResponse requestResponse = callbacks.makeHttpRequest(httpService, request.getValue());
+            this.responses.add(requestResponse);
+
+            // Add new entry to result table
+            attackerResultWindow.addEntry(new TableEntry(this.responses.size(), "Alg: " + request.getKey(), requestResponse, callbacks));
+
+            // Update the progress bar
+            attackerResultWindow.setPrograssBarValue(responses.size(), attackInfo.getAmountRequests());
+        }
+        return null;
+    }
+
+    @Override
+    protected void done() {
+        loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
     }
 }

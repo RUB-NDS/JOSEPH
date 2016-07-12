@@ -39,6 +39,7 @@ import org.json.JSONObject;
  */
 public class AttackerPanel extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
+    private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
     private static final Finder finder = new Finder();
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
@@ -295,6 +296,8 @@ public class AttackerPanel extends JPanel {
             loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.LogLevel.DEBUG);
             attack.performAttack();
         } catch (AttackPreparationFailedException e) {
+            // Show error popup with exception message
+            JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), bundle.getString("ATTACK_PREPARATION_FAILED"), JOptionPane.ERROR_MESSAGE);
             loggerInstance.log(selectedAttack.getClass(), e.getMessage(), Logger.LogLevel.ERROR);
         }
 
