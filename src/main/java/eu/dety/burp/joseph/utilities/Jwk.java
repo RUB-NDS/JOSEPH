@@ -39,20 +39,20 @@ public class Jwk {
     private static final Logger loggerInstance = Logger.getInstance();
 
     /**
-     * Get RSA PublicKey by JWK JSON Input
+     * Get RSA PublicKey list by JWK JSON input
      * @param input JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
      */
-    public List<PublicKey> getRsaPublicKeys(final Object input) {
+    public static List<PublicKey> getRsaPublicKeys(final Object input) {
         List<PublicKey> keys = new ArrayList<>();
 
-        if (!(input instanceof JSONObject)) return null;
+        if (!(input instanceof JSONObject)) return keys;
 
         JSONObject inputJsonObject = (JSONObject) input;
 
         // Multiple keys existent
         if (inputJsonObject.containsKey("keys")) {
-            loggerInstance.log(getClass(), "Key array found...", Logger.LogLevel.DEBUG);
+            loggerInstance.log(Jwk.class, "Key array found...", Logger.LogLevel.DEBUG);
 
             for (final Object value : (JSONArray) inputJsonObject.get("keys")) {
                 JSONObject keyJson = (JSONObject) value;
@@ -71,11 +71,11 @@ public class Jwk {
     }
 
     /**
-     * Get RSA PublicKey by JWK JSON Input
+     * Get RSA PublicKey by JWK JSON input
      * @param input JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
      */
-    private PublicKey getRsaPublicKey(JSONObject input) {
+    private static PublicKey getRsaPublicKey(JSONObject input) {
         if (!input.containsKey("kty")) return null;
         String kty = (String) input.get("kty");
 
@@ -85,16 +85,16 @@ public class Jwk {
     }
 
     /**
-     * Build RSA {@link PublicKey} from RSA JWK JSON Object
+     * Build RSA {@link PublicKey} from RSA JWK JSON object
      * @param input RSA JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
      */
-    private PublicKey buildRsaPublicKey(JSONObject input) {
+    private static PublicKey buildRsaPublicKey(JSONObject input) {
         try {
             BigInteger modulus = new BigInteger(Base64.decodeBase64(input.get("n").toString()));
             BigInteger publicExponent = new BigInteger(Base64.decodeBase64(input.get("e").toString()));
 
-            loggerInstance.log(getClass(), "RSA PublicKey values: N: " + modulus + " E: " + publicExponent, Logger.LogLevel.DEBUG);
+            loggerInstance.log(Jwk.class, "RSA PublicKey values: N: " + modulus + " E: " + publicExponent, Logger.LogLevel.DEBUG);
             return KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
         } catch (Exception e){
             return null;
