@@ -69,7 +69,7 @@ public class AttackerResultWindow extends JFrame {
             public void valueChanged(ListSelectionEvent evt) {
                 loggerInstance.log(table.getClass(), "Selection changed", Logger.LogLevel.DEBUG);
 
-                TableEntry entry = table.getTableList().get(table.getSelectedRow());
+                TableEntry entry = table.getEntryByRow(table.getSelectedRow());
 
                 requestViewer.setMessage(entry.getMessage().getRequest(), true);
                 responseViewer.setMessage(entry.getMessage().getResponse(), false);
@@ -86,8 +86,7 @@ public class AttackerResultWindow extends JFrame {
             public void actionPerformed(ActionEvent evt) {
                 loggerInstance.log(table.getClass(), "Send to intruder clicked", Logger.LogLevel.DEBUG);
 
-                int row = table.getSelectedRow();
-                TableEntry entry = table.getEntry(row);
+                TableEntry entry = table.getEntryByRow(table.getSelectedRow());
 
                 IHttpService messageHttpService = entry.getMessage().getHttpService();
                 boolean isHttps = false;
@@ -106,8 +105,7 @@ public class AttackerResultWindow extends JFrame {
             public void actionPerformed(ActionEvent evt) {
                 loggerInstance.log(table.getClass(), "Send to repeater clicked", Logger.LogLevel.DEBUG);
 
-                int row = table.getSelectedRow();
-                TableEntry entry = table.getEntry(row);
+                TableEntry entry = table.getEntryByRow(table.getSelectedRow());
 
                 IHttpService messageHttpService = entry.getMessage().getHttpService();
                 boolean isHttps = false;

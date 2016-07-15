@@ -94,4 +94,13 @@ public class Table extends JTable {
         return tableEntries.get(index);
     }
 
+    /**
+     * Get the {@link TableEntry} by row index.
+     * @param index The row index.
+     * @return {@link TableEntry}
+     */
+    public TableEntry getEntryByRow(int index){
+        return tableEntries.get(convertRowIndexToModel(index));
+    }
+
 }
