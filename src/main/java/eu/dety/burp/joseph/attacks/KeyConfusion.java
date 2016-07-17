@@ -63,7 +63,7 @@ public class KeyConfusion extends SwingWorker<Integer, Integer> implements IAtta
             this.responses.add(requestResponse);
 
             // Add new entry to result table
-            attackerResultWindow.addEntry(new TableEntry(this.responses.size(), "Alg: " + request.getKey(), requestResponse, callbacks));
+            attackerResultWindow.addEntry(new TableEntry(this.responses.size(), request.getKey(), requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setPrograssBarValue(responses.size(), attackInfo.getAmountRequests());

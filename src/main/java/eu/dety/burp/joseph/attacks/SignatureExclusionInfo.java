@@ -80,7 +80,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
                 IParameter tmpParameter = helpers.buildParameter(this.parameter.getName(), tmpParameterValue, this.parameter.getType());
                 tmpRequest = helpers.updateParameter(tmpRequest, tmpParameter);
 
-                requests.put(noneAlgVariation, tmpRequest);
+                requests.put("Alg: " + noneAlgVariation, tmpRequest);
             } catch (Exception e) {
                 throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
             }
