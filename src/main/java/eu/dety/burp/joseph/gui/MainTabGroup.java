@@ -123,7 +123,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     }
 
     /**
-     * Getter for the help pabel
+     * Getter for the help panel
      * @return {@link HelpPanel} object.
      */
     public HelpPanel getHelpPanel() {

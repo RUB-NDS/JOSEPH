@@ -23,14 +23,11 @@ package eu.dety.burp.joseph.attacks;
  * AttackPreparationFailedException
  * <p>
  * Throw new exception if the preparation of an {@link eu.dety.burp.joseph.attacks.IAttackInfo} fails.
- *
  * @author Dennis Detering
  * @version 1.0
  */
 public class AttackPreparationFailedException extends Exception {
-    public AttackPreparationFailedException () {
-
-    }
+    public AttackPreparationFailedException () { }
 
     public AttackPreparationFailedException (String message) {
         super (message);

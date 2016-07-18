@@ -61,7 +61,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
      * Create a new instance of Burps own request/response viewer (IMessageEditorTab).
      * @param controller {@link burp.IMessageEditorController}
      * @param editable True if message is editable, false otherwise.
-     * @return {@link JwtEditorTab} instance implementing {@link burp.IMessageEditorTab}
+     * @return {@link JwtEditor.JwtEditorTab} instance implementing {@link burp.IMessageEditorTab}
      */
     @Override
     public IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable) {

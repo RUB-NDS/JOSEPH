@@ -111,7 +111,7 @@ public class AttackerResultWindow extends JFrame {
                 boolean isHttps = false;
                 if (Objects.equals(messageHttpService.getProtocol(), "https")) { isHttps = true; }
 
-                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest(), "JWT (SigExc)");
+                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest(), "JWT");
 
             }
         });
@@ -151,7 +151,6 @@ public class AttackerResultWindow extends JFrame {
 
     /**
      * Add new {@link TableEntry} to table
-     *
      * @param tableEntry {@link TableEntry} table entry
      */
     public void addEntry(TableEntry tableEntry) {
@@ -160,7 +159,6 @@ public class AttackerResultWindow extends JFrame {
 
     /**
      * Add new {@link TableEntry} to table
-     *
      * @param request number of already performed requests
      * @param all amount of requests to be performed
      */

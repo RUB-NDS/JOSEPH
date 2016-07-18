@@ -30,6 +30,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Key Confusion Attack
+ * <p>
+ * Perform a key confusion attack by
+ * using an RSA public key as MAC secret.
+ *
+ * @author Dennis Detering
+ * @version 1.0
+ */
 public class KeyConfusion extends SwingWorker<Integer, Integer> implements IAttack {
     private static final Logger loggerInstance = Logger.getInstance();
     private KeyConfusionInfo attackInfo;

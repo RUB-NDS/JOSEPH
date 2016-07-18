@@ -43,7 +43,7 @@ public class TableModel extends AbstractTableModel {
 
     /**
      * Get the tableEntries list.
-     * @return The list of table entries.
+     * @return The list of {@link TableEntry}.
      */
     public ArrayList<TableEntry> getTableEntries(){
         return tableEntries;
@@ -67,7 +67,7 @@ public class TableModel extends AbstractTableModel {
 
     /**
      * Remove all entries from the tableEntries list.
-     * @return True if all entries removed, false otherwise.
+     * @return True if all entries cleared, false otherwise.
      */
     public boolean clear() {
         try {

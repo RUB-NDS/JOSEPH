@@ -70,7 +70,7 @@ public interface IAttackInfo {
 
     /**
      * Get additional UI components if further data is needed to perform the attack
-     * @return {@link JPanel} with additional UI components
+     * @return True if attack provides extra UI elements
      */
     boolean getExtraUI(JPanel extraPanel);
 
@@ -84,7 +84,7 @@ public interface IAttackInfo {
      * Check whether attack is suitable based on algorithm and type values
      * @param type JOSE header type value string
      * @param algorithm JOSE header algorithm value string
-     * @return true if attack is suitable
+     * @return True if attack is suitable
      */
     boolean isSuitable(String type, String algorithm);
 
@@ -96,7 +96,7 @@ public interface IAttackInfo {
 
     /**
      * Get list of prepared requests
-     * @return Byte array list of requests
+     * @return HashMap with byte array requests
      */
     HashMap<String, byte[]> getRequests();
 }

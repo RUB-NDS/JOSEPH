@@ -35,6 +35,15 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
 
 
+/**
+ * Key Confusion Attack Info
+ * <p>
+ * Class holding meta data for the Key Confusion attack
+ * and for preparing all necessary parameter for the actual attack.
+ *
+ * @author Dennis Detering
+ * @version 1.0
+ */
 public class KeyConfusionInfo implements IAttackInfo {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
