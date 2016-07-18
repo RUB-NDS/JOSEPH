@@ -78,8 +78,6 @@ public class AttackerPanel extends JPanel {
      * @param message {@link IHttpRequestResponse} requestResponse message
      */
     public AttackerPanel(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
-        // TODO: Make closable
-
         Decoder joseDecoder = new Decoder();
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
