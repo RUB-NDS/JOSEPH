@@ -258,6 +258,8 @@ public class AttackerPanel extends JPanel {
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
         loggerInstance.log(getClass(), "Load button clicked, chosen attack: " + attackListModel.getSelectedItem(), Logger.LogLevel.DEBUG);
 
+        clearAttackSelection();
+
         // Get selected Attack
         selectedAttack = registeredAttacks.get(attackListModel.getSelectedItem());
 
