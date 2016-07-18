@@ -25,6 +25,8 @@ import eu.dety.burp.joseph.utilities.Logger;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +42,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
     private final IBurpExtenderCallbacks callbacks;
-    private int tabIndex = 0;
+    private int globalTabCounter = 0;
 
     // Sub tabs within JOSEPH MainTabGroup
     private HelpPanel helpPanel;
@@ -104,9 +106,69 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                         // Create new attacker panel for this message
                         AttackerPanel attackerPanel = new AttackerPanel(callbacks, message);
 
-                        int newTabIndex = getNewTabIndex();
-                        attackerTabGroup.addTab(Integer.toString(newTabIndex), attackerPanel);
-                        attackerTabGroup.setSelectedIndex(newTabIndex - 1);
+                        int newTabCounter = getNewGlobalTabCounter();
+                        final String captionTitleValue = Integer.toString(newTabCounter);
+                        attackerTabGroup.addTab(captionTitleValue, attackerPanel);
+                        attackerTabGroup.setSelectedIndex(attackerTabGroup.indexOfTab(captionTitleValue));
+
+                        // Tab caption
+                        JPanel tabCaptionPanel = new JPanel(new GridBagLayout());
+                        tabCaptionPanel.setOpaque(false);
+                        JLabel captionTitle = new JLabel(captionTitleValue);
+                        captionTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 3));
+
+                        // Define close button
+                        final JButton closeButton = new JButton("x");
+                        closeButton.setToolTipText("Click to close tab.");
+                        closeButton.setOpaque(false);
+                        closeButton.setContentAreaFilled(false);
+                        closeButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+                        closeButton.setPreferredSize(new Dimension(18, 18));
+                        closeButton.setMargin(new Insets(0, 0, 0, 0));
+                        closeButton.setForeground(Color.gray);
+
+                        // Close button mouse listener
+                        // performing the tab removal on mouse click
+                        // and defining hover effects
+                        closeButton.addMouseListener(new MouseListener() {
+
+                            @Override
+                            public void mouseClicked(MouseEvent e) {
+                                int index = attackerTabGroup.indexOfTab(captionTitleValue);
+                                loggerInstance.log(MainTabGroup.class, Integer.toString(index), Logger.LogLevel.DEBUG);
+                                if (index >= 0) {
+                                    attackerTabGroup.removeTabAt(index);
+                                }
+                            }
+
+                            @Override
+                            public void mousePressed(MouseEvent e) {}
+
+                            @Override
+                            public void mouseReleased(MouseEvent e) {}
+
+                            @Override
+                            public void mouseEntered(MouseEvent e) {
+                                closeButton.setForeground(Color.black);
+                            }
+
+                            @Override
+                            public void mouseExited(MouseEvent e) {
+                                closeButton.setForeground(Color.gray);
+                            }
+                        });
+
+                        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+                        gridBagConstraints.gridx = 0;
+                        gridBagConstraints.gridy = 0;
+                        gridBagConstraints.weightx = 1;
+                        tabCaptionPanel.add(captionTitle, gridBagConstraints);
+
+                        gridBagConstraints.gridx++;
+                        gridBagConstraints.weightx = 0;
+                        tabCaptionPanel.add(closeButton, gridBagConstraints);
+
+                        attackerTabGroup.setTabComponentAt(attackerTabGroup.indexOfTab(captionTitleValue), tabCaptionPanel);
 
                         // TODO: Highlight MainTabGroup (like on "send to repeater")
 
@@ -142,17 +204,17 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
      * Get the current tab index
      * @return the tab index.
      */
-    public int getTabIndex(){
-        return tabIndex;
+    public int getGlobalTabCounter(){
+        return globalTabCounter;
     }
 
     /**
      * Increase the tab index and get new value
      * @return the increased tab index.
      */
-    public int getNewTabIndex(){
-        tabIndex++;
-        return tabIndex;
+    public int getNewGlobalTabCounter(){
+        globalTabCounter++;
+        return globalTabCounter;
     }
 
     /**
