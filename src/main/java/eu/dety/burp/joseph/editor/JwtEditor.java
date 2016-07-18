@@ -44,13 +44,12 @@ import java.awt.Component;
 public class JwtEditor implements IMessageEditorTabFactory {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final Decoder joseDecoder = new Decoder();
-    private static final Finder finder = new Finder();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private String joseParameterName = null;
 
     /**
-     * Create new Source Viewer instance.
+     * Create JwtEditor instance.
      * @param callbacks {@link IBurpExtenderCallbacks}.
      */
     public JwtEditor(IBurpExtenderCallbacks callbacks) {
@@ -59,17 +58,17 @@ public class JwtEditor implements IMessageEditorTabFactory {
     }
 
     /**
-     * Create a new Instance of Burps own Request/Response Viewer (IMessageEditorTab).
+     * Create a new instance of Burps own request/response viewer (IMessageEditorTab).
      * @param controller {@link burp.IMessageEditorController}
      * @param editable True if message is editable, false otherwise.
-     * @return {@link burp.IMessageEditorTab}
+     * @return {@link JwtEditorTab} instance implementing {@link burp.IMessageEditorTab}
      */
     @Override
     public IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable) {
-        return new UIJwtEditorTab(controller, editable);
+        return new JwtEditorTab(controller, editable);
     }
 
-    class UIJwtEditorTab implements IMessageEditorTab {
+    private class JwtEditorTab implements IMessageEditorTab {
         private JTabbedPane UIJWTEditorTabPanel;
         private boolean editable;
         private byte[] currentMessage;
@@ -79,7 +78,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
         private ITextEditor sourceViewerPayload;
         private ITextEditor sourceViewerSignature;
 
-        UIJwtEditorTab(IMessageEditorController controller, boolean editable) {
+        JwtEditorTab(IMessageEditorController controller, boolean editable) {
             this.editable = editable;
             this.UIJWTEditorTabPanel = new JTabbedPane();
 
@@ -113,7 +112,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
             // Enable this tab for requests containing a JOSE parameter
             if(isRequest) {
                 for(Object param: PreferencesPanel.getParameterNames().toArray()) {
-                    if(helpers.getRequestParameter(content, param.toString()) != null && finder.checkJwtPattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
+                    if(helpers.getRequestParameter(content, param.toString()) != null && Finder.checkJwtPattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
                         joseParameterName = helpers.getRequestParameter(content, param.toString()).getName();
                         loggerInstance.log(getClass(), "JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
                         return true;
@@ -126,7 +125,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
         @Override
         public void setMessage(byte[] content, boolean isRequest) {
             if (content == null) {
-                // Clear display
+                // Clear displayed content
                 sourceViewerRaw.setText(null);
                 sourceViewerRaw.setEditable(false);
             } else if (joseParameterName != null) {

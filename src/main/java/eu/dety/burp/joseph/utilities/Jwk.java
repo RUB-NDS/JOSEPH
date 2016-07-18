@@ -41,7 +41,7 @@ public class Jwk {
     /**
      * Get RSA PublicKey list by JWK JSON input
      * @param input JSON Web Key {@link JSONObject}
-     * @return {@link PublicKey} or null
+     * @return List of {@link PublicKey}
      */
     public static List<PublicKey> getRsaPublicKeys(final Object input) {
         List<PublicKey> keys = new ArrayList<>();

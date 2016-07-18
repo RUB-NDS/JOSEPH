@@ -40,7 +40,6 @@ import org.json.JSONObject;
 public class AttackerPanel extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
-    private static final Finder finder = new Finder();
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
 
@@ -93,7 +92,7 @@ public class AttackerPanel extends JPanel {
         // Find the JOSE parameter
         for (IParameter param : requestInfo.getParameters()) {
             if(PreferencesPanel.getParameterNames().contains(param.getName())) {
-                if (finder.checkJwtPattern(param.getValue())) {
+                if (Finder.checkJwtPattern(param.getValue())) {
                     parameter = param;
                     break;
                 }

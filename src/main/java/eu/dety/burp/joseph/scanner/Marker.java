@@ -40,7 +40,6 @@ import java.util.ResourceBundle;
  */
 public class Marker implements IHttpListener {
     private static final Logger loggerInstance = Logger.getInstance();
-    private static final Finder finder = new Finder();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
     private final IExtensionHelpers helpers;
 
@@ -70,7 +69,7 @@ public class Marker implements IHttpListener {
         for (String header : requestInfo.getHeaders()) {
             if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER")) {
                 loggerInstance.log(getClass(), "Authorization HTTP Header with type bearer found.", Logger.LogLevel.DEBUG);
-                jwtFound = finder.checkJwtPattern(header);
+                jwtFound = Finder.checkJwtPattern(header);
                 break;
             }
         }
@@ -80,7 +79,7 @@ public class Marker implements IHttpListener {
             for (IParameter param : requestInfo.getParameters()) {
                 if(PreferencesPanel.getParameterNames().contains(param.getName())) {
                     loggerInstance.log(getClass(), String.format("Possible JWT parameter found: %s.", param.getName()), Logger.LogLevel.DEBUG);
-                    jwtFound = finder.checkJwtPattern(param.getValue());
+                    jwtFound = Finder.checkJwtPattern(param.getValue());
                     if (jwtFound) break;
                 }
             }
