@@ -16,11 +16,12 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package eu.dety.burp.joseph.attacks;
+package eu.dety.burp.joseph.attacks.KeyConfusion;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IHttpService;
+import eu.dety.burp.joseph.attacks.IAttack;
 import eu.dety.burp.joseph.gui.AttackerResultWindow;
 import eu.dety.burp.joseph.gui.table.TableEntry;
 import eu.dety.burp.joseph.utilities.Logger;
@@ -57,7 +58,7 @@ public class KeyConfusion extends SwingWorker<Integer, Integer> implements IAtta
         attackerResultWindow = new AttackerResultWindow(attackInfo.getName(), callbacks);
 
         // Add original message to result table
-        attackerResultWindow.addEntry(new TableEntry(0, "", attackInfo.getRequestResponse(), callbacks));
+        attackerResultWindow.addEntry(new TableEntry(0, -1, "", attackInfo.getRequestResponse(), callbacks));
 
         this.execute();
     }
@@ -67,12 +68,14 @@ public class KeyConfusion extends SwingWorker<Integer, Integer> implements IAtta
         IHttpService httpService = this.attackInfo.getRequestResponse().getHttpService();
 
         // Fire each prepared request and store responses in IHttpRequestResponse list
-        for (Map.Entry<String, byte[]> request : this.attackInfo.getRequests().entrySet()) {
-            IHttpRequestResponse requestResponse = callbacks.makeHttpRequest(httpService, request.getValue());
+        for (KeyConfusionAttackRequest attackRequest : this.attackInfo.getRequests()) {
+            IHttpRequestResponse requestResponse = callbacks.makeHttpRequest(httpService, attackRequest.getRequest());
             this.responses.add(requestResponse);
 
+            String payload = "Alg: " + attackRequest.getAlgorithm() + " KeyLen: " + attackRequest.getKeyLength();
+
             // Add new entry to result table
-            attackerResultWindow.addEntry(new TableEntry(this.responses.size(), request.getKey(), requestResponse, callbacks));
+            attackerResultWindow.addEntry(new TableEntry(this.responses.size(), attackRequest.getPayloadType(), payload, requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setPrograssBarValue(responses.size(), attackInfo.getAmountRequests());

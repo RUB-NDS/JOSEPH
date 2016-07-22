@@ -95,8 +95,10 @@ public interface IAttackInfo {
     IHttpRequestResponse getRequestResponse();
 
     /**
-     * Get list of prepared requests
-     * @return HashMap with byte array requests
+     * Get list of prepared {@link AttackRequest} objects
+     * @return List with {@link AttackRequest} objects
      */
-    HashMap<String, byte[]> getRequests();
+    List<? extends AttackRequest> getRequests();
+
 }
+

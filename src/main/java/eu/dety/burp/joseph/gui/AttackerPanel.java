@@ -23,6 +23,8 @@ import burp.*;
 
 import eu.dety.burp.joseph.attacks.*;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
+import eu.dety.burp.joseph.attacks.KeyConfusion.KeyConfusionInfo;
+import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionInfo;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.Logger;
