@@ -107,7 +107,7 @@ public class KeyConfusion implements IAttack {
             attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), payload, requestResponse, callbacks));
 
             // Update the progress bar
-            attackerResultWindow.setPrograssBarValue(responses.size(), attackInfo.getAmountRequests());
+            attackerResultWindow.setProgressBarValue(responses.size(), attackInfo.getAmountRequests());
 
             loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
         }

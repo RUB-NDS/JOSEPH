@@ -162,7 +162,7 @@ public class AttackerResultWindow extends JFrame {
      * @param request number of already performed requests
      * @param all amount of requests to be performed
      */
-    public void setPrograssBarValue(int request, int all) {
+    public void setProgressBarValue(int request, int all) {
         // If all requests have been performed, set to 100% and change text to "finished"
         if(request == all) {
             this.progressBar.setValue(100);
