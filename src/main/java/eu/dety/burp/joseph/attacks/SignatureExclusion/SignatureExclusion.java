@@ -28,7 +28,7 @@ import javax.swing.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Signature Exclusion Attack
@@ -41,16 +41,18 @@ import java.util.Map;
  * @author Dennis Detering
  * @version 1.0
  */
-public class SignatureExclusion extends SwingWorker<Integer, Integer> implements IAttack {
+public class SignatureExclusion implements IAttack {
     private static final Logger loggerInstance = Logger.getInstance();
     private SignatureExclusionInfo attackInfo;
     private IBurpExtenderCallbacks callbacks;
     private AttackerResultWindow attackerResultWindow;
     private List<IHttpRequestResponse> responses = new ArrayList<>();
+    private IHttpService httpService;
 
     public SignatureExclusion(IBurpExtenderCallbacks callbacks, SignatureExclusionInfo attackInfo) {
         this.callbacks = callbacks;
         this.attackInfo = attackInfo;
+        this.httpService = this.attackInfo.getRequestResponse().getHttpService();
     }
 
     @Override
@@ -61,29 +63,55 @@ public class SignatureExclusion extends SwingWorker<Integer, Integer> implements
         // Add original message to result table
         attackerResultWindow.addEntry(new TableEntry(0, -1, "", attackInfo.getRequestResponse(), callbacks));
 
-        this.execute();
+        // Create new AttackExecutor thread for each prepared request
+        for (SignatureExclusionAttackRequest attackRequest : this.attackInfo.getRequests()) {
+            AttackExecutor attackRequestExecutor = new AttackExecutor(attackRequest);
+            attackRequestExecutor.execute();
+        }
     }
 
-    @Override
-    protected Integer doInBackground() throws Exception {
-        IHttpService httpService = this.attackInfo.getRequestResponse().getHttpService();
+    /**
+     * Attack Executor
+     * <p>
+     * Performs the actual request and updates related widgets
+     */
+    private class AttackExecutor extends SwingWorker<IHttpRequestResponse, Integer> {
+        private SignatureExclusionAttackRequest attackRequest;
 
-        // Fire each prepared request and store responses in IHttpRequestResponse list
-        for (SignatureExclusionAttackRequest attackRequest : this.attackInfo.getRequests()) {
-            IHttpRequestResponse requestResponse = callbacks.makeHttpRequest(httpService, attackRequest.getRequest());
-            this.responses.add(requestResponse);
+        AttackExecutor(SignatureExclusionAttackRequest attackRequest) {
+            this.attackRequest = attackRequest;
+        }
+
+        @Override
+        // Fire prepared request and return responses as IHttpRequestResponse
+        protected IHttpRequestResponse doInBackground() {
+            return callbacks.makeHttpRequest(httpService, attackRequest.getRequest());
+        }
+
+        @Override
+        // Add response to response list, add new entry to attacker result window table and update process bar
+        protected void done() {
+            IHttpRequestResponse requestResponse = null;
+            try {
+                requestResponse = get();
+            } catch (InterruptedException | ExecutionException e) {
+                loggerInstance.log(SignatureExclusion.class, "Failed to get request result: " + e.getMessage(), Logger.LogLevel.ERROR);
+                return;
+            }
+
+            // Add response to response list
+            responses.add(requestResponse);
 
             // Add new entry to result table
-            attackerResultWindow.addEntry(new TableEntry(this.responses.size(), attackRequest.getPayloadType(), "Alg: " + attackRequest.getPayload(), requestResponse, callbacks));
+            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), "Alg: " + attackRequest.getPayload(), requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setPrograssBarValue(responses.size(), attackInfo.getAmountRequests());
+
+            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
         }
-        return null;
     }
 
-    @Override
-    protected void done() {
-        loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
-    }
+
+
 }
