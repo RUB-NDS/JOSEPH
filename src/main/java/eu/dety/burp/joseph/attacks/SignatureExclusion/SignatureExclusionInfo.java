@@ -85,6 +85,8 @@ public class SignatureExclusionInfo implements IAttackInfo {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
+        this.requests.clear();
+
         for (Map.Entry<payloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
             try {
                 // Change the "alg" header value for each of the noneAlgVariation entries

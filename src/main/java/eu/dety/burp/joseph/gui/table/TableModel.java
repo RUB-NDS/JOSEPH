@@ -130,7 +130,6 @@ public class TableModel extends AbstractTableModel {
             case 0:
                 return entry.getEntryIndex();
             case 1:
-                loggerInstance.log(getClass(), entry.getPayloadType(), Logger.LogLevel.ERROR);
                 return entry.getPayloadType();
             case 2:
                 return entry.getPayload();
