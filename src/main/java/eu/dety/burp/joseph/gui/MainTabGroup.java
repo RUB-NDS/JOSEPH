@@ -90,8 +90,9 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
             final IHttpRequestResponse message = messages[0];
 
-            // Check if message has been marked by JOSEPH extension
-            if(!Objects.equals(message.getHighlight(), Marker.getHighlightColor())) {
+            // Check if message has been marked by JOSEPH extension (or if tool is repeater)
+            // TODO: Other check than highlight
+            if(!Objects.equals(message.getHighlight(), Marker.getHighlightColor()) && iContextMenuInvocation.getToolFlag() != IBurpExtenderCallbacks.TOOL_REPEATER) {
                 return null;
             }
 
