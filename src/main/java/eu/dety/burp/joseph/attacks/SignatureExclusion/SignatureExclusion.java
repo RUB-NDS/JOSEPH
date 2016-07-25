@@ -91,7 +91,7 @@ public class SignatureExclusion implements IAttack {
         @Override
         // Add response to response list, add new entry to attacker result window table and update process bar
         protected void done() {
-            IHttpRequestResponse requestResponse = null;
+            IHttpRequestResponse requestResponse;
             try {
                 requestResponse = get();
             } catch (InterruptedException | ExecutionException e) {

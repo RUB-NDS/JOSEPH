@@ -91,7 +91,7 @@ public class KeyConfusion implements IAttack {
         // Add response to response list, add new entry to attacker result window table and update process bar
         protected void done() {
 
-            IHttpRequestResponse requestResponse = null;
+            IHttpRequestResponse requestResponse;
             try {
                 requestResponse = get();
             } catch (InterruptedException | ExecutionException e) {
@@ -104,7 +104,7 @@ public class KeyConfusion implements IAttack {
 
             // Add new entry to result table
             String payload = "Alg: " + attackRequest.getAlgorithm() + " KeyLen: " + attackRequest.getKeyLength();
-            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), "Alg: " + payload, requestResponse, callbacks));
+            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), payload, requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setPrograssBarValue(responses.size(), attackInfo.getAmountRequests());
