@@ -44,7 +44,7 @@ public class Decoder {
      * @param input byte array input
      * @return base64url encoded string
      */
-    private String base64UrlEncode(byte[] input) {
+    public String base64UrlEncode(byte[] input) {
         return new String(Base64.encodeBase64URLSafe(input));
     }
 

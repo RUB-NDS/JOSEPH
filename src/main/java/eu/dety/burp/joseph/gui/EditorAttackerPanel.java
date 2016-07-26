@@ -18,42 +18,40 @@
  */
 package eu.dety.burp.joseph.gui;
 
-
 import burp.*;
-
-import eu.dety.burp.joseph.attacks.*;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
+import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.attacks.KeyConfusion.KeyConfusionInfo;
 import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionInfo;
-import eu.dety.burp.joseph.utilities.Decoder;
-import eu.dety.burp.joseph.utilities.Finder;
+import eu.dety.burp.joseph.editor.JwtEditor;
 import eu.dety.burp.joseph.utilities.Logger;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
-
-/**
- * Attacker panel showing a single message and related attacks
- * @author Dennis Detering
- * @version 1.0
- */
-public class AttackerPanel extends JPanel {
+public class EditorAttackerPanel extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
+    private JwtEditor.JwtEditorTab jwtEditorReference;
 
     private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
     private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
-    private IHttpRequestResponse requestResponse;
-    private IRequestInfo requestInfo;
-    private IParameter parameter = null;
     private String type = "?";
     private String algorithm = "?";
     private IAttackInfo selectedAttack = null;
+
+    private HashMap<String, ? extends Enum> payloads;
+    private JComboBox payloadSelection = new JComboBox<>();
+    private DefaultComboBoxModel<String> payloadSelectionListModel =  new DefaultComboBoxModel<>();
+
+    private String header = "";
+    private String payload = "";
 
     /**
      * Register Attacks
@@ -78,43 +76,31 @@ public class AttackerPanel extends JPanel {
      * generate attackListModel based on type and suitableness of the attack.
      *
      * @param callbacks {@link IBurpExtenderCallbacks} extender callbacks
-     * @param message {@link IHttpRequestResponse} requestResponse message
      */
-    public AttackerPanel(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
-        Decoder joseDecoder = new Decoder();
+    public EditorAttackerPanel(IBurpExtenderCallbacks callbacks, JwtEditor.JwtEditorTab jwtEditorReference) {
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
-        this.requestResponse = message;
-        this.requestInfo = helpers.analyzeRequest(message);
+        this.jwtEditorReference = jwtEditorReference;
 
         // Register all available attacks
         registerAttacks();
 
-        // Find the JOSE parameter
-        for (IParameter param : requestInfo.getParameters()) {
-            if(PreferencesPanel.getParameterNames().contains(param.getName())) {
-                if (Finder.checkJwtPattern(param.getValue())) {
-                    parameter = param;
-                    break;
-                }
-            }
-        }
-
         // Initialize UI components
         initComponents();
+    }
 
-        // Parse the JOSE value to an JSONObject
-        JSONObject[] joseJSONComponents = joseDecoder.getJsonComponents(parameter.getValue());
+    /**
+     * Update the attack list
+     */
+    public void updateAttackList() {
+        attackListModel.removeAllElements();
+
+        this.header = jwtEditorReference.getHeader();
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
-        if(joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
-        if(joseJSONComponents[0].has("typ")) type = joseJSONComponents[0].getString("typ");
-        typeValue.setText(type);
-        algorithmValue.setText(algorithm);
-
-        loggerInstance.log(getClass(), "JOSE Parameter Name: " + parameter.getName(), Logger.LogLevel.DEBUG);
-        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . "
-                + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.LogLevel.DEBUG);
+        JSONObject headerJson = new JSONObject(header);
+        if(headerJson.has("alg")) algorithm = headerJson.getString("alg");
+        if(headerJson.has("typ")) type = headerJson.getString("typ");
 
         // Build available attacks list
         for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
@@ -129,18 +115,14 @@ public class AttackerPanel extends JPanel {
      * Clean up attack specific UI changes
      */
     private void clearAttackSelection() {
-        attackInfoName.setText("");
-        attackInfoName.setEnabled(false);
-
-        attackInfoDescription.setText("");
-        attackInfoDescription.setEnabled(false);
-
         extraPanel.removeAll();
         extraPanel.revalidate();
         extraPanel.repaint();
         extraPanel.setEnabled(false);
 
-        attackButton.setEnabled(false);
+        payloadSelectionListModel.removeAllElements();
+
+        updateButton.setEnabled(false);
     }
 
     /**
@@ -152,20 +134,11 @@ public class AttackerPanel extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        typeLabel = new javax.swing.JLabel();
         attackListLabel = new javax.swing.JLabel();
         attackList = new javax.swing.JComboBox<>();
         loadButton = new javax.swing.JButton();
-        algorithmLabel = new javax.swing.JLabel();
-        typeValue = new javax.swing.JLabel();
-        algorithmValue = new javax.swing.JLabel();
-        attackInfoName = new javax.swing.JLabel();
-        attackInfoDescription = new javax.swing.JLabel();
         extraPanel = new javax.swing.JPanel();
-        attackButton = new javax.swing.JButton();
-
-        typeLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
-        typeLabel.setText("Type:");
+        updateButton = new javax.swing.JButton();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
         attackListLabel.setText(bundle.getString("ATTACKLISTLABEL")); // NOI18N
@@ -184,22 +157,14 @@ public class AttackerPanel extends JPanel {
             }
         });
 
-        algorithmLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
-        algorithmLabel.setText("Algorithm:");
-
-        attackInfoName.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
-        attackInfoName.setEnabled(false);
-
-        attackInfoDescription.setEnabled(false);
-
         extraPanel.setEnabled(false);
         extraPanel.setLayout(new java.awt.GridBagLayout());
 
-        attackButton.setText(bundle.getString("ATTACKBUTTON")); // NOI18N
-        attackButton.setEnabled(false);
-        attackButton.addActionListener(new java.awt.event.ActionListener() {
+        updateButton.setText(bundle.getString("UPDATEBUTTON")); // NOI18N
+        updateButton.setEnabled(false);
+        updateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                attackButtonActionPerformed(evt);
+                updateButtonActionPerformed(evt);
             }
         });
 
@@ -210,53 +175,35 @@ public class AttackerPanel extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(typeLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(typeValue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(algorithmLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(algorithmValue))
                     .addComponent(attackListLabel)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loadButton))
-                    .addComponent(attackInfoName)
-                    .addComponent(attackInfoDescription)
                     .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(attackButton))
-                .addContainerGap(261, Short.MAX_VALUE))
+                    .addComponent(updateButton))
+                .addContainerGap(84, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(typeLabel)
-                    .addComponent(algorithmLabel)
-                    .addComponent(typeValue)
-                    .addComponent(algorithmValue))
-                .addGap(18, 18, 18)
                 .addComponent(attackListLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loadButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(attackInfoName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(attackInfoDescription)
                 .addGap(18, 18, 18)
                 .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(attackButton)
-                .addContainerGap(120, Short.MAX_VALUE))
+                .addComponent(updateButton)
+                .addContainerGap(180, Short.MAX_VALUE))
         );
-
-        attackInfoName.getAccessibleContext().setAccessibleName("attackInfoName");
     }// </editor-fold>//GEN-END:initComponents
+
+    private void attackListItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_attackListItemStateChanged
+        clearAttackSelection();
+    }//GEN-LAST:event_attackListItemStateChanged
 
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
         loggerInstance.log(getClass(), "Load button clicked, chosen attack: " + attackListModel.getSelectedItem(), Logger.LogLevel.DEBUG);
@@ -268,62 +215,61 @@ public class AttackerPanel extends JPanel {
 
         // Set attack information
         loggerInstance.log(selectedAttack.getClass(), "Loading attack information and additional UI components...", Logger.LogLevel.DEBUG);
-        attackInfoName.setText(selectedAttack.getName());
-        attackInfoName.setEnabled(true);
-
-        attackInfoDescription.setText(selectedAttack.getDescription());
-        attackInfoDescription.setEnabled(true);
 
         // Check if attack has extra UI components and update UI
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        boolean hasExtraUI = selectedAttack.getExtraUI(extraPanel, constraints);
+        selectedAttack.getExtraUI(extraPanel, constraints);
 
-        if(hasExtraUI) {
-            extraPanel.setEnabled(true);
-            extraPanel.revalidate();
-            extraPanel.repaint();
+        payloads = selectedAttack.getPayloadList();
+
+        payloadSelection.setPreferredSize(new Dimension(350, 25));
+
+        for(Map.Entry<String, ? extends Enum> payload : payloads.entrySet()) {
+            payloadSelectionListModel.addElement(payload.getKey());
         }
 
-        // Enable attack button
-        attackButton.setEnabled(true);
+        payloadSelection.setModel(payloadSelectionListModel);
 
+        constraints.gridy++;
+        extraPanel.add(new JLabel(bundle.getString("CHOOSE_PAYLOAD")), constraints);
+
+        constraints.gridy++;
+        extraPanel.add(payloadSelection, constraints);
+
+        extraPanel.setEnabled(true);
+        extraPanel.revalidate();
+        extraPanel.repaint();
+
+        // Enable attack button
+        updateButton.setEnabled(true);
     }//GEN-LAST:event_loadButtonActionPerformed
 
-    private void attackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attackButtonActionPerformed
-        loggerInstance.log(getClass(), "Attack button clicked, prepare attack and FIRE!", Logger.LogLevel.DEBUG);
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        loggerInstance.log(getClass(), "Update button clicked, modify request!", Logger.LogLevel.DEBUG);
+
+        this.header = jwtEditorReference.getHeader();
+        this.payload = jwtEditorReference.getPayload();
 
         try {
-            // Prepare the selected attack
-            loggerInstance.log(selectedAttack.getClass(), "Preparing attack...", Logger.LogLevel.DEBUG);
-            IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
+            HashMap<String, String> updatedValues = selectedAttack.updateValuesByPayload(payloads.get(payloadSelectionListModel.getSelectedItem()), this.header, this.payload);
+            this.jwtEditorReference.updateSourceViewer(updatedValues.get("header"), updatedValues.get("payload"), updatedValues.get("signature"));
 
-            // Perform the selected attack
-            loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.LogLevel.DEBUG);
-            attack.performAttack();
+            loggerInstance.log(selectedAttack.getClass(), "Selected payload: " + payloadSelectionListModel.getSelectedItem(), Logger.LogLevel.DEBUG);
         } catch (AttackPreparationFailedException e) {
             // Show error popup with exception message
             JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), bundle.getString("ATTACK_PREPARATION_FAILED"), JOptionPane.ERROR_MESSAGE);
             loggerInstance.log(selectedAttack.getClass(), e.getMessage(), Logger.LogLevel.ERROR);
         }
 
-    }//GEN-LAST:event_attackButtonActionPerformed
+    }//GEN-LAST:event_updateButtonActionPerformed
 
-    private void attackListItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_attackListItemStateChanged
-        clearAttackSelection();
-    }//GEN-LAST:event_attackListItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel algorithmLabel;
-    private javax.swing.JLabel algorithmValue;
-    private javax.swing.JButton attackButton;
-    private javax.swing.JLabel attackInfoDescription;
-    private javax.swing.JLabel attackInfoName;
     private javax.swing.JComboBox<String> attackList;
     private javax.swing.JLabel attackListLabel;
     private javax.swing.JPanel extraPanel;
     private javax.swing.JButton loadButton;
-    private javax.swing.JLabel typeLabel;
-    private javax.swing.JLabel typeValue;
+    private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
 }

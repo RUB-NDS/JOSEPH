@@ -25,7 +25,9 @@ import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusion;
 import eu.dety.burp.joseph.utilities.Decoder;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Signature Exclusion Attack Info
@@ -37,7 +39,7 @@ import java.util.*;
  * @version 1.0
  */
 public class SignatureExclusionInfo implements IAttackInfo {
-    private Decoder joseDecoder;
+    private Decoder joseDecoder = new Decoder();
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
     private IParameter parameter;
@@ -64,6 +66,13 @@ public class SignatureExclusionInfo implements IAttackInfo {
         put(payloadType.MIXED, "nOnE");
     }};
 
+    // Hashmap of available payloads with a verbose name (including the payloadType)
+    private static final HashMap<String, payloadType> payloads = new HashMap<String, payloadType>() {{
+        for (Map.Entry<payloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
+            put(String.format("Alg: %s (0x%02X)", noneAlgVariation.getValue(), noneAlgVariation.getKey().ordinal()), noneAlgVariation.getKey());
+        }
+    }};
+
     // Amount of requests needed
     private static final int amountRequests = noneAlgVariations.size();
 
@@ -75,13 +84,15 @@ public class SignatureExclusionInfo implements IAttackInfo {
         MIXED
     }
 
-    // List of SignatureExclusionsAttackRequest obejcts holding prepared attack requests
+    // List of SignatureExclusionsAttackRequest objects holding prepared attack requests
     private List<SignatureExclusionAttackRequest> requests = new ArrayList<>();
+
+    public SignatureExclusionInfo(IBurpExtenderCallbacks callbacks) {
+        this.helpers = callbacks.getHelpers();
+    }
 
     @Override
     public SignatureExclusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
-        this.joseDecoder = new Decoder();
-        this.helpers = callbacks.getHelpers();
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
@@ -137,7 +148,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public boolean getExtraUI(JPanel extraPanel) {
+    public boolean getExtraUI(JPanel extraPanel, GridBagConstraints constraints) {
         return false;
     }
 
@@ -160,4 +171,21 @@ public class SignatureExclusionInfo implements IAttackInfo {
     public List<SignatureExclusionAttackRequest> getRequests() {
         return this.requests;
     }
+
+    @Override
+    public HashMap<String, payloadType> getPayloadList() {return payloads; }
+
+    @Override
+    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload) {
+        HashMap<String, String> result = new HashMap<>();
+
+        result.put("header", header.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + noneAlgVariations.get(payloadTypeId) + "\""));
+        result.put("payload", payload);
+        result.put("signature", "");
+
+        return result;
+    }
+
+
+
 }

@@ -24,6 +24,8 @@ import burp.IParameter;
 import burp.IRequestInfo;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +35,7 @@ import java.util.List;
  * @version 1.0
  */
 public interface IAttackInfo {
+
     /**
      * Prepare the attack by loading all necessary parameter
      * @param requestResponse {@link IHttpRequestResponse} requestResponse message
@@ -72,7 +75,7 @@ public interface IAttackInfo {
      * Get additional UI components if further data is needed to perform the attack
      * @return True if attack provides extra UI elements
      */
-    boolean getExtraUI(JPanel extraPanel);
+    boolean getExtraUI(JPanel extraPanel, GridBagConstraints constraints);
 
     /**
      * Get list of suitable JOSE types
@@ -99,6 +102,22 @@ public interface IAttackInfo {
      * @return List with {@link AttackRequest} objects
      */
     List<? extends AttackRequest> getRequests();
+
+    /**
+     * Get list of available payloads
+     * @return HashMap with payloadType and explaining name
+     */
+    HashMap<String, ? extends Enum> getPayloadList();
+    // TODO: Other way round unfortunately not working: issues with ComboBox in EditorAttackPanel
+
+    /**
+     * Get HashMap with modified header, payload, signature values
+     * @param payloadType The payload type identifier
+     * @param header The header JSON string
+     * @param payload The payload JSON string
+     * @return HashMap with modified header, payload, signature values
+     */
+    HashMap<String, String> updateValuesByPayload(Enum payloadType, String header, String payload) throws AttackPreparationFailedException;
 
 }
 
