@@ -35,5 +35,15 @@ public class Finder {
         return jwtMatcher.matches();
     }
 
-    
+    /**
+     * Check whether given JWE candidate matches regex pattern
+     * @param candidate String containing the JWE candidate value.
+     * @return boolean whether regex pattern matched or not.
+     */
+    public static boolean checkJwePattern(String candidate) {
+        Pattern jwePattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)", Pattern.CASE_INSENSITIVE);
+        Matcher jweMatcher = jwePattern.matcher(candidate);
+
+        return jweMatcher.matches();
+    }
 }

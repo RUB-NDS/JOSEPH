@@ -152,8 +152,8 @@ public class JwtEditor implements IMessageEditorTabFactory {
                 String payload = joseDecoder.getDecoded(joseParts[1]);
                 String signature = joseParts[2];
 
-                sourceViewerHeader.setText(header.getBytes());
-                sourceViewerPayload.setText(payload.getBytes());
+                sourceViewerHeader.setText(helpers.stringToBytes(header));
+                sourceViewerPayload.setText(helpers.stringToBytes(payload));
                 sourceViewerSignature.setText(helpers.stringToBytes(signature));
 
                 editorAttackerPanel.updateAttackList();
@@ -191,11 +191,11 @@ public class JwtEditor implements IMessageEditorTabFactory {
          * Update all related source viewer editors
          * @param header The header JSON string
          * @param payload The payload JSON string
-         * @param signature The signature JSON string
+         * @param signature The signature base64 string
          */
         public void updateSourceViewer(String header, String payload, String signature) {
-            sourceViewerHeader.setText(header.getBytes());
-            sourceViewerPayload.setText(payload.getBytes());
+            sourceViewerHeader.setText(helpers.stringToBytes(header));
+            sourceViewerPayload.setText(helpers.stringToBytes(payload));
             sourceViewerSignature.setText(helpers.stringToBytes(signature));
             this.isModified = true;
         }
