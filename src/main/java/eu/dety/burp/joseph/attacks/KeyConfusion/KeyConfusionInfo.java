@@ -373,6 +373,11 @@ public class KeyConfusionInfo implements IAttackInfo {
             default:
                 loggerInstance.log(getClass(), "Key format is PEM:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
+                // Simple check if String has valid format
+                if(!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MII")) {
+                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
+                }
+
                 modifiedKey = transformKeyByPayload(payloadTypeId, publicKeyValue);
         }
 
