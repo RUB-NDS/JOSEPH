@@ -154,12 +154,14 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
     @Override
     public boolean isSuitable(String type, String algorithm) {
-        if(type != null && !type.equals("")) {
-            return this.getSuitableTypes().contains(type.toLowerCase());
-        }
+        // TODO: How to check suitablility best?
+        // Should work for all JWT and JWS
 
-        // TODO: Guessing / further checks if type is null
-        return false;
+//        if(type != null && !type.equals("")) {
+//            return this.getSuitableTypes().contains(type.toLowerCase());
+//        }
+
+        return true;
     }
 
     @Override
