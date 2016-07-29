@@ -39,10 +39,17 @@ public class FinderTest {
     }
 
     @Test
-    public void checkJwtPatternWithInvalidEncodedHeaderJwtInputReturnsFalse() {
+    public void checkJwtPatternWithInvalidEncodedHeaderJwtWithoutEndingDotInputReturnsFalse() {
         String token = "SW52YWxpZCBIZWFkZXI.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
         assertFalse(Finder.checkJwtPattern(token));
+    }
+
+    @Test
+    public void checkJwtPatternWithTwoComponentJwtWithEndingDotInputReturnsTrue() {
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.";
+
+        assertTrue(Finder.checkJwtPattern(token));
     }
 
     @Test
@@ -52,14 +59,13 @@ public class FinderTest {
         assertFalse(Finder.checkJwtPattern(token));
     }
 
-    /* TODO: Implement if different checker for JWT and JWE exist */
-    @Ignore
+    @Test
     public void checkJwtPatternWithInvalidEncodedPayloadJwtInputReturnsFalse() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.SW52YWxpZCBQYXlsb2Fk.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
         assertFalse(Finder.checkJwtPattern(token));
     }
 
-    @Ignore
+    @Test
     public void checkJwtPatternWithFourComponentJwtInputReturnsFalse() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
         assertFalse(Finder.checkJwtPattern(token));
