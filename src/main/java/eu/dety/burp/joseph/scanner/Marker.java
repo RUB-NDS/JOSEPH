@@ -84,7 +84,6 @@ public class Marker implements IHttpListener {
                     jwtFound = Finder.checkJwtPattern(param.getValue());
                     jweFound = Finder.checkJwePattern(param.getValue());
 
-                    loggerInstance.log(getClass(), "HIER: " + jweFound, Logger.LogLevel.DEBUG);
                     if (jwtFound || jweFound) break;
                 }
             }
