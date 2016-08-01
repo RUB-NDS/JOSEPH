@@ -72,7 +72,9 @@ public class JweEditor implements IMessageEditorTabFactory {
         private ITextEditor sourceViewerCek;
         private ITextEditor sourceViewerIv;
         private ITextEditor sourceViewerCiphertext;
-        private ITextEditor sourceViewerAad;
+        private ITextEditor sourceViewerTag;
+
+        // private ITextEditor sourceViewerAad;
         // private EditorAttackerPanel editorAttackerPanel;
 
         JweEditorTab(IMessageEditorController controller, boolean editable) {
@@ -84,13 +86,13 @@ public class JweEditor implements IMessageEditorTabFactory {
             sourceViewerCek = callbacks.createTextEditor();
             sourceViewerIv = callbacks.createTextEditor();
             sourceViewerCiphertext = callbacks.createTextEditor();
-            sourceViewerAad = callbacks.createTextEditor();
+            sourceViewerTag = callbacks.createTextEditor();
 
             JweEditorTabPanel.addTab("Header", sourceViewerHeader.getComponent());
             JweEditorTabPanel.addTab("CEK", sourceViewerCek.getComponent());
             JweEditorTabPanel.addTab("IV", sourceViewerIv.getComponent());
             JweEditorTabPanel.addTab("Ciphertext", sourceViewerCiphertext.getComponent());
-            JweEditorTabPanel.addTab("AAD", sourceViewerAad.getComponent());
+            JweEditorTabPanel.addTab("AuthTag", sourceViewerTag.getComponent());
 
 //            editorAttackerPanel = new EditorAttackerPanel(callbacks, this);
 //            if(editable) {
@@ -139,8 +141,8 @@ public class JweEditor implements IMessageEditorTabFactory {
                 sourceViewerCiphertext.setText(null);
                 sourceViewerCiphertext.setEditable(false);
 
-                sourceViewerAad.setText(null);
-                sourceViewerAad.setEditable(false);
+                sourceViewerTag.setText(null);
+                sourceViewerTag.setEditable(false);
 
                 // editorAttackerPanel.setEnabled(false);
             } else if (joseParameterName != null) {
@@ -153,19 +155,19 @@ public class JweEditor implements IMessageEditorTabFactory {
                 sourceViewerCek.setEditable(editable);
                 sourceViewerIv.setEditable(editable);
                 sourceViewerCiphertext.setEditable(editable);
-                sourceViewerAad.setEditable(editable);
+                sourceViewerTag.setEditable(editable);
 
                 String header = joseDecoder.getDecoded(joseParts[0]);
                 String cek = joseParts[1];
                 String iv = joseParts[2];
                 String ciphertext = joseParts[3];
-                String aad = joseParts[4];
+                String tag = joseParts[4];
 
                 sourceViewerHeader.setText(helpers.stringToBytes(header));
                 sourceViewerCek.setText(helpers.stringToBytes(cek));
                 sourceViewerIv.setText(helpers.stringToBytes(iv));
                 sourceViewerCiphertext.setText(helpers.stringToBytes(ciphertext));
-                sourceViewerAad.setText(helpers.stringToBytes(aad));
+                sourceViewerTag.setText(helpers.stringToBytes(tag));
 
                 // editorAttackerPanel.updateAttackList();
             }
@@ -181,7 +183,7 @@ public class JweEditor implements IMessageEditorTabFactory {
                 helpers.bytesToString(sourceViewerCek.getText()),
                 helpers.bytesToString(sourceViewerIv.getText()),
                 helpers.bytesToString(sourceViewerCiphertext.getText()),
-                helpers.bytesToString(sourceViewerAad.getText())
+                helpers.bytesToString(sourceViewerTag.getText())
             };
 
             // Update the request with the new parameter value
@@ -190,7 +192,7 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         @Override
         public boolean isModified() {
-            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerCek.isTextModified() || sourceViewerIv.isTextModified()  || sourceViewerCiphertext.isTextModified() || sourceViewerAad.isTextModified() || this.isModified);
+            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerCek.isTextModified() || sourceViewerIv.isTextModified()  || sourceViewerCiphertext.isTextModified() || sourceViewerTag.isTextModified() || this.isModified);
             this.isModified = false;
             return isModified;
         }
@@ -206,15 +208,15 @@ public class JweEditor implements IMessageEditorTabFactory {
          * @param cek The CEK base64string
          * @param iv The IV base64string
          * @param ciphertext The ciphertext base64string
-         * @param aad The aad base64string
+         * @param tag The AuthTag base64string
 
          */
-        public void updateSourceViewer(String header, String cek, String iv, String ciphertext, String aad) {
+        public void updateSourceViewer(String header, String cek, String iv, String ciphertext, String tag) {
             sourceViewerHeader.setText(helpers.stringToBytes(header));
             sourceViewerCek.setText(helpers.stringToBytes(cek));
             sourceViewerIv.setText(helpers.stringToBytes(iv));
             sourceViewerCiphertext.setText(helpers.stringToBytes(ciphertext));
-            sourceViewerAad.setText(helpers.stringToBytes(aad));
+            sourceViewerTag.setText(helpers.stringToBytes(tag));
             this.isModified = true;
         }
 
@@ -251,11 +253,11 @@ public class JweEditor implements IMessageEditorTabFactory {
         }
 
         /**
-         * Get the AAD value from sourceViewerAad editor as string
-         * @return AAD JSON string
+         * Get the authentication tag value from sourceViewerTag editor as string
+         * @return AuthTag JSON string
          */
-        public String getAad() {
-            return helpers.bytesToString(sourceViewerAad.getText());
+        public String getTag() {
+            return helpers.bytesToString(sourceViewerTag.getText());
         }
     }
 }
