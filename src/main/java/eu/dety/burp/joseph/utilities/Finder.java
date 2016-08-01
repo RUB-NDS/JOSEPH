@@ -21,6 +21,11 @@ package eu.dety.burp.joseph.utilities;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Help functions to find JWT and JWE patterns.
+ * @author Dennis Detering
+ * @version 1.0
+ */
 public class Finder {
 
     /**

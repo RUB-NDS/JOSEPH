@@ -38,7 +38,7 @@ import java.awt.Component;
 /**
  * JSON Web Token (JWT) Editor.
  * <p>
- * Display decoded JWT syntax highlighted.
+ * Display decoded JWT components.
  * @author Dennis Detering
  * @version 1.0
  */

@@ -31,7 +31,7 @@ import java.awt.*;
 /**
  * JSON Web Token (JWE) Editor.
  * <p>
- * Display decoded JWE syntax highlighted.
+ * Display decoded JWE components.
  * @author Dennis Detering
  * @version 1.0
  */
