@@ -89,10 +89,10 @@ public class JweEditor implements IMessageEditorTabFactory {
             sourceViewerTag = callbacks.createTextEditor();
 
             JweEditorTabPanel.addTab("Header", sourceViewerHeader.getComponent());
-            JweEditorTabPanel.addTab("CEK", sourceViewerCek.getComponent());
-            JweEditorTabPanel.addTab("IV", sourceViewerIv.getComponent());
-            JweEditorTabPanel.addTab("Ciphertext", sourceViewerCiphertext.getComponent());
-            JweEditorTabPanel.addTab("AuthTag", sourceViewerTag.getComponent());
+            JweEditorTabPanel.addTab("CEK (base64)", sourceViewerCek.getComponent());
+            JweEditorTabPanel.addTab("IV (base64)", sourceViewerIv.getComponent());
+            JweEditorTabPanel.addTab("Ciphertext (base64)", sourceViewerCiphertext.getComponent());
+            JweEditorTabPanel.addTab("AuthTag (base64)", sourceViewerTag.getComponent());
 
 //            editorAttackerPanel = new EditorAttackerPanel(callbacks, this);
 //            if(editable) {
