@@ -115,6 +115,7 @@ public interface IAttackInfo {
      * @param payloadType The payload type identifier
      * @param header The header JSON string
      * @param payload The payload JSON string
+     * @throws AttackPreparationFailedException if error occurs during preparation step
      * @return HashMap with modified header, payload, signature values
      */
     HashMap<String, String> updateValuesByPayload(Enum payloadType, String header, String payload) throws AttackPreparationFailedException;
