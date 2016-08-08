@@ -20,6 +20,7 @@ package eu.dety.burp.joseph.gui;
 
 import burp.*;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
+import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1Info;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.attacks.KeyConfusion.KeyConfusionInfo;
 import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionInfo;
@@ -67,6 +68,10 @@ public class EditorAttackerPanel extends JPanel {
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
         registeredAttacks.put(keyConfusionInfo.getName(), keyConfusionInfo);
         loggerInstance.log(getClass(), "Attack registered: Key Confusion", Logger.LogLevel.INFO);
+
+        BleichenbacherPkcs1Info bleichenbacherPkcs1Info = new BleichenbacherPkcs1Info(callbacks);
+        registeredAttacks.put(bleichenbacherPkcs1Info.getName(), bleichenbacherPkcs1Info);
+        loggerInstance.log(getClass(), "Attack registered: Bleichenbacher PKCS#1 v1.5", Logger.LogLevel.INFO);
     }
 
     /**
