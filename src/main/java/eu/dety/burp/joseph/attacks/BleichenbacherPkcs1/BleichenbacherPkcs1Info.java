@@ -24,9 +24,9 @@ import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Jwk;
 import eu.dety.burp.joseph.utilities.Logger;
+import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.simple.parser.JSONParser;
-
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -34,8 +34,11 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
+import java.io.ByteArrayInputStream;
 import java.security.*;
+import java.security.cert.*;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 import java.util.List;
 
@@ -126,14 +129,63 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
         this.requests.clear();
 
+        String publicKeyValue = publicKey.getText();
+
+        // Throw error if public key value is empty
+        if(publicKeyValue.isEmpty()) {
+            throw new AttackPreparationFailedException(bundle.getString("PROVIDE_PUBKEY"));
+        }
+
+        RSAPublicKey publicKey;
+        try {
+            Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
+            List<PublicKey> publicKeys = Jwk.getRsaPublicKeys(publickKeyValueJson);
+            publicKey = (RSAPublicKey)publicKeys.get(0);
+
+        } catch (Exception e) {
+            throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
+        }
+
+        // TODO: Support PEM
+//        // Parse public key according to selected format
+//        int publicKeyFormat = publicKeySelection.getSelectedIndex();
+//
+//        switch (publicKeyFormat) {
+//            // JWK (JSON)
+//            case 1:
+//                loggerInstance.log(getClass(), "Key format is JWK:  " + publicKeyValue, Logger.LogLevel.DEBUG);
+//
+//                try {
+//                    Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
+//                    List<PublicKey> publicKeys = Jwk.getRsaPublicKeys(publickKeyValueJson);
+//                    publicKey = (RSAPublicKey)publicKeys.get(0);
+//
+//                } catch (Exception e) {
+//                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
+//                }
+//
+//                break;
+//            // PEM (String)
+//            default:
+//                loggerInstance.log(getClass(), "Key format is PEM:  " + publicKeyValue, Logger.LogLevel.DEBUG);
+//
+//                try {
+//                    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(publicKeyValue));
+//                    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+//                    publicKey = (RSAPublicKey)keyFactory.generatePublic(keySpec);
+//
+//
+//                } catch (Exception e) {
+//                    loggerInstance.log(getClass(), "Error on transforming to RSAPublicKey:  " + e.getMessage(), Logger.LogLevel.ERROR);
+//                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
+//                }
+//
+//        }
+
         HashMap<payloadType, byte[]> encryptedKeys;
 
         try {
-            Object jwk = new JSONParser().parse("{\"keys\":[{ \"kty\": \"RSA\",\"use\": \"sig\",\"n\": \"AK9LhraAG8Tz55FnLk99Q1V-rJEAS7PhXcaXK5z4tw0IOWVXVHKf7xXibbPRwQVIyF4YUaoanmrkzUa0aU-oWXGdBsBmo4CIhj8jcY5YZFtZF7ynov_3a-8-dQNcfjc6_1U6bBw95bsP6C-oJhaXmX2fnAuVpcK0BjkQ3zoI7SGikTLGwclPJ1WsvTo2pX3HR6QCc1puvDjaO3gBA0mn_S6q3TL6mOqYDIeD3b6aklNbobHe1QSm1rRLO7I-j7B-qiAGb_gGLTRndBc4ZI-sWkwQGOkZeEugJukgspmWAmFYd821RXQ9M8egqCYsVM7FsEm_raKvSG2ehxFo7ZSVbLM\",\"e\": \"AQAB\" },{\"kty\":\"RSA\",\"n\": \"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\",\"e\":\"AQAB\",\"alg\":\"RS256\",\"kid\":\"2011-04-29\"}]}");
-
-            List<PublicKey> publicKeys = Jwk.getRsaPublicKeys(jwk);
-
-            encryptedKeys = generatePkcs1Vectors((RSAPublicKey)publicKeys.get(0), 32);
+            encryptedKeys = generatePkcs1Vectors(publicKey, 32);
 
         } catch(Exception e) {
             throw new AttackPreparationFailedException(e.getMessage());
@@ -192,7 +244,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         publicKey = new JTextArea(10, 50);
         publicKey.setLineWrap(true);
 
-        publicKeySelectionListModel.addElement("PEM (String)");
+        // publicKeySelectionListModel.addElement("PEM (String)");
         publicKeySelectionListModel.addElement("JWK (JSON)");
 
         publicKeySelection.setModel(publicKeySelectionListModel);
