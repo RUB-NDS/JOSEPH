@@ -45,6 +45,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     private int globalTabCounter = 0;
 
     // Sub tabs within JOSEPH MainTabGroup
+    private DecoderPanel decoderPanel;
     private HelpPanel helpPanel;
     private PreferencesPanel preferencesPanel;
     private JTabbedPane attackerTabGroup = new JTabbedPane();
@@ -186,6 +187,14 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     }
 
     /**
+     * Getter for the decoder panel
+     * @return {@link DecoderPanel} object.
+     */
+    public DecoderPanel getDecoderPanel() {
+        return decoderPanel;
+    }
+
+    /**
      * Getter for the help panel
      * @return {@link HelpPanel} object.
      */
@@ -223,13 +232,18 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
      */
     private void initComponents(){
         // Create panel instances
+        decoderPanel = new DecoderPanel();
         helpPanel = new HelpPanel();
         preferencesPanel = new PreferencesPanel();
 
         // Add panel instances as tabs
         this.addTab(bundle.getString("ATTACKER"), attackerTabGroup);
+        this.addTab(bundle.getString("DECODER"), decoderPanel);
         this.addTab(bundle.getString("PREFERENCES"), preferencesPanel);
         this.addTab(bundle.getString("HELP"), helpPanel);
+
+        attackerTabGroup.addTab(bundle.getString("INFO"), new AttackerInfoPanel());
+
 
         // Use Burp UI settings and add as extension tab
         callbacks.customizeUiComponent(this);
