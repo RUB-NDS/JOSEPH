@@ -395,8 +395,11 @@ public class KeyConfusionInfo implements IAttackInfo {
                 macAlg = "HmacSHA512";
                 break;
             default:
+                algorithm = "HS256";
                 macAlg = "HmacSHA256";
         }
+
+        header = header.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + algorithm + "\"");
 
         HashMap<String, String> result = new HashMap<>();
         result.put("header", header);
