@@ -1,3 +1,4 @@
+package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
@@ -16,14 +17,10 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package eu.dety.burp.joseph.gui;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpService;
 import burp.IMessageEditor;
-import eu.dety.burp.joseph.gui.table.Table;
-import eu.dety.burp.joseph.gui.table.TableEntry;
-import eu.dety.burp.joseph.gui.table.TableModel;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
@@ -43,14 +40,14 @@ import java.util.Objects;
  * @author Dennis Detering
  * @version 1.0
  */
-public class AttackerResultWindow extends JFrame {
+public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
     private static final Logger loggerInstance = Logger.getInstance();
-    private Table table;
+    private BleichenbacherPkcs1Table table;
     private JProgressBar progressBar = new JProgressBar();
     private JTabbedPane topTabs;
 
 
-    public AttackerResultWindow(String caption, final IBurpExtenderCallbacks callbacks) {
+    public BleichenbacherPkcs1AttackerResultWindow(String caption, final IBurpExtenderCallbacks callbacks) {
         super(caption);
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -64,14 +61,14 @@ public class AttackerResultWindow extends JFrame {
         responseViewer = callbacks.createMessageEditor(null, false);
 
         // Create result table
-        table = new Table(new TableModel(new ArrayList<TableEntry>()));
+        table = new BleichenbacherPkcs1Table(new BleichenbacherPkcs1TableModel(new ArrayList<BleichenbacherPkcs1TableEntry>()));
 
         // Add selection changed listener to update request and response viewer editors
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent evt) {
                 loggerInstance.log(table.getClass(), "Selection changed", Logger.LogLevel.DEBUG);
 
-                TableEntry entry = table.getEntryByRow(table.getSelectedRow());
+                BleichenbacherPkcs1TableEntry entry = table.getEntryByRow(table.getSelectedRow());
 
                 requestViewer.setMessage(entry.getMessage().getRequest(), true);
                 responseViewer.setMessage(entry.getMessage().getResponse(), false);
@@ -88,7 +85,7 @@ public class AttackerResultWindow extends JFrame {
             public void actionPerformed(ActionEvent evt) {
                 loggerInstance.log(table.getClass(), "Send to intruder clicked", Logger.LogLevel.DEBUG);
 
-                TableEntry entry = table.getEntryByRow(table.getSelectedRow());
+                BleichenbacherPkcs1TableEntry entry = table.getEntryByRow(table.getSelectedRow());
 
                 IHttpService messageHttpService = entry.getMessage().getHttpService();
                 boolean isHttps = false;
@@ -107,7 +104,7 @@ public class AttackerResultWindow extends JFrame {
             public void actionPerformed(ActionEvent evt) {
                 loggerInstance.log(table.getClass(), "Send to repeater clicked", Logger.LogLevel.DEBUG);
 
-                TableEntry entry = table.getEntryByRow(table.getSelectedRow());
+                BleichenbacherPkcs1TableEntry entry = table.getEntryByRow(table.getSelectedRow());
 
                 IHttpService messageHttpService = entry.getMessage().getHttpService();
                 boolean isHttps = false;
@@ -151,15 +148,15 @@ public class AttackerResultWindow extends JFrame {
     }
 
     /**
-     * Add new {@link TableEntry} to table
-     * @param tableEntry {@link TableEntry} table entry
+     * Add new {@link BleichenbacherPkcs1TableEntry} to table
+     * @param BleichenbacherPkcs1TableEntry {@link BleichenbacherPkcs1TableEntry} table entry
      */
-    public void addEntry(TableEntry tableEntry) {
-        this.table.addEntry(tableEntry);
+    public void addEntry(BleichenbacherPkcs1TableEntry BleichenbacherPkcs1TableEntry) {
+        this.table.addEntry(BleichenbacherPkcs1TableEntry);
     }
 
     /**
-     * Add new {@link TableEntry} to table
+     * Add new {@link BleichenbacherPkcs1TableEntry} to table
      * @param request number of already performed requests
      * @param all amount of requests to be performed
      */

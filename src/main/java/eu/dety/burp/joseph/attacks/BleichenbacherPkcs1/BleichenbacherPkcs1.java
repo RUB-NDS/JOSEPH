@@ -21,9 +21,9 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IHttpService;
+import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui.BleichenbacherPkcs1AttackerResultWindow;
+import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui.BleichenbacherPkcs1TableEntry;
 import eu.dety.burp.joseph.attacks.IAttack;
-import eu.dety.burp.joseph.gui.AttackerResultWindow;
-import eu.dety.burp.joseph.gui.table.TableEntry;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
@@ -44,7 +44,7 @@ public class BleichenbacherPkcs1 implements IAttack {
     private static final Logger loggerInstance = Logger.getInstance();
     private BleichenbacherPkcs1Info attackInfo;
     private IBurpExtenderCallbacks callbacks;
-    private AttackerResultWindow attackerResultWindow;
+    private BleichenbacherPkcs1AttackerResultWindow attackerResultWindow;
     private List<IHttpRequestResponse> responses = new ArrayList<>();
     private IHttpService httpService;
 
@@ -57,10 +57,13 @@ public class BleichenbacherPkcs1 implements IAttack {
     @Override
     public  void performAttack() {
         // Create attacker result window
-        attackerResultWindow = new AttackerResultWindow(attackInfo.getName(), callbacks);
+        attackerResultWindow = new BleichenbacherPkcs1AttackerResultWindow(attackInfo.getName(), callbacks);
 
         // Add original message to result table
-        attackerResultWindow.addEntry(new TableEntry(0, -1, "", attackInfo.getRequestResponse(), callbacks));
+        attackerResultWindow.addEntry(new BleichenbacherPkcs1TableEntry(0, -1, "", attackInfo.getRequestResponse(), callbacks));
+
+        attackerResultWindow.addTab("Decryption Attack", new JPanel());
+        attackerResultWindow.setTabEnabled(1, false);
 
         // Create new AttackExecutor thread for each prepared request
         for (BleichenbacherPkcs1AttackRequest attackRequest : this.attackInfo.getRequests()) {
@@ -103,7 +106,7 @@ public class BleichenbacherPkcs1 implements IAttack {
             responses.add(requestResponse);
 
             // Add new entry to result table
-            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), attackRequest.getVectorName(), requestResponse, callbacks));
+            attackerResultWindow.addEntry(new BleichenbacherPkcs1TableEntry(responses.size(), attackRequest.getPayloadType(), attackRequest.getVectorName(), requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setProgressBarValue(responses.size(), attackInfo.getAmountRequests());

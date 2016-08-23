@@ -24,7 +24,6 @@ import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Jwk;
 import eu.dety.burp.joseph.utilities.Logger;
-import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.simple.parser.JSONParser;
 
@@ -34,11 +33,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
-import java.io.ByteArrayInputStream;
 import java.security.*;
-import java.security.cert.*;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 import java.util.List;
 
