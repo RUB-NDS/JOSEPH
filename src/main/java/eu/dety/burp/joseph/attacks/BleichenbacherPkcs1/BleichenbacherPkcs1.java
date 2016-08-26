@@ -22,6 +22,7 @@ import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IHttpService;
 import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui.BleichenbacherPkcs1AttackerResultWindow;
+import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui.BleichenbacherPkcs1DecryptionAttackPanel;
 import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui.BleichenbacherPkcs1TableEntry;
 import eu.dety.burp.joseph.attacks.IAttack;
 import eu.dety.burp.joseph.utilities.Logger;
@@ -62,8 +63,12 @@ public class BleichenbacherPkcs1 implements IAttack {
         // Add original message to result table
         attackerResultWindow.addEntry(new BleichenbacherPkcs1TableEntry(0, -1, "", attackInfo.getRequestResponse(), callbacks));
 
-        attackerResultWindow.addTab("Decryption Attack", new JPanel());
+        attackerResultWindow.addTab("Decryption Attack", new BleichenbacherPkcs1DecryptionAttackPanel());
         attackerResultWindow.setTabEnabled(1, false);
+
+
+//        // Create a new PKCS1 Oracle instance
+//        final BleichenbacherPkcs1Oracle oracle = new BleichenbacherPkcs1Oracle(callbacks);
 
         // Create new AttackExecutor thread for each prepared request
         for (BleichenbacherPkcs1AttackRequest attackRequest : this.attackInfo.getRequests()) {

@@ -21,16 +21,19 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpService;
 import burp.IMessageEditor;
+import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1Oracle;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Attacker Result Window
@@ -45,6 +48,8 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
     private BleichenbacherPkcs1Table table;
     private JProgressBar progressBar = new JProgressBar();
     private JTabbedPane topTabs;
+
+    private java.util.List<BleichenbacherPkcs1TableEntry> validEntries = new ArrayList<>();
 
 
     public BleichenbacherPkcs1AttackerResultWindow(String caption, final IBurpExtenderCallbacks callbacks) {
@@ -72,6 +77,34 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
 
                 requestViewer.setMessage(entry.getMessage().getRequest(), true);
                 responseViewer.setMessage(entry.getMessage().getResponse(), false);
+            }
+        });
+
+        // Add table model listener to perform action on valid checkbox change
+        table.getModel().addTableModelListener(new TableModelListener() {
+            public void tableChanged(TableModelEvent evt) {
+                int row = evt.getFirstRow();
+                int column = evt.getColumn();
+                if (column == 6) {
+                    TableModel model = table.getTableModel();
+                    String columnName = model.getColumnName(column);
+                    Boolean checked = (Boolean) model.getValueAt(row, column);
+
+                    BleichenbacherPkcs1TableEntry entry = table.getEntry(row);
+
+                    if(checked) {
+                        validEntries.add(entry);
+                        BleichenbacherPkcs1AttackerResultWindow.this.setTabEnabled(1, true);
+
+                    } else {
+                        validEntries.remove(entry);
+
+                        if (validEntries.size() == 0) {
+                            BleichenbacherPkcs1AttackerResultWindow.this.setTabEnabled(1, false);
+                        }
+
+                    }
+                }
             }
         });
 

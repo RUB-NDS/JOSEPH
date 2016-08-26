@@ -18,5 +18,60 @@
  */
 package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1;
 
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui.BleichenbacherPkcs1TableEntry;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import eu.dety.burp.joseph.utilities.Logger;
+import org.simmetrics.StringMetric;
+import org.simmetrics.metrics.StringMetrics;
+
+
 public class BleichenbacherPkcs1Oracle {
+    private static final Logger loggerInstance = Logger.getInstance();
+    private IExtensionHelpers helpers;
+    private static final double COMPARE_THRESHOLD = 0.9;
+
+
+    private List<String> validResponses = new ArrayList<>();
+
+    public enum Result {
+        VALID,
+        INVALID,
+        UNDEFINED
+    }
+
+    public BleichenbacherPkcs1Oracle(final IBurpExtenderCallbacks callbacks, List<BleichenbacherPkcs1TableEntry> responseCandidates) {
+        this.helpers = callbacks.getHelpers();
+
+        buildResponseList(responseCandidates);
+    }
+
+
+    /**
+     * Build a list of responses indicating PKCS1 correctness
+     * @param responseCandidates List of {@link BleichenbacherPkcs1TableEntry} selected by the user as candidates
+     */
+    private void buildResponseList(List<BleichenbacherPkcs1TableEntry> responseCandidates) {
+        outerloop:
+        for (BleichenbacherPkcs1TableEntry entry : responseCandidates) {
+            StringMetric metric = StringMetrics.dice();
+
+            double tempScore;
+            for (int i = 0; responseCandidates.size() > i; i++) {
+                tempScore = metric.compare( helpers.bytesToString(entry.getMessage().getResponse()), validResponses.get(i) );
+
+                // If entry score is higher than threshold, don't add new entry
+                if (COMPARE_THRESHOLD <= tempScore) {
+                    continue outerloop;
+                }
+            }
+
+            validResponses.add(helpers.bytesToString(entry.getMessage().getResponse()));
+        }
+    }
+
 }
