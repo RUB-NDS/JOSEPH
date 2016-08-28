@@ -34,14 +34,14 @@ public class BleichenbacherPkcs1Oracle {
     private static final Logger loggerInstance = Logger.getInstance();
     private IExtensionHelpers helpers;
     private static final double COMPARE_THRESHOLD = 0.9;
+    private StringMetric metric = StringMetrics.dice();
 
 
     private List<String> validResponses = new ArrayList<>();
 
     public enum Result {
         VALID,
-        INVALID,
-        UNDEFINED
+        INVALID
     }
 
     public BleichenbacherPkcs1Oracle(final IBurpExtenderCallbacks callbacks, List<BleichenbacherPkcs1TableEntry> responseCandidates) {
@@ -58,11 +58,10 @@ public class BleichenbacherPkcs1Oracle {
     private void buildResponseList(List<BleichenbacherPkcs1TableEntry> responseCandidates) {
         outerloop:
         for (BleichenbacherPkcs1TableEntry entry : responseCandidates) {
-            StringMetric metric = StringMetrics.dice();
 
             double tempScore;
-            for (int i = 0; responseCandidates.size() > i; i++) {
-                tempScore = metric.compare( helpers.bytesToString(entry.getMessage().getResponse()), validResponses.get(i) );
+            for (String validResponse : validResponses) {
+                tempScore = metric.compare(helpers.bytesToString(entry.getMessage().getResponse()), validResponse);
 
                 // If entry score is higher than threshold, don't add new entry
                 if (COMPARE_THRESHOLD <= tempScore) {
@@ -72,6 +71,22 @@ public class BleichenbacherPkcs1Oracle {
 
             validResponses.add(helpers.bytesToString(entry.getMessage().getResponse()));
         }
+    }
+
+    /**
+     * Check wheter the given response is valid or not according to the current oracle
+     * @param response Byte array with the response
+     * @return {@link Result} status
+     */
+    public Result getResult(byte[] response) {
+        for (String validResponse : validResponses) {
+            if (metric.compare(helpers.bytesToString(response), validResponse) >= COMPARE_THRESHOLD) {
+                loggerInstance.log(getClass(), "Considered PKCS conform - Score: " + metric.compare(helpers.bytesToString(response), validResponse), Logger.LogLevel.INFO);
+                return Result.VALID;
+            }
+        }
+
+        return Result.INVALID;
     }
 
 }

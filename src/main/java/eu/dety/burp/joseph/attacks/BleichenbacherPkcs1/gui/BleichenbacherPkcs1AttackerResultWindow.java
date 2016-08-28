@@ -34,6 +34,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.List;
 
 /**
  * Attacker Result Window
@@ -229,6 +230,10 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
      */
     public void setTabEnabled(int index, boolean status) {
         topTabs.setEnabledAt(index, status);
+    }
+
+    public List<BleichenbacherPkcs1TableEntry> getValidEntries() {
+        return this.validEntries;
     }
 
 }

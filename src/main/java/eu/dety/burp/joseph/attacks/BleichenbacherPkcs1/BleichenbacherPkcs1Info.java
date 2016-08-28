@@ -59,6 +59,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
     private IParameter parameter;
+    private RSAPublicKey pubKey;
+
 
     // Unique identifier for the attack class
     private static final String id = "bleichenbarcher_pkcs1";
@@ -132,11 +134,10 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
             throw new AttackPreparationFailedException(bundle.getString("PROVIDE_PUBKEY"));
         }
 
-        RSAPublicKey publicKey;
         try {
             Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
             List<PublicKey> publicKeys = Jwk.getRsaPublicKeys(publickKeyValueJson);
-            publicKey = (RSAPublicKey)publicKeys.get(0);
+            pubKey = (RSAPublicKey)publicKeys.get(0);
 
         } catch (Exception e) {
             throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
@@ -181,7 +182,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         HashMap<payloadType, byte[]> encryptedKeys;
 
         try {
-            encryptedKeys = generatePkcs1Vectors(publicKey, 32);
+            encryptedKeys = generatePkcs1Vectors(pubKey, 32);
 
         } catch(Exception e) {
             throw new AttackPreparationFailedException(e.getMessage());
@@ -283,6 +284,23 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
         return result;
     }
+
+    /**
+     * Get the public key
+     * @return {@link RSAPublicKey} public key
+     */
+    public RSAPublicKey getPublicKey() {
+        return this.pubKey;
+    }
+
+    /**
+     * Get the parameter with the JOSE value
+     * @return {@link IParameter} parameter
+     */
+    public IParameter getParameter() {
+        return this.parameter;
+    }
+
 
     /**
      * Generate different encrypted PKCS1 vectors

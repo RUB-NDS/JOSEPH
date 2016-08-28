@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
     private static final Logger loggerInstance = Logger.getInstance();
     private ArrayList<BleichenbacherPkcs1TableEntry> tableEntries;
-    private String[] columnName = {"#", "Payload type", "Payload", "Status", "Length", "Time", "Valid?"};
+    private String[] columnName = {"#", "Payload type", "Payload", "Status", "Length", "Time", "PKCS1 Conform?"};
 
     
     /**

@@ -49,6 +49,9 @@ public class BleichenbacherPkcs1 implements IAttack {
     private List<IHttpRequestResponse> responses = new ArrayList<>();
     private IHttpService httpService;
 
+    public BleichenbacherPkcs1DecryptionAttackExecutor decryptionAttackWorker;
+    private BleichenbacherPkcs1DecryptionAttackPanel decryptionAttackPanel;
+
     public BleichenbacherPkcs1(IBurpExtenderCallbacks callbacks, BleichenbacherPkcs1Info attackInfo) {
         this.callbacks = callbacks;
         this.attackInfo = attackInfo;
@@ -63,12 +66,10 @@ public class BleichenbacherPkcs1 implements IAttack {
         // Add original message to result table
         attackerResultWindow.addEntry(new BleichenbacherPkcs1TableEntry(0, -1, "", attackInfo.getRequestResponse(), callbacks));
 
-        attackerResultWindow.addTab("Decryption Attack", new BleichenbacherPkcs1DecryptionAttackPanel());
+        decryptionAttackPanel = new BleichenbacherPkcs1DecryptionAttackPanel(this);
+
+        attackerResultWindow.addTab("Decryption Attack", decryptionAttackPanel);
         attackerResultWindow.setTabEnabled(1, false);
-
-
-//        // Create a new PKCS1 Oracle instance
-//        final BleichenbacherPkcs1Oracle oracle = new BleichenbacherPkcs1Oracle(callbacks);
 
         // Create new AttackExecutor thread for each prepared request
         for (BleichenbacherPkcs1AttackRequest attackRequest : this.attackInfo.getRequests()) {
@@ -119,6 +120,21 @@ public class BleichenbacherPkcs1 implements IAttack {
             loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
         }
 
+    }
+
+    public void performDecryptionAttack() {
+
+        // Create a new PKCS1 Oracle instance
+        BleichenbacherPkcs1Oracle oracle = new BleichenbacherPkcs1Oracle(callbacks, attackerResultWindow.getValidEntries());
+
+        decryptionAttackWorker = new BleichenbacherPkcs1DecryptionAttackExecutor(this.decryptionAttackPanel, callbacks, attackInfo.getPublicKey(), attackInfo.getRequestResponse(), attackInfo.getParameter(), oracle);
+        decryptionAttackWorker.execute();
+
+
+    }
+
+    public void cancelDecryptionAttack() {
+        decryptionAttackWorker.cancel(true);
     }
 
 }

@@ -19,13 +19,95 @@
 
 package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
 
+import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1;
+import eu.dety.burp.joseph.utilities.Decoder;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.BigInteger;
+import java.util.concurrent.TimeUnit;
+
+
 public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel {
+    private Decoder joseDecoder = new Decoder();
+    private BleichenbacherPkcs1 reference;
+    private Timer tmr;
+    private long startTime;
+    private byte[] result;
+    private int amountRequests;
+
 
     /**
      * Creates new form BleichenbacherPkcs1DecryptionAttackPanel
      */
-    public BleichenbacherPkcs1DecryptionAttackPanel() {
+    public BleichenbacherPkcs1DecryptionAttackPanel(BleichenbacherPkcs1 reference) {
+        this.reference = reference;
+
         initComponents();
+
+        setVisibilityStatusComponents(false);
+        
+        tmr = new Timer(1000, taskPerformer);
+    }
+
+    private void setVisibilityStatusComponents(boolean status) {
+        timeElapsedLabel.setVisible(status);
+        amountRequestsLabel.setVisible(status);
+        currentSLabel.setVisible(status);
+        resultKeyLabel.setVisible(status);
+        cekFormatHex.setVisible(status);
+        cekFormatB64.setVisible(status);
+        resultKeyValue.getParent().setVisible(status);
+        timeElapsedValue.setVisible(status);
+        amountRequestsValue.setVisible(status);
+        currentSValue.getParent().setVisible(status);
+    }
+
+    public void setCurrentSValue(BigInteger s) {
+        this.currentSValue.setText(s.toString());
+    }
+
+    public void setAmountRequestsValue(int value) {
+        amountRequests = value;
+    }
+
+    public void attackDoneAction(byte[] result) {
+        tmr.stop();
+        startAttackButton.setEnabled(true);
+        cancelAttackButton.setEnabled(false);
+
+        this.result = result;
+        this.resultKeyValue.setText(bytesToHex(result));
+    }
+
+    private ActionListener taskPerformer = new ActionListener() {
+        long difference;
+
+        public void actionPerformed(ActionEvent evt) {
+            difference = System.nanoTime() - startTime;
+            String timeElapsed = String.format("%02d:%02d", TimeUnit.NANOSECONDS.toMinutes(difference), TimeUnit.NANOSECONDS.toSeconds(difference) - (TimeUnit.NANOSECONDS.toMinutes(difference) * 60));
+
+            timeElapsedValue.setText(timeElapsed);
+            amountRequestsValue.setText(Integer.toString(amountRequests));
+        }
+    };
+
+    private final static char[] HEXCHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+    public static String bytesToHex( final byte[] bytes ) {
+        StringBuilder builder = new StringBuilder( bytes.length * 2 );
+
+        for ( int i = 0; i < bytes.length; i++ )
+        {
+            // unsigned right shift of the MSBs
+            builder.append( HEXCHARS[( bytes[i] & 0xff ) >>> 4] );
+            // handling the LSBs
+            builder.append( HEXCHARS[bytes[i] & 0xf] );
+            builder.append( ' ' );
+        }
+
+        return builder.toString();
     }
 
     /**
@@ -37,38 +119,218 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        decryptionAttackButton = new javax.swing.JButton();
+        cekFormatButtonGroup = new javax.swing.ButtonGroup();
+        startAttackButton = new javax.swing.JButton();
+        cancelAttackButton = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        timeElapsedLabel = new javax.swing.JLabel();
+        amountRequestsLabel = new javax.swing.JLabel();
+        currentSLabel = new javax.swing.JLabel();
+        resultKeyLabel = new javax.swing.JLabel();
+        cekFormatHex = new javax.swing.JRadioButton();
+        cekFormatB64 = new javax.swing.JRadioButton();
+        attackDescription = new javax.swing.JLabel();
+        timeElapsedValue = new javax.swing.JLabel();
+        amountRequestsValue = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        currentSValue = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        resultKeyValue = new javax.swing.JTextArea();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
-        decryptionAttackButton.setText(bundle.getString("ATTACKBUTTON")); // NOI18N
-        decryptionAttackButton.addActionListener(new java.awt.event.ActionListener() {
+        startAttackButton.setText(bundle.getString("STARTATTACKBUTTON")); // NOI18N
+        startAttackButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                decryptionAttackButtonActionPerformed(evt);
+                startAttackButtonActionPerformed(evt);
             }
         });
+
+        cancelAttackButton.setText(bundle.getString("CANCELATTACKBUTTON")); // NOI18N
+        cancelAttackButton.setEnabled(false);
+        cancelAttackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelAttackButtonActionPerformed(evt);
+            }
+        });
+
+        timeElapsedLabel.setText(bundle.getString("TIME_ELAPSED")); // NOI18N
+
+        amountRequestsLabel.setText(bundle.getString("AMOUNT_REQUESTS")); // NOI18N
+
+        currentSLabel.setText(bundle.getString("FOUND_S")); // NOI18N
+
+        resultKeyLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        resultKeyLabel.setText(bundle.getString("RESULT_CECK")); // NOI18N
+
+        cekFormatButtonGroup.add(cekFormatHex);
+        cekFormatHex.setSelected(true);
+        cekFormatHex.setText(bundle.getString("HEX")); // NOI18N
+        cekFormatHex.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cekFormatHexActionPerformed(evt);
+            }
+        });
+
+        cekFormatButtonGroup.add(cekFormatB64);
+        cekFormatB64.setText(bundle.getString("BASE64URL")); // NOI18N
+        cekFormatB64.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cekFormatB64ActionPerformed(evt);
+            }
+        });
+
+        attackDescription.setText("This is some description text...");
+
+        timeElapsedValue.setText("00:00");
+        timeElapsedValue.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        amountRequestsValue.setText("0");
+        amountRequestsValue.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        jScrollPane1.setBorder(null);
+
+        currentSValue.setEditable(false);
+        currentSValue.setBackground(new java.awt.Color(251, 251, 251));
+        currentSValue.setColumns(20);
+        currentSValue.setForeground(new java.awt.Color(0, 0, 0));
+        currentSValue.setLineWrap(true);
+        currentSValue.setRows(4);
+        currentSValue.setTabSize(4);
+        currentSValue.setText("0");
+        currentSValue.setWrapStyleWord(true);
+        currentSValue.setBorder(null);
+        jScrollPane1.setViewportView(currentSValue);
+
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        resultKeyValue.setEditable(false);
+        resultKeyValue.setColumns(20);
+        resultKeyValue.setLineWrap(true);
+        resultKeyValue.setRows(5);
+        resultKeyValue.setWrapStyleWord(true);
+        jScrollPane2.setViewportView(resultKeyValue);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(decryptionAttackButton)
-                .addGap(0, 329, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(attackDescription, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(startAttackButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelAttackButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(cekFormatHex)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cekFormatB64))
+                    .addComponent(resultKeyLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 584, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(currentSLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(amountRequestsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(timeElapsedLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(timeElapsedValue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(amountRequestsValue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(decryptionAttackButton)
-                .addGap(0, 268, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(attackDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(startAttackButton)
+                    .addComponent(cancelAttackButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(timeElapsedLabel)
+                    .addComponent(timeElapsedValue))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(amountRequestsLabel)
+                    .addComponent(amountRequestsValue))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(currentSLabel)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(resultKeyLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cekFormatHex)
+                    .addComponent(cekFormatB64))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void decryptionAttackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decryptionAttackButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_decryptionAttackButtonActionPerformed
+    private void startAttackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startAttackButtonActionPerformed
+        startAttackButton.setEnabled(false);
+        cancelAttackButton.setEnabled(true);
+        setVisibilityStatusComponents(true);
+
+        this.startTime = System.nanoTime();
+        tmr.start();
+
+        reference.performDecryptionAttack();
+
+    }//GEN-LAST:event_startAttackButtonActionPerformed
+
+    private void cancelAttackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelAttackButtonActionPerformed
+        startAttackButton.setEnabled(true);
+        cancelAttackButton.setEnabled(false);
+        // setVisibilityStatusComponents(false);
+
+        tmr.stop();
+        this.startTime = 0;
+
+        reference.cancelDecryptionAttack();
+    }//GEN-LAST:event_cancelAttackButtonActionPerformed
+
+    private void cekFormatHexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cekFormatHexActionPerformed
+        if(cekFormatHex.isSelected()) {
+            resultKeyValue.setText(bytesToHex(this.result));
+        }
+    }//GEN-LAST:event_cekFormatHexActionPerformed
+
+    private void cekFormatB64ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cekFormatB64ActionPerformed
+        if(cekFormatB64.isSelected()) {
+            resultKeyValue.setText(joseDecoder.base64UrlEncode(this.result));
+        }
+    }//GEN-LAST:event_cekFormatB64ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton decryptionAttackButton;
+    private javax.swing.JLabel amountRequestsLabel;
+    private javax.swing.JLabel amountRequestsValue;
+    private javax.swing.JLabel attackDescription;
+    private javax.swing.JButton cancelAttackButton;
+    private javax.swing.JRadioButton cekFormatB64;
+    private javax.swing.ButtonGroup cekFormatButtonGroup;
+    private javax.swing.JRadioButton cekFormatHex;
+    private javax.swing.JLabel currentSLabel;
+    private javax.swing.JTextArea currentSValue;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel resultKeyLabel;
+    private javax.swing.JTextArea resultKeyValue;
+    private javax.swing.JButton startAttackButton;
+    private javax.swing.JLabel timeElapsedLabel;
+    private javax.swing.JLabel timeElapsedValue;
     // End of variables declaration//GEN-END:variables
 }
