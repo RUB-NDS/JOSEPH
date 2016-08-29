@@ -175,4 +175,42 @@ public class Decoder {
 
         return output;
     }
+
+    private final static char[] HEXCHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+    /**
+     * Convert byte array to hex string
+     * @param bytes Byte array input
+     * @return Hex string
+     */
+    public static String bytesToHex( final byte[] bytes ) {
+        StringBuilder builder = new StringBuilder( bytes.length * 2 );
+
+        for (byte aByte : bytes) {
+            // unsigned right shift of the MSBs
+            builder.append(HEXCHARS[(aByte & 0xff) >>> 4]);
+            // handling the LSBs
+            builder.append(HEXCHARS[aByte & 0xf]);
+            builder.append(' ');
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Convert hex string to byte array
+     * @param str Hex formatted string
+     * @return Byte array
+     */
+    public static byte[] hexToBytes(String str) {
+        str = str.replace(" ", "");
+        int len = str.length();
+        byte[] data = new byte[len / 2];
+
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4) + Character.digit(str.charAt(i+1), 16));
+        }
+
+        return data;
+    }
 }
