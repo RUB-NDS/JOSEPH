@@ -135,6 +135,7 @@ public class BleichenbacherPkcs1 implements IAttack {
 
     public void cancelDecryptionAttack() {
         decryptionAttackWorker.cancel(true);
+        decryptionAttackWorker = null;
     }
 
 }

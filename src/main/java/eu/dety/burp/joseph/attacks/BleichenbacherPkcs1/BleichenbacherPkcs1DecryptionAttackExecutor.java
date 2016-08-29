@@ -54,7 +54,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     private Interval[] m;
     private int blockSize;
     private BigInteger bigB;
-    private byte[] result;
+    private byte[] result = {};
     private BleichenbacherPkcs1Oracle oracle;
     private RSAPublicKey pubKey;
     private IHttpService httpService;
@@ -135,15 +135,15 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
     @Override
     protected void process(List<BigInteger> chunks) {
-        for (BigInteger s : chunks) {
-            this.panelReference.setCurrentSValue(s);
+        if(!this.isCancelled()) {
+            for (BigInteger s : chunks) {
+                this.panelReference.setCurrentSValue(s);
+            }
         }
     }
 
     @Override
     protected void done() {
-        System.out.println("DONE!");
-
         this.panelReference.attackDoneAction(this.result);
     }
 
