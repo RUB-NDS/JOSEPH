@@ -32,6 +32,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
+ * Algorithm code heavily based on the WS-Attacker
+ * @see <a href="https://github.com/RUB-NDS/WS-Attacker">https://github.com/RUB-NDS/WS-Attacker</a>
+ */
+
+/**
  * Decryption Attack Executor
  * <p>
  * Performs the actual request and updates related widgets

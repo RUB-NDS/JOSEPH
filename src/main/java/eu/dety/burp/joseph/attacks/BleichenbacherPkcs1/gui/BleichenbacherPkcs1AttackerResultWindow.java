@@ -232,6 +232,10 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
         topTabs.setEnabledAt(index, status);
     }
 
+    /**
+     * Get list of {@link BleichenbacherPkcs1TableEntry} defined as valid by user
+     * @return List of {@link BleichenbacherPkcs1TableEntry}
+     */
     public List<BleichenbacherPkcs1TableEntry> getValidEntries() {
         return this.validEntries;
     }

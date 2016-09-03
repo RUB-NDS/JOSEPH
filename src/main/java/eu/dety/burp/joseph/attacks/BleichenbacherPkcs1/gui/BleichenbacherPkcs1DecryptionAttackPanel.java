@@ -57,6 +57,10 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
         attackTimer = new Timer(1000, taskPerformer);
     }
 
+    /**
+     * Set the visibility of several components
+     * @param status Boolean value used for setVisible()
+     */
     private void setVisibilityStatusComponents(boolean status) {
         timeElapsedLabel.setVisible(status);
         amountRequestsLabel.setVisible(status);
@@ -67,14 +71,26 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
         jScrollPane1.setVisible(status);
     }
 
+    /**
+     * Set the currently found s value on text widget
+     * @param s BigInteger s value
+     */
     public void setCurrentSValue(BigInteger s) {
         this.currentSValue.setText(s.toString());
     }
 
+    /**
+     * Set amount of performed requests
+     * @param value Amount of requests
+     */
     public void setAmountRequestsValue(int value) {
         amountRequests = value;
     }
 
+    /**
+     * Actions to perform if attack has been finished
+     * @param result Byte array of the calculated key
+     */
     public void attackDoneAction(byte[] result) {
         attackTimer.stop();
         startAttackButton.setEnabled(true);
@@ -93,6 +109,12 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
         }
     }
 
+    /**
+     * Task Performer
+     * <p>
+     * Starts the time elapsed timer and prints the elapsed time
+     * and amount of requests to the text widget
+     */
     private ActionListener taskPerformer = new ActionListener() {
         long difference;
 

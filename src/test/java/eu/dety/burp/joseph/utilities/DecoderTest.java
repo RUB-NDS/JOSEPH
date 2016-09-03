@@ -179,5 +179,37 @@ public class DecoderTest {
         }
     }
 
+    @Test
+    public void convertBytesToHex() {
+        byte[] input = new byte[] {84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116};
+        String output = "54 68 69 73 20 69 73 20 61 20 74 65 73 74";
+
+        assertEquals(output, Decoder.bytesToHex(input));
+    }
+
+    @Test
+    public void convertHexToBytes() {
+        String input = "54 68 69 73 20 69 73 20 61 20 74 65 73 74";
+        byte[] output = new byte[] {84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116};
+
+        assertArrayEquals(output, Decoder.hexToBytes(input));
+    }
+
+    @Test
+    public void convertHexToBytesWithWrongByteReturnsEmptyByteArray() {
+        String input = "54 68 69 73 20 69 73 20 61 20 74 65 73 7";
+        byte[] output = new byte[] {};
+
+        assertArrayEquals(output, Decoder.hexToBytes(input));
+    }
+
+    @Test
+    public void convertHexToBytesWithWrongSpacesReturnsCorrectByteArray() {
+        String input = " 54 68 69 73 20 69 73 20 61 20 74   65 73 74 ";
+        byte[] output = new byte[] {84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116};
+
+        assertArrayEquals(output, Decoder.hexToBytes(input));
+    }
+
 
 }

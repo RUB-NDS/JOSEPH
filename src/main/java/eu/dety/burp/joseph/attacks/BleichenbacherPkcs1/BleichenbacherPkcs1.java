@@ -122,17 +122,22 @@ public class BleichenbacherPkcs1 implements IAttack {
 
     }
 
+    /**
+     * Start the decryption attack by creating an oracle instance
+     * and starting the executor swing worker
+     */
     public void performDecryptionAttack() {
-
         // Create a new PKCS1 Oracle instance
         BleichenbacherPkcs1Oracle oracle = new BleichenbacherPkcs1Oracle(callbacks, attackerResultWindow.getValidEntries());
 
+        // Create new Decryption Attack Executor worker instance
         decryptionAttackWorker = new BleichenbacherPkcs1DecryptionAttackExecutor(this.decryptionAttackPanel, callbacks, attackInfo.getPublicKey(), attackInfo.getRequestResponse(), attackInfo.getParameter(), oracle);
         decryptionAttackWorker.execute();
-
-
     }
 
+    /**
+     * Cancel the currently running attack by setting the SwingWorker to cancelled
+     */
     public void cancelDecryptionAttack() {
         decryptionAttackWorker.cancel(true);
         decryptionAttackWorker = null;

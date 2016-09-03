@@ -29,7 +29,12 @@ import eu.dety.burp.joseph.utilities.Logger;
 import org.simmetrics.StringMetric;
 import org.simmetrics.metrics.StringMetrics;
 
-
+/**
+ * Bleichenbacher PKCS1 Oracle
+ * <p>
+ * Stores all responses and their validity according to PKCS#1 v1.5
+ * to compare new responses based on dice distance.
+ */
 public class BleichenbacherPkcs1Oracle {
     private static final Logger loggerInstance = Logger.getInstance();
     private IExtensionHelpers helpers;
