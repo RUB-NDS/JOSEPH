@@ -23,15 +23,13 @@ import burp.*;
 
 import eu.dety.burp.joseph.attacks.*;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
-import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1Info;
-import eu.dety.burp.joseph.attacks.KeyConfusion.KeyConfusionInfo;
-import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionInfo;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.json.JSONObject;
 
@@ -57,26 +55,6 @@ public class AttackerPanel extends JPanel {
     private IAttackInfo selectedAttack = null;
 
     /**
-     * Register Attacks
-     * <p>
-     * Method called on construction to register all available attacks.
-     * Extend this method to add your custom attack.
-     */
-    private void registerAttacks() {
-        SignatureExclusionInfo signatureExclusionInfo = new SignatureExclusionInfo(callbacks);
-        registeredAttacks.put(signatureExclusionInfo.getName(), signatureExclusionInfo);
-        loggerInstance.log(getClass(), "Attack registered: Signature Exclusion", Logger.LogLevel.INFO);
-
-        KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
-        registeredAttacks.put(keyConfusionInfo.getName(), keyConfusionInfo);
-        loggerInstance.log(getClass(), "Attack registered: Key Confusion", Logger.LogLevel.INFO);
-
-        BleichenbacherPkcs1Info bleichenbacherPkcs1Info = new BleichenbacherPkcs1Info(callbacks);
-        registeredAttacks.put(bleichenbacherPkcs1Info.getName(), bleichenbacherPkcs1Info);
-        loggerInstance.log(getClass(), "Attack registered: Bleichenbacher PKCS#1 v1.5", Logger.LogLevel.INFO);
-    }
-
-    /**
      * AttackerPanel constructor
      * <p>
      * Register available attacks, extract "alg" and "typ" header fields and
@@ -93,7 +71,7 @@ public class AttackerPanel extends JPanel {
         this.requestInfo = helpers.analyzeRequest(message);
 
         // Register all available attacks
-        registerAttacks();
+        registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
 
         // Find the JOSE parameter
         for (IParameter param : requestInfo.getParameters()) {

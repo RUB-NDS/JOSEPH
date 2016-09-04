@@ -19,6 +19,7 @@
 package eu.dety.burp.joseph.gui;
 
 import burp.*;
+import eu.dety.burp.joseph.attacks.AttackLoader;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1Info;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
@@ -55,26 +56,6 @@ public class EditorAttackerPanel extends JPanel {
     private String payload = "";
 
     /**
-     * Register Attacks
-     * <p>
-     * Method called on construction to register all available attacks.
-     * Extend this method to add your custom attack.
-     */
-    private void registerAttacks() {
-        SignatureExclusionInfo signatureExclusionInfo = new SignatureExclusionInfo(callbacks);
-        registeredAttacks.put(signatureExclusionInfo.getName(), signatureExclusionInfo);
-        loggerInstance.log(getClass(), "Attack registered: Signature Exclusion", Logger.LogLevel.INFO);
-
-        KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
-        registeredAttacks.put(keyConfusionInfo.getName(), keyConfusionInfo);
-        loggerInstance.log(getClass(), "Attack registered: Key Confusion", Logger.LogLevel.INFO);
-
-        BleichenbacherPkcs1Info bleichenbacherPkcs1Info = new BleichenbacherPkcs1Info(callbacks);
-        registeredAttacks.put(bleichenbacherPkcs1Info.getName(), bleichenbacherPkcs1Info);
-        loggerInstance.log(getClass(), "Attack registered: Bleichenbacher PKCS#1 v1.5", Logger.LogLevel.INFO);
-    }
-
-    /**
      * AttackerPanel constructor
      * <p>
      * Register available attacks, extract "alg" and "typ" header fields and
@@ -88,7 +69,7 @@ public class EditorAttackerPanel extends JPanel {
         this.jwtEditorReference = jwtEditorReference;
 
         // Register all available attacks
-        registerAttacks();
+        registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
 
         // Initialize UI components
         initComponents();
