@@ -26,34 +26,32 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class DecoderTest {
-    private static final Decoder joseDecoder = new Decoder();
-
     @Test
     public void getEncodedWithBytesInputReturnsCorrectBase64UrlEncodedString() {
         byte[] input = new byte[] {84, 101, 115, 116, 32, 73, 110, 112, 117, 116};
 
-        assertEquals("VGVzdCBJbnB1dA", joseDecoder.getEncoded(input));
+        assertEquals("VGVzdCBJbnB1dA", Decoder.getEncoded(input));
     }
 
     @Test
     public void getEncodedWithStringInputReturnsCorrectBase64UrlEncodedString() {
         String input = "Test Input";
 
-        assertEquals("VGVzdCBJbnB1dA", joseDecoder.getEncoded(input));
+        assertEquals("VGVzdCBJbnB1dA", Decoder.getEncoded(input));
     }
 
     @Test
     public void getDecodedWithBase64UrlStringInputReturnsCorrectDecodedString() {
         String input = "VGVzdCBJbnB1dA";
 
-        assertEquals("Test Input", joseDecoder.getDecoded(input));
+        assertEquals("Test Input", Decoder.getDecoded(input));
     }
 
     @Test
     public void getDecodedGetEncodedWithStringInputReturnsSameString() {
         String input = "Test Input";
 
-        assertEquals("Test Input", joseDecoder.getDecoded(joseDecoder.getEncoded(input)));
+        assertEquals("Test Input", Decoder.getDecoded(Decoder.getEncoded(input)));
     }
 
     @Test
@@ -61,7 +59,7 @@ public class DecoderTest {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
         String[] expected = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
 
-        assertArrayEquals(expected, joseDecoder.getComponents(token));
+        assertArrayEquals(expected, Decoder.getComponents(token));
     }
 
     @Test
@@ -69,7 +67,7 @@ public class DecoderTest {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
         String[] expected = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"};
 
-        assertArrayEquals(expected, joseDecoder.getComponents(token));
+        assertArrayEquals(expected, Decoder.getComponents(token));
     }
 
     @Test
@@ -77,7 +75,7 @@ public class DecoderTest {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
         String[] expected = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
 
-        assertArrayEquals(expected, joseDecoder.getComponents(token, 3));
+        assertArrayEquals(expected, Decoder.getComponents(token, 3));
     }
 
     @Test
@@ -85,7 +83,7 @@ public class DecoderTest {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
         String[] expected = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", ""};
 
-        assertArrayEquals(expected, joseDecoder.getComponents(token, 3));
+        assertArrayEquals(expected, Decoder.getComponents(token, 3));
     }
 
     @Test
@@ -93,7 +91,7 @@ public class DecoderTest {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
         String[] expected = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
 
-        assertArrayEquals(expected, joseDecoder.getComponents(token, 3));
+        assertArrayEquals(expected, Decoder.getComponents(token, 3));
     }
 
     @Test
@@ -101,7 +99,7 @@ public class DecoderTest {
         String[] input = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
         String expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
-        assertEquals(expected, joseDecoder.concatComponents(input));
+        assertEquals(expected, Decoder.concatComponents(input));
     }
 
     @Test
@@ -109,7 +107,7 @@ public class DecoderTest {
         String[] input = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", ""};
         String expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.";
 
-        assertEquals(expected, joseDecoder.concatComponents(input));
+        assertEquals(expected, Decoder.concatComponents(input));
     }
 
     @Test
@@ -117,22 +115,22 @@ public class DecoderTest {
         String[] input = new String[] {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9"};
         String expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
 
-        assertEquals(expected, joseDecoder.concatComponents(input));
+        assertEquals(expected, Decoder.concatComponents(input));
     }
 
     @Test
     public void getDecodedJsonWithBase64EncodedJsonStringInputReturnsCorrectJsonObject() {
-        JSONAssert.assertEquals(new JSONObject().put("some", "payload"), joseDecoder.getDecodedJson("eyJzb21lIjoicGF5bG9hZCJ9"), true);
+        JSONAssert.assertEquals(new JSONObject().put("some", "payload"), Decoder.getDecodedJson("eyJzb21lIjoicGF5bG9hZCJ9"), true);
     }
 
     @Test
     public void getDecodedJsonWithEmptyStringInputReturnsEmptyJsonObject() {
-        JSONAssert.assertEquals(new JSONObject(), joseDecoder.getDecodedJson(""), true);
+        JSONAssert.assertEquals(new JSONObject(), Decoder.getDecodedJson(""), true);
     }
 
     @Test
     public void getDecodedJsonWithInvalidInputReturnsEmptyJsonObject() {
-        JSONAssert.assertEquals(new JSONObject(), joseDecoder.getDecodedJson("Invalid Base64"), true);
+        JSONAssert.assertEquals(new JSONObject(), Decoder.getDecodedJson("Invalid Base64"), true);
     }
 
     @Test
@@ -141,7 +139,7 @@ public class DecoderTest {
         expected[0] = new JSONObject().put("alg", "HS256").put("typ", "JWT");
         expected[1] = new JSONObject().put("some", "payload");
 
-        JSONObject[] result = joseDecoder.getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9");
+        JSONObject[] result = Decoder.getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9");
         assertEquals(expected.length, result.length);
 
         for (int i = 0; i < result.length; i++ ) {
@@ -155,7 +153,7 @@ public class DecoderTest {
         expected[0] = new JSONObject().put("alg", "HS256").put("typ", "JWT");
         expected[1] = new JSONObject();
 
-        JSONObject[] result = joseDecoder.getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.");
+        JSONObject[] result = Decoder.getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.");
         assertEquals(expected.length, result.length);
 
         for (int i = 0; i < result.length; i++ ) {
@@ -171,7 +169,7 @@ public class DecoderTest {
         expected[2] = new JSONObject().put("another", "payload");
         expected[3] = new JSONObject().put("and even", "more");
 
-        JSONObject[] result = joseDecoder.getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.eyJhbm90aGVyIjoicGF5bG9hZCJ9.eyJhbmQgZXZlbiI6Im1vcmUifQ");
+        JSONObject[] result = Decoder.getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.eyJhbm90aGVyIjoicGF5bG9hZCJ9.eyJhbmQgZXZlbiI6Im1vcmUifQ");
         assertEquals(expected.length, result.length);
 
         for (int i = 0; i < result.length; i++ ) {

@@ -64,7 +64,6 @@ public class AttackerPanel extends JPanel {
      * @param message {@link IHttpRequestResponse} requestResponse message
      */
     public AttackerPanel(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
-        Decoder joseDecoder = new Decoder();
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
         this.requestResponse = message;
@@ -87,7 +86,7 @@ public class AttackerPanel extends JPanel {
         initComponents();
 
         // Parse the JOSE value to an JSONObject
-        JSONObject[] joseJSONComponents = joseDecoder.getJsonComponents(parameter.getValue());
+        JSONObject[] joseJSONComponents = Decoder.getJsonComponents(parameter.getValue());
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
         if(joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");

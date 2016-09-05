@@ -55,7 +55,6 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
-    private Decoder joseDecoder = new Decoder();
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
     private IParameter parameter;
@@ -191,16 +190,16 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         // Prepare requests
         for(Map.Entry<payloadType, byte[]> cek: encryptedKeys.entrySet()) {
             byte[] request = this.requestResponse.getRequest();
-            String[] components = joseDecoder.getComponents(this.parameter.getValue());
-            components[1] = joseDecoder.base64UrlEncode(cek.getValue());
+            String[] components = Decoder.getComponents(this.parameter.getValue());
+            components[1] = Decoder.base64UrlEncode(cek.getValue());
 
-            String newComponentsConcatenated = joseDecoder.concatComponents(components);
+            String newComponentsConcatenated = Decoder.concatComponents(components);
 
             IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
             request = helpers.updateParameter(request, updatedParameter);
 
             requests.add(new BleichenbacherPkcs1AttackRequest(request, cek.getKey().ordinal(), cek.getValue(), cek.getKey().name()));
-            loggerInstance.log(getClass(), "Generated CEK: " + joseDecoder.base64UrlEncode(cek.getValue()), Logger.LogLevel.DEBUG);
+            loggerInstance.log(getClass(), "Generated CEK: " + Decoder.base64UrlEncode(cek.getValue()), Logger.LogLevel.DEBUG);
         }
 
         this.amountRequests = requests.size();

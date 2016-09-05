@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 
 
 public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel {
-    private Decoder joseDecoder = new Decoder();
     private BleichenbacherPkcs1 reference;
     private Timer attackTimer;
     private long startTime;
@@ -330,7 +329,7 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
 
     private void cekFormatB64ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cekFormatB64ActionPerformed
         if(cekFormatB64.isSelected()) {
-            resultKeyValue.setText(joseDecoder.base64UrlEncode(this.result));
+            resultKeyValue.setText(Decoder.base64UrlEncode(this.result));
         }
     }//GEN-LAST:event_cekFormatB64ActionPerformed
 

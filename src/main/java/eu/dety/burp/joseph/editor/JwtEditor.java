@@ -44,7 +44,6 @@ import java.awt.Component;
  */
 public class JwtEditor implements IMessageEditorTabFactory {
     private static final Logger loggerInstance = Logger.getInstance();
-    private static final Decoder joseDecoder = new Decoder();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private String joseParameterName = null;
@@ -142,14 +141,14 @@ public class JwtEditor implements IMessageEditorTabFactory {
                 // Retrieve JOSE parameter
                 IParameter parameter = helpers.getRequestParameter(content, joseParameterName);
 
-                String[] joseParts = joseDecoder.getComponents(parameter.getValue(), 3);
+                String[] joseParts = Decoder.getComponents(parameter.getValue(), 3);
 
                 sourceViewerHeader.setEditable(editable);
                 sourceViewerPayload.setEditable(editable);
                 sourceViewerSignature.setEditable(editable);
 
-                String header = joseDecoder.getDecoded(joseParts[0]);
-                String payload = joseDecoder.getDecoded(joseParts[1]);
+                String header = Decoder.getDecoded(joseParts[0]);
+                String payload = Decoder.getDecoded(joseParts[1]);
                 String signature = joseParts[2];
 
                 sourceViewerHeader.setText(helpers.stringToBytes(header));
@@ -166,13 +165,13 @@ public class JwtEditor implements IMessageEditorTabFactory {
         @Override
         public byte[] getMessage() {
             String[] components = {
-                joseDecoder.getEncoded(sourceViewerHeader.getText()),
-                joseDecoder.getEncoded(sourceViewerPayload.getText()),
+                Decoder.getEncoded(sourceViewerHeader.getText()),
+                Decoder.getEncoded(sourceViewerPayload.getText()),
                 helpers.bytesToString(sourceViewerSignature.getText())
             };
 
             // Update the request with the new parameter value
-            return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, joseDecoder.concatComponents(components), IParameter.PARAM_URL));
+            return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, Decoder.concatComponents(components), IParameter.PARAM_URL));
         }
 
         @Override

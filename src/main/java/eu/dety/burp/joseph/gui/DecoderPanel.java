@@ -32,7 +32,6 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class DecoderPanel extends javax.swing.JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
-    private Decoder joseDecoder = new Decoder();
     private IExtensionHelpers helpers;
 
     public DecoderPanel(IBurpExtenderCallbacks callbacks) {
@@ -150,7 +149,7 @@ public class DecoderPanel extends javax.swing.JPanel {
                 input = helpers.stringToBytes(content);
             }
 
-            outputTextarea.setText(joseDecoder.base64UrlEncode(input));
+            outputTextarea.setText(Decoder.base64UrlEncode(input));
         } catch (Exception e) {
             loggerInstance.log(getClass(), "Base64url encoding failed: " + e.getMessage(), Logger.LogLevel.ERROR);
             outputTextarea.setText("");
@@ -165,7 +164,7 @@ public class DecoderPanel extends javax.swing.JPanel {
             if(formatHex.isSelected()) {
                 input = Decoder.bytesToHex(Base64.decodeBase64(content));
             } else {
-                input = joseDecoder.getDecoded(content);
+                input = Decoder.getDecoded(content);
             }
 
             inputTextarea.setText(input);

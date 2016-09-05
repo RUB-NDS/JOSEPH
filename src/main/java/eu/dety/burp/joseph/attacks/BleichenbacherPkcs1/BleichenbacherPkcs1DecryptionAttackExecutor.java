@@ -45,8 +45,6 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
-    private Decoder joseDecoder = new Decoder();
-
     private BleichenbacherPkcs1DecryptionAttackPanel panelReference;
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
@@ -102,7 +100,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         loggerInstance.log(getClass(), "B computed: " + this.bigB.toString(16), Logger.LogLevel.INFO);
         loggerInstance.log(getClass(), "Blocksize: " + blockSize + " bytes", Logger.LogLevel.INFO);
 
-        String[] components = joseDecoder.getComponents(this.parameter.getValue());
+        String[] components = Decoder.getComponents(this.parameter.getValue());
 
         encryptedKey = Base64.decodeBase64(components[1]);
 
@@ -179,10 +177,10 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             send = prepareMsg( this.c0, this.si );
 
             request = this.requestResponse.getRequest();
-            String[] components = joseDecoder.getComponents(this.parameter.getValue());
-            components[1] = joseDecoder.base64UrlEncode(send);
+            String[] components = Decoder.getComponents(this.parameter.getValue());
+            components[1] = Decoder.base64UrlEncode(send);
 
-            String newComponentsConcatenated = joseDecoder.concatComponents(components);
+            String newComponentsConcatenated = Decoder.concatComponents(components);
 
             IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
             request = helpers.updateParameter(request, updatedParameter);
@@ -247,10 +245,10 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             send = prepareMsg( this.c0, this.si );
 
             request = this.requestResponse.getRequest();
-            String[] components = joseDecoder.getComponents(this.parameter.getValue());
-            components[1] = joseDecoder.base64UrlEncode(send);
+            String[] components = Decoder.getComponents(this.parameter.getValue());
+            components[1] = Decoder.base64UrlEncode(send);
 
-            String newComponentsConcatenated = joseDecoder.concatComponents(components);
+            String newComponentsConcatenated = Decoder.concatComponents(components);
 
             IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
             request = helpers.updateParameter(request, updatedParameter);
@@ -281,10 +279,10 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             send = prepareMsg( this.c0, this.si );
 
             request = this.requestResponse.getRequest();
-            String[] components = joseDecoder.getComponents(this.parameter.getValue());
-            components[1] = joseDecoder.base64UrlEncode(send);
+            String[] components = Decoder.getComponents(this.parameter.getValue());
+            components[1] = Decoder.base64UrlEncode(send);
 
-            String newComponentsConcatenated = joseDecoder.concatComponents(components);
+            String newComponentsConcatenated = Decoder.concatComponents(components);
 
             IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
             request = helpers.updateParameter(request, updatedParameter);
@@ -337,10 +335,10 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             send = prepareMsg( this.c0, this.si );
 
             request = this.requestResponse.getRequest();
-            String[] components = joseDecoder.getComponents(this.parameter.getValue());
-            components[1] = joseDecoder.base64UrlEncode(send);
+            String[] components = Decoder.getComponents(this.parameter.getValue());
+            components[1] = Decoder.base64UrlEncode(send);
 
-            String newComponentsConcatenated = joseDecoder.concatComponents(components);
+            String newComponentsConcatenated = Decoder.concatComponents(components);
 
             IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
             request = helpers.updateParameter(request, updatedParameter);

@@ -39,7 +39,6 @@ import java.util.List;
  * @version 1.0
  */
 public class SignatureExclusionInfo implements IAttackInfo {
-    private Decoder joseDecoder = new Decoder();
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
     private IParameter parameter;
@@ -103,12 +102,12 @@ public class SignatureExclusionInfo implements IAttackInfo {
                 // Change the "alg" header value for each of the noneAlgVariation entries
                 // and rebuild a valid request
                 byte[] tmpRequest = this.requestResponse.getRequest();
-                String[] tmpComponents = joseDecoder.getComponents(this.parameter.getValue());
-                String tmpDecodedHeader = joseDecoder.getDecoded(tmpComponents[0]);
+                String[] tmpComponents = Decoder.getComponents(this.parameter.getValue());
+                String tmpDecodedHeader = Decoder.getDecoded(tmpComponents[0]);
                 String tmpReplaced = tmpDecodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + noneAlgVariation.getValue() + "\"");
-                String tmpReplacedEncoded = joseDecoder.getEncoded(tmpReplaced);
+                String tmpReplacedEncoded = Decoder.getEncoded(tmpReplaced);
                 String[] tmpNewComponents = {tmpReplacedEncoded, tmpComponents[1], ""};
-                String tmpParameterValue = joseDecoder.concatComponents(tmpNewComponents);
+                String tmpParameterValue = Decoder.concatComponents(tmpNewComponents);
 
                 IParameter tmpParameter = helpers.buildParameter(this.parameter.getName(), tmpParameterValue, this.parameter.getType());
                 tmpRequest = helpers.updateParameter(tmpRequest, tmpParameter);
