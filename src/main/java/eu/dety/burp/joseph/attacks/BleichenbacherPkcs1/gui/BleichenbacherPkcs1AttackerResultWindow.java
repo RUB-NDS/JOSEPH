@@ -240,4 +240,8 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
         return this.validEntries;
     }
 
+    public boolean getOriginalMsgIsPkcs() {
+        return table.getEntry(0).getIsValid();
+    }
+
 }

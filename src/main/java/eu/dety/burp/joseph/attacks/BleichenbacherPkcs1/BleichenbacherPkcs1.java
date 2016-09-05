@@ -131,7 +131,7 @@ public class BleichenbacherPkcs1 implements IAttack {
         BleichenbacherPkcs1Oracle oracle = new BleichenbacherPkcs1Oracle(callbacks, attackerResultWindow.getValidEntries());
 
         // Create new Decryption Attack Executor worker instance
-        decryptionAttackWorker = new BleichenbacherPkcs1DecryptionAttackExecutor(this.decryptionAttackPanel, callbacks, attackInfo.getPublicKey(), attackInfo.getRequestResponse(), attackInfo.getParameter(), oracle);
+        decryptionAttackWorker = new BleichenbacherPkcs1DecryptionAttackExecutor(this.decryptionAttackPanel, callbacks, attackInfo.getPublicKey(), attackInfo.getRequestResponse(), attackInfo.getParameter(), oracle, attackerResultWindow.getOriginalMsgIsPkcs());
         decryptionAttackWorker.execute();
     }
 
