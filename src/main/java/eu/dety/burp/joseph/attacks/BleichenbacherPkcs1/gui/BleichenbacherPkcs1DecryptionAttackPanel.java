@@ -19,17 +19,24 @@
 
 package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
 
+import burp.IParameter;
 import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1;
+import eu.dety.burp.joseph.utilities.Crypto;
 import eu.dety.burp.joseph.utilities.Decoder;
+import eu.dety.burp.joseph.utilities.DecryptionFailedException;
+import eu.dety.burp.joseph.utilities.Logger;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 
 public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel {
+    private static final Logger loggerInstance = Logger.getInstance();
     private BleichenbacherPkcs1 reference;
     private Timer attackTimer;
     private long startTime;
@@ -47,11 +54,14 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
 
         setVisibilityStatusComponents(false);
         jScrollPane2.setVisible(false);
-        resultKeyValue.setVisible(false);
+        jScrollPane3.setVisible(false);
         cekFormatHex.setVisible(false);
         cekFormatB64.setVisible(false);
         resultKeyLabel.setVisible(false);
-
+        resultKeyLabel.setVisible(false);
+        resultKeyValue.setVisible(false);
+        resultContentLabel.setVisible(false);
+        resultContentValue.setVisible(false);
 
         attackTimer = new Timer(1000, taskPerformer);
     }
@@ -90,7 +100,7 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
      * Actions to perform if attack has been finished
      * @param result Byte array of the calculated key
      */
-    public void attackDoneAction(byte[] result) {
+    public void attackDoneAction(byte[] result, IParameter joseParameter) {
         attackTimer.stop();
         startAttackButton.setEnabled(true);
         cancelAttackButton.setEnabled(false);
@@ -99,12 +109,27 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
             this.result = result;
 
             jScrollPane2.setVisible(true);
-            resultKeyValue.setVisible(true);
+            jScrollPane3.setVisible(true);
             cekFormatHex.setVisible(true);
             cekFormatB64.setVisible(true);
             resultKeyLabel.setVisible(true);
+            resultKeyValue.setVisible(true);
+            resultContentLabel.setVisible(true);
+            resultContentValue.setVisible(true);
 
-            this.resultKeyValue.setText(Decoder.bytesToHex(result));
+            resultKeyValue.setText(Decoder.bytesToHex(result));
+
+            String[] components = Decoder.getComponents(joseParameter.getValue());
+
+            try {
+                byte[] content = Crypto.decryptAES(components[0], result, Base64.decodeBase64(components[2]), Base64.decodeBase64(components[3]));
+                resultContentValue.setText(new String(content, StandardCharsets.UTF_8));
+            } catch (DecryptionFailedException e) {
+                loggerInstance.log(BleichenbacherPkcs1.class, "Failed to decrypt the content: " + e.getMessage(), Logger.LogLevel.ERROR);
+                resultContentValue.setText("[ERROR] Could not decrypt content. See error logs for further information.");
+                resultContentValue.setEnabled(false);
+            }
+
         }
     }
 
@@ -151,6 +176,9 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
         jScrollPane1 = new javax.swing.JScrollPane();
         currentSValue = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
+        resultContentValue = new javax.swing.JTextArea();
+        resultContentLabel = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
         resultKeyValue = new javax.swing.JTextArea();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
@@ -176,7 +204,7 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
         currentSLabel.setText(bundle.getString("FOUND_S")); // NOI18N
 
         resultKeyLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
-        resultKeyLabel.setText(bundle.getString("RESULT_CECK")); // NOI18N
+        resultKeyLabel.setText(bundle.getString("RESULT_CEK")); // NOI18N
 
         cekFormatButtonGroup.add(cekFormatHex);
         cekFormatHex.setSelected(true);
@@ -221,13 +249,26 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
 
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
+        resultContentValue.setEditable(false);
+        resultContentValue.setColumns(20);
+        resultContentValue.setLineWrap(true);
+        resultContentValue.setRows(5);
+        resultContentValue.setWrapStyleWord(true);
+        resultContentValue.setBorder(null);
+        jScrollPane2.setViewportView(resultContentValue);
+
+        resultContentLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        resultContentLabel.setText(bundle.getString("RESULT_CONTENT")); // NOI18N
+
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         resultKeyValue.setEditable(false);
         resultKeyValue.setColumns(20);
         resultKeyValue.setLineWrap(true);
         resultKeyValue.setRows(5);
         resultKeyValue.setWrapStyleWord(true);
         resultKeyValue.setBorder(null);
-        jScrollPane2.setViewportView(resultKeyValue);
+        jScrollPane3.setViewportView(resultKeyValue);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -236,32 +277,40 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(attackDescription, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 922, Short.MAX_VALUE)
-                    .addComponent(jSeparator1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(attackDescription, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 922, Short.MAX_VALUE)
+                            .addComponent(jSeparator1)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(startAttackButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cancelAttackButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(cekFormatHex)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cekFormatB64))
-                            .addComponent(resultKeyLabel)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(currentSLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(amountRequestsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(timeElapsedLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(timeElapsedValue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-                                    .addComponent(amountRequestsValue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(startAttackButton)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(cancelAttackButton))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(cekFormatHex)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(cekFormatB64))
+                                    .addComponent(resultKeyLabel)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(currentSLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(amountRequestsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(timeElapsedLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(timeElapsedValue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+                                            .addComponent(amountRequestsValue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)))
+                                    .addComponent(resultContentLabel))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -292,9 +341,13 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cekFormatHex)
                     .addComponent(cekFormatB64))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resultContentLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -346,7 +399,10 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
     private javax.swing.JTextArea currentSValue;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel resultContentLabel;
+    private javax.swing.JTextArea resultContentValue;
     private javax.swing.JLabel resultKeyLabel;
     private javax.swing.JTextArea resultKeyValue;
     private javax.swing.JButton startAttackButton;

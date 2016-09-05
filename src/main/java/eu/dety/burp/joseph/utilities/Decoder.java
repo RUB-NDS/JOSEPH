@@ -125,7 +125,7 @@ public class Decoder {
      * @param key Name of the key
      * @return String value according to given key or empty string
      */
-    public String getValueByBase64String(String input, String key) {
+    public static String getValueByBase64String(String input, String key) {
         JSONObject jsonObj = Decoder.getDecodedJson(input);
 
         try {

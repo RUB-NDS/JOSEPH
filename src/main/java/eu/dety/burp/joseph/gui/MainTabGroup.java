@@ -137,7 +137,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                             @Override
                             public void mouseClicked(MouseEvent e) {
                                 int index = attackerTabGroup.indexOfTab(captionTitleValue);
-                                loggerInstance.log(MainTabGroup.class, Integer.toString(index), Logger.LogLevel.DEBUG);
+
                                 if (index >= 0) {
                                     attackerTabGroup.removeTabAt(index);
                                 }

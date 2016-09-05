@@ -153,7 +153,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
     @Override
     protected void done() {
-        this.panelReference.attackDoneAction(this.result);
+        this.panelReference.attackDoneAction(this.result, this.parameter);
     }
 
     private void updateAmountRequest() {
@@ -467,9 +467,9 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     /**
      * @param originalMessage original message to be changed
      * @param si factor
-     * @return
+     * @return Prepared message as byte array
      */
-    protected byte[] prepareMsg( final BigInteger originalMessage, final BigInteger si ) {
+    private byte[] prepareMsg( final BigInteger originalMessage, final BigInteger si ) {
         byte[] msg;
         BigInteger tmp;
 
@@ -494,7 +494,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
      * @param removeSignByte If set to TRUE leading sign bytes will be removed
      * @return Size corrected array (maybe padded or stripped the sign byte)
      */
-    public static byte[] correctSize( final byte[] array, final int blockSize, final boolean removeSignByte ) {
+    private static byte[] correctSize( final byte[] array, final int blockSize, final boolean removeSignByte ) {
         int remainder = array.length % blockSize;
         byte[] result = array;
         byte[] tmp;

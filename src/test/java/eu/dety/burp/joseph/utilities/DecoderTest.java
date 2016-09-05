@@ -179,8 +179,8 @@ public class DecoderTest {
 
     @Test
     public void convertBytesToHex() {
-        byte[] input = new byte[] {84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116};
-        String output = "54 68 69 73 20 69 73 20 61 20 74 65 73 74";
+        byte[] input = new byte[] {00, 84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116};
+        String output = "00 54 68 69 73 20 69 73 20 61 20 74 65 73 74";
 
         assertEquals(output, Decoder.bytesToHex(input));
     }
