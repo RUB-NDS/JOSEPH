@@ -240,8 +240,12 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
         return this.validEntries;
     }
 
-//    public boolean getOriginalMsgIsPkcs() {
-//        return table.getEntry(0).getIsValid();
-//    }
+    /**
+     * Get boolean value whether original message is PKCS1 conformant (based on user definition)
+     * @return Boolean PKCS1 validity
+     */
+    public boolean getOriginalMsgIsPkcs() {
+        return table.getEntry(0).getIsValid();
+    }
 
 }

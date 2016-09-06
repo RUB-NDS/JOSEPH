@@ -122,7 +122,7 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
             String[] components = Decoder.getComponents(joseParameter.getValue());
 
             try {
-                byte[] content = Crypto.decryptAES(components[0], result, Base64.decodeBase64(components[2]), Base64.decodeBase64(components[3]));
+                byte[] content = Crypto.decryptAES(components[0], result, Base64.decodeBase64(components[2]), Base64.decodeBase64(components[3]), Base64.decodeBase64(components[4]));
                 resultContentValue.setText(new String(content, StandardCharsets.UTF_8));
             } catch (DecryptionFailedException e) {
                 loggerInstance.log(BleichenbacherPkcs1.class, "Failed to decrypt the content: " + e.getMessage(), Logger.LogLevel.ERROR);

@@ -18,6 +18,8 @@
  */
 package eu.dety.burp.joseph.utilities;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,7 +28,7 @@ import java.util.Arrays;
 
 public class Crypto {
 
-    public static byte[] decryptAES(String header, byte[] key, byte[] iv, byte[] cipherBytes) throws DecryptionFailedException {
+    public static byte[] decryptAES(String header, byte[] key, byte[] iv, byte[] cipherBytes, byte[] authTag) throws DecryptionFailedException {
         byte[] decryptedContent;
 
         String encAlg = Decoder.getValueByBase64String(header, "enc").toUpperCase();
@@ -74,9 +76,21 @@ public class Crypto {
             field.setAccessible(true);
             field.set(null, java.lang.Boolean.FALSE);
 
-            cipher = Cipher.getInstance(cipherInstance);
+            cipher = Cipher.getInstance(cipherInstance, new BouncyCastleProvider());
             cipher.init(Cipher.DECRYPT_MODE, aesKey, new IvParameterSpec(iv));
-            decryptedContent = cipher.doFinal(cipherBytes);
+
+            if (encAlg.contains("GCM")) {
+                cipher.updateAAD(header.getBytes());
+
+                // Concatenate ciphertext and authentication tag byte arrays
+                byte[] concat = new byte[cipherBytes.length + authTag.length];
+                System.arraycopy(cipherBytes, 0, concat, 0, cipherBytes.length);
+                System.arraycopy(authTag, 0, concat, cipherBytes.length, authTag.length);
+
+                decryptedContent = cipher.doFinal(concat);
+            } else {
+                decryptedContent = cipher.doFinal(cipherBytes);
+            }
 
         } catch (Exception e) {
             throw new DecryptionFailedException(e.getMessage());
