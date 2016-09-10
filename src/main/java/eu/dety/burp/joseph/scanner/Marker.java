@@ -53,7 +53,7 @@ public class Marker implements IHttpListener {
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse httpRequestResponse) {
         // Only flag messages if highlighting option is set to true and if sent/received by the proxy
         if (PreferencesPanel.getHighlighting() && toolFlag == IBurpExtenderCallbacks.TOOL_PROXY) {
-            checkForJwtLocations(httpRequestResponse);
+            checkForJoseLocations(httpRequestResponse);
         }
     }
 
@@ -61,33 +61,42 @@ public class Marker implements IHttpListener {
      * Checks whether given recognition pattern for JWT locations match
      * @param httpRequestResponse {@link IHttpRequestResponse} Object containing the request/response.
      */
-    private void checkForJwtLocations(IHttpRequestResponse httpRequestResponse) {
+    private void checkForJoseLocations(IHttpRequestResponse httpRequestResponse) {
         IRequestInfo requestInfo = helpers.analyzeRequest(httpRequestResponse);
         boolean jwtFound = false;
+        boolean jweFound = false;
 
         // Search for authorization header
         for (String header : requestInfo.getHeaders()) {
             if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER")) {
                 loggerInstance.log(getClass(), "Authorization HTTP Header with type bearer found.", Logger.LogLevel.DEBUG);
                 jwtFound = Finder.checkJwtPattern(header);
+                jweFound = Finder.checkJwePattern(header);
                 break;
             }
         }
 
-        if (!jwtFound) {
+        if (!jwtFound && !jweFound) {
             // Search for (specific) parameter
             for (IParameter param : requestInfo.getParameters()) {
                 if(PreferencesPanel.getParameterNames().contains(param.getName())) {
-                    loggerInstance.log(getClass(), String.format("Possible JWT parameter found: %s.", param.getName()), Logger.LogLevel.DEBUG);
+                    loggerInstance.log(getClass(), String.format("Possible JOSE parameter found: %s.", param.getName()), Logger.LogLevel.DEBUG);
                     jwtFound = Finder.checkJwtPattern(param.getValue());
-                    if (jwtFound) break;
+                    jweFound = Finder.checkJwePattern(param.getValue());
+
+                    if (jwtFound || jweFound) break;
                 }
             }
         }
 
         if (jwtFound) {
-            markRequestResponse(httpRequestResponse, bundle.getString("REQUEST_RESPONSE_MARKER"));
+            markRequestResponse(httpRequestResponse, bundle.getString("JWT"));
             loggerInstance.log(getClass(), "JSON Web Token found!", Logger.LogLevel.DEBUG);
+        }
+
+        if (jweFound) {
+            markRequestResponse(httpRequestResponse, bundle.getString("JWE"));
+            loggerInstance.log(getClass(), "JSON Web Encryption found!", Logger.LogLevel.DEBUG);
         }
     }
 

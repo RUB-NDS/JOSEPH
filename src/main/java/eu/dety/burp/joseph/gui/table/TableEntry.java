@@ -33,6 +33,7 @@ import java.util.Calendar;
  */
 public class TableEntry {
     private int entryIndex = 0;
+    private String payloadType = "";
     private String payload = "";
     private short status = 0;
     private String time = "";
@@ -47,12 +48,13 @@ public class TableEntry {
      * @param requestResponse The content of the request/response.
      * @param callbacks Helper provided by the Burp Suite api.
      */
-    public TableEntry(int entryIndex, String payload, IHttpRequestResponse requestResponse, IBurpExtenderCallbacks callbacks) {
+    public TableEntry(int entryIndex, int payloadType, String payload, IHttpRequestResponse requestResponse, IBurpExtenderCallbacks callbacks) {
         this.helpers = callbacks.getHelpers();
 
         IResponseInfo responseInfo = helpers.analyzeResponse(requestResponse.getResponse());
 
         this.entryIndex = entryIndex;
+        this.setPayloadType(payloadType);
         this.payload = payload;
         this.status = responseInfo.getStatusCode();
 
@@ -131,4 +133,19 @@ public class TableEntry {
         this.comment = comment;
     }
 
+    /**
+     * Get the payload type ordinal value.
+     * @return The payload type ordinal value.
+     */
+    public String getPayloadType() {
+        return payloadType;
+    }
+
+    /**
+     * Set the payload type hex string representation.
+     * @param payloadType The hex string representation value of the payload type.
+     */
+    public void setPayloadType(int payloadType) {
+        this.payloadType = (payloadType > -1) ? String.format("0x%02X", payloadType) : "";
+    }
 }

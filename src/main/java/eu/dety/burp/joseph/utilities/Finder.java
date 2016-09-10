@@ -21,6 +21,11 @@ package eu.dety.burp.joseph.utilities;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Help functions to find JWT and JWE patterns.
+ * @author Dennis Detering
+ * @version 1.0
+ */
 public class Finder {
 
     /**
@@ -29,10 +34,22 @@ public class Finder {
      * @return boolean whether regex pattern matched or not.
      */
     public static boolean checkJwtPattern(String candidate) {
-        Pattern jwtPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?([a-zA-Z0-9\\-_\\.]+)*)", Pattern.CASE_INSENSITIVE);
+        Pattern jwtPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)", Pattern.CASE_INSENSITIVE);
         Matcher jwtMatcher = jwtPattern.matcher(candidate);
 
-        return jwtMatcher.find();
+        return jwtMatcher.matches();
+    }
+
+    /**
+     * Check whether given JWE candidate matches regex pattern
+     * @param candidate String containing the JWE candidate value.
+     * @return boolean whether regex pattern matched or not.
+     */
+    public static boolean checkJwePattern(String candidate) {
+        Pattern jwePattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)", Pattern.CASE_INSENSITIVE);
+        Matcher jweMatcher = jwePattern.matcher(candidate);
+
+        return jweMatcher.matches();
     }
 
     /**

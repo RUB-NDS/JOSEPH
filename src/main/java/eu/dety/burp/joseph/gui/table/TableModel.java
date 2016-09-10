@@ -31,7 +31,7 @@ import javax.swing.table.AbstractTableModel;
 public class TableModel extends AbstractTableModel {
     private static final Logger loggerInstance = Logger.getInstance();
     private ArrayList<TableEntry> tableEntries;
-    private String[] columnName = {"#", "Payload", "Status", "Length", "Time", "Comment"};
+    private String[] columnName = {"#", "Payload type", "Payload", "Status", "Length", "Time", "Comment"};
 
     /**
      * Construct a new table helper
@@ -130,14 +130,16 @@ public class TableModel extends AbstractTableModel {
             case 0:
                 return entry.getEntryIndex();
             case 1:
-                return entry.getPayload();
+                return entry.getPayloadType();
             case 2:
-                return entry.getStatus();
+                return entry.getPayload();
             case 3:
-                return entry.getLength();
+                return entry.getStatus();
             case 4:
-                return entry.getTime();
+                return entry.getLength();
             case 5:
+                return entry.getTime();
+            case 6:
                 return entry.getComment();
             default:
                 return null;

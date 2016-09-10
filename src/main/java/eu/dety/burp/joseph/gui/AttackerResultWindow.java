@@ -47,6 +47,8 @@ public class AttackerResultWindow extends JFrame {
     private static final Logger loggerInstance = Logger.getInstance();
     private Table table;
     private JProgressBar progressBar = new JProgressBar();
+    private JTabbedPane topTabs;
+
 
     public AttackerResultWindow(String caption, final IBurpExtenderCallbacks callbacks) {
         super(caption);
@@ -140,7 +142,6 @@ public class AttackerResultWindow extends JFrame {
         splitPane.setLeftComponent(viewScrollPane);
         splitPane.setRightComponent(bottomPanel);
 
-        JTabbedPane topTabs;
         topTabs = new JTabbedPane();
         topTabs.addTab("Results", null, splitPane, null);
 
@@ -162,7 +163,7 @@ public class AttackerResultWindow extends JFrame {
      * @param request number of already performed requests
      * @param all amount of requests to be performed
      */
-    public void setPrograssBarValue(int request, int all) {
+    public void setProgressBarValue(int request, int all) {
         // If all requests have been performed, set to 100% and change text to "finished"
         if(request == all) {
             this.progressBar.setValue(100);
@@ -181,6 +182,23 @@ public class AttackerResultWindow extends JFrame {
         // Sett percentage value and text
         this.progressBar.setValue(percentage);
         this.progressBar.setString("Request " + request + " of " + all + " (" + percentage + "%)");
+    }
+
+    /**
+     * Add new tab to this window
+     * @param tab {@link JPanel} new tab to add
+     */
+    public void addTab(String caption, JPanel tab) {
+        topTabs.addTab(caption, null, tab, null);
+    }
+
+    /**
+     * Set enabled status of a specific tab
+     * @param index Index of the tab
+     * @param status Boolean value of the enabled status
+     */
+    public void setTabEnabled(int index, boolean status) {
+        topTabs.setEnabledAt(index, status);
     }
 
 }

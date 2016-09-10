@@ -28,6 +28,8 @@ import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
+import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.json.JSONObject;
 
@@ -53,22 +55,6 @@ public class AttackerPanel extends JPanel {
     private IAttackInfo selectedAttack = null;
 
     /**
-     * Register Attacks
-     * <p>
-     * Method called on construction to register all available attacks.
-     * Extend this method to add your custom attack.
-     */
-    private void registerAttacks() {
-        SignatureExclusionInfo signatureExclusionInfo = new SignatureExclusionInfo();
-        registeredAttacks.put(signatureExclusionInfo.getName(), signatureExclusionInfo);
-        loggerInstance.log(getClass(), "Attack registered: Signature Exclusion", Logger.LogLevel.INFO);
-
-        KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo();
-        registeredAttacks.put(keyConfusionInfo.getName(), keyConfusionInfo);
-        loggerInstance.log(getClass(), "Attack registered: Key Confusion", Logger.LogLevel.INFO);
-    }
-
-    /**
      * AttackerPanel constructor
      * <p>
      * Register available attacks, extract "alg" and "typ" header fields and
@@ -78,19 +64,18 @@ public class AttackerPanel extends JPanel {
      * @param message {@link IHttpRequestResponse} requestResponse message
      */
     public AttackerPanel(IBurpExtenderCallbacks callbacks, IHttpRequestResponse message) {
-        Decoder joseDecoder = new Decoder();
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
         this.requestResponse = message;
         this.requestInfo = helpers.analyzeRequest(message);
 
         // Register all available attacks
-        registerAttacks();
+        registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
 
         // Find the JOSE parameter
         for (IParameter param : requestInfo.getParameters()) {
             if(PreferencesPanel.getParameterNames().contains(param.getName())) {
-                if (Finder.checkJwtPattern(param.getValue())) {
+                if (Finder.checkJwtPattern(param.getValue()) || Finder.checkJwePattern(param.getValue())) {
                     parameter = param;
                     break;
                 }
@@ -101,7 +86,7 @@ public class AttackerPanel extends JPanel {
         initComponents();
 
         // Parse the JOSE value to an JSONObject
-        JSONObject[] joseJSONComponents = joseDecoder.getJsonComponents(parameter.getValue());
+        JSONObject[] joseJSONComponents = Decoder.getJsonComponents(parameter.getValue());
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
         if(joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
@@ -133,6 +118,8 @@ public class AttackerPanel extends JPanel {
         attackInfoDescription.setEnabled(false);
 
         extraPanel.removeAll();
+        extraPanel.revalidate();
+        extraPanel.repaint();
         extraPanel.setEnabled(false);
 
         attackButton.setEnabled(false);
@@ -270,7 +257,9 @@ public class AttackerPanel extends JPanel {
         attackInfoDescription.setEnabled(true);
 
         // Check if attack has extra UI components and update UI
-        boolean hasExtraUI = selectedAttack.getExtraUI(extraPanel);
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        boolean hasExtraUI = selectedAttack.getExtraUI(extraPanel, constraints);
 
         if(hasExtraUI) {
             extraPanel.setEnabled(true);

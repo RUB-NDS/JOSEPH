@@ -1,5 +1,7 @@
 burp
 eu.dety.burp.joseph.attacks
+eu.dety.burp.joseph.attacks.KeyConfusion
+eu.dety.burp.joseph.attacks.SignatureExclusion
 eu.dety.burp.joseph.editor
 eu.dety.burp.joseph.gui
 eu.dety.burp.joseph.gui.editor

@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
+import eu.dety.burp.joseph.editor.JweEditor;
 import eu.dety.burp.joseph.editor.JwtEditor;
 import eu.dety.burp.joseph.gui.MainTabGroup;
 import eu.dety.burp.joseph.scanner.Marker;
@@ -81,6 +82,11 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         final JwtEditor jwtEditor = new JwtEditor(callbacks);
         callbacks.registerMessageEditorTabFactory(jwtEditor);
         loggerInstance.log(getClass(), bundle.getString("REGISTERED_JWTEDITOR"), Logger.LogLevel.INFO);
+
+        // Register JWE Editor
+        final JweEditor jweEditor = new JweEditor(callbacks);
+        callbacks.registerMessageEditorTabFactory(jweEditor);
+        loggerInstance.log(getClass(), bundle.getString("REGISTERED_JWEEDITOR"), Logger.LogLevel.INFO);
 
     }
 

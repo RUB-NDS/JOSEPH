@@ -33,18 +33,11 @@ public class Decoder {
     private static final Logger loggerInstance = Logger.getInstance();
 
     /**
-     * Create new Decoder instance
-     */
-    public Decoder() {
-
-    }
-
-    /**
      * Safe URL encode a byte array to a String
      * @param input byte array input
      * @return base64url encoded string
      */
-    private String base64UrlEncode(byte[] input) {
+    public static String base64UrlEncode(byte[] input) {
         return new String(Base64.encodeBase64URLSafe(input));
     }
 
@@ -53,7 +46,7 @@ public class Decoder {
      * @param input Compact serialization JOSE value
      * @return string array with the separate parts
      */
-    public String[] getComponents(String input) {
+    public static String[] getComponents(String input) {
         return input.split("\\.", -1);
     }
 
@@ -63,7 +56,7 @@ public class Decoder {
      * @param assureLength Assure a certain length of the returned string array
      * @return string array with the separate fixed amount of parts
      */
-    public String[] getComponents(String input, int assureLength) {
+    public static String[] getComponents(String input, int assureLength) {
         String [] components = input.split("\\.");
 
         // If length is already correct return the components
@@ -84,7 +77,7 @@ public class Decoder {
      * @param input string array of JOSE values in compact serialization
      * @return single string with concatenated components
      */
-    public String concatComponents(String[] input) {
+    public static String concatComponents(String[] input) {
         return StringUtils.join(input, ".");
     }
 
@@ -93,13 +86,13 @@ public class Decoder {
      * @param input base64url encoded value
      * @return string representation of the base64 decoded value
      */
-    public String getDecoded(String input) {
+    public static String getDecoded(String input) {
         String output = "[ERROR]";
 
         try {
             output = new String(Base64.decodeBase64(input), Charset.forName("UTF-8"));
         } catch(Exception e){
-            loggerInstance.log(getClass(), e.getMessage(), Logger.LogLevel.ERROR);
+            loggerInstance.log(Decoder.class, e.getMessage(), Logger.LogLevel.ERROR);
         }
 
         return output;
@@ -110,7 +103,7 @@ public class Decoder {
      * @param input base64url encoded value
      * @return JSONObject of the parsed value
      */
-    public JSONObject getDecodedJson(String input) {
+    public static JSONObject getDecodedJson(String input) {
         String decoded = getDecoded(input);
         JSONObject output = new JSONObject();
 
@@ -127,16 +120,33 @@ public class Decoder {
     }
 
     /**
+     * Get value by base64url string input and key name
+     * @param input base64url string
+     * @param key Name of the key
+     * @return String value according to given key or empty string
+     */
+    public static String getValueByBase64String(String input, String key) {
+        JSONObject jsonObj = Decoder.getDecodedJson(input);
+
+        try {
+            return jsonObj.get(key).toString();
+        } catch (Exception e) {
+            return "";
+        }
+
+    }
+
+    /**
      * Decode from jose value to JSONObject array
      * @param input base64url encoded jose value string
      * @return JSONObject array of the parsed value
      */
-    public JSONObject[] getJsonComponents(String input) {
-        String[] components = this.getComponents(input);
+    public static JSONObject[] getJsonComponents(String input) {
+        String[] components = Decoder.getComponents(input);
 
         JSONObject[] output = new JSONObject[components.length];
         for(int i = 0; i < components.length; i++) {
-            output[i] = this.getDecodedJson(components[i]);
+            output[i] = Decoder.getDecodedJson(components[i]);
         }
 
         return output;
@@ -147,13 +157,13 @@ public class Decoder {
      * @param input JSON byte array
      * @return base64url representation of the JSON string
      */
-    public String getEncoded(byte[] input) {
+    public static String getEncoded(byte[] input) {
         String output = "[ERROR]";
 
         try {
             output = base64UrlEncode(input);
         } catch(Exception e){
-            loggerInstance.log(getClass(), e.getMessage(), Logger.LogLevel.ERROR);
+            loggerInstance.log(Decoder.class, e.getMessage(), Logger.LogLevel.ERROR);
         }
 
         return output;
@@ -164,15 +174,57 @@ public class Decoder {
      * @param input JSON string
      * @return base64url representation of the JSON string
      */
-    public String getEncoded(String input) {
+    public static String getEncoded(String input) {
         String output = "[ERROR]";
 
         try {
             output = base64UrlEncode(input.getBytes(Charset.forName("UTF-8")));
         } catch(Exception e){
-            loggerInstance.log(getClass(), e.getMessage(), Logger.LogLevel.ERROR);
+            loggerInstance.log(Decoder.class, e.getMessage(), Logger.LogLevel.ERROR);
         }
 
         return output;
+    }
+
+    private final static char[] HEXCHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+    /**
+     * Convert byte array to hex string
+     * @param bytes Byte array input
+     * @return Hex string
+     */
+    public static String bytesToHex( final byte[] bytes ) {
+        StringBuilder builder = new StringBuilder( bytes.length * 2 );
+
+        for (byte aByte : bytes) {
+            // unsigned right shift of the MSBs
+            builder.append(HEXCHARS[(aByte & 0xff) >>> 4]);
+            // handling the LSBs
+            builder.append(HEXCHARS[aByte & 0xf]);
+            builder.append(' ');
+        }
+
+        return builder.toString().trim();
+    }
+
+    /**
+     * Convert hex string to byte array
+     * @param str Hex formatted string
+     * @return Byte array
+     */
+    public static byte[] hexToBytes(String str) {
+        str = str.replace(" ", "");
+        int len = str.length();
+        byte[] data = new byte[len / 2];
+
+        try {
+            for (int i = 0; i < len; i += 2) {
+                data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4) + Character.digit(str.charAt(i+1), 16));
+            }
+        } catch (Exception e) {
+            data = new byte[0];
+        }
+
+        return data;
     }
 }

@@ -20,6 +20,7 @@ package eu.dety.burp.joseph.editor;
 
 import burp.*;
 
+import eu.dety.burp.joseph.gui.EditorAttackerPanel;
 import eu.dety.burp.joseph.gui.PreferencesPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Logger;
@@ -33,13 +34,12 @@ import java.util.List;
 /**
  * JSON Web Token (JWT) Editor.
  * <p>
- * Display decoded JWT syntax highlighted.
+ * Display decoded JWT components.
  * @author Dennis Detering
  * @version 1.0
  */
 public class JwtEditor implements IMessageEditorTabFactory {
     private static final Logger loggerInstance = Logger.getInstance();
-    private static final Decoder joseDecoder = new Decoder();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private String joseHeader = null;
@@ -67,23 +67,20 @@ public class JwtEditor implements IMessageEditorTabFactory {
         return new JwtEditorTab(controller, editable);
     }
 
-    private class JwtEditorTab implements IMessageEditorTab {
+    public class JwtEditorTab implements IMessageEditorTab {
         private JTabbedPane JwtEditorTabPanel;
         private boolean editable;
         private byte[] currentMessage;
+        private boolean isModified = false;
 
-        private ITextEditor sourceViewerRaw;
         private ITextEditor sourceViewerHeader;
         private ITextEditor sourceViewerPayload;
         private ITextEditor sourceViewerSignature;
+        private EditorAttackerPanel editorAttackerPanel;
 
         JwtEditorTab(IMessageEditorController controller, boolean editable) {
             this.editable = editable;
             this.JwtEditorTabPanel = new JTabbedPane();
-
-            // Create an instance of Burp's text editor to display raw data
-            sourceViewerRaw = callbacks.createTextEditor();
-            sourceViewerRaw.setEditable(editable);
 
             // Add text editor tab for each JOSE part
             sourceViewerHeader = callbacks.createTextEditor();
@@ -93,7 +90,11 @@ public class JwtEditor implements IMessageEditorTabFactory {
             JwtEditorTabPanel.addTab("Header", sourceViewerHeader.getComponent());
             JwtEditorTabPanel.addTab("Payload", sourceViewerPayload.getComponent());
             JwtEditorTabPanel.addTab("Base64(Signature)", sourceViewerSignature.getComponent());
-            JwtEditorTabPanel.addTab("Raw", sourceViewerRaw.getComponent());
+
+            editorAttackerPanel = new EditorAttackerPanel(callbacks, this);
+            if(editable) {
+                JwtEditorTabPanel.addTab("Attacker", editorAttackerPanel);
+            }
         }
 
         @Override
@@ -140,41 +141,41 @@ public class JwtEditor implements IMessageEditorTabFactory {
         public void setMessage(byte[] content, boolean isRequest) {
             if (content == null) {
                 // Clear displayed content
-                sourceViewerRaw.setText(null);
-                sourceViewerRaw.setEditable(false);
             }
             // Set JOSE header values
             else if (joseHeader != null) {
-                sourceViewerRaw.setText(joseHeaderValue.getBytes());
-                sourceViewerRaw.setEditable(editable);
+                sourceViewerHeader.setText(null);
+                sourceViewerHeader.setEditable(false);
 
-                String[] joseParts = joseDecoder.getComponents(joseHeaderValue, 3);
+                sourceViewerPayload.setText(null);
+                sourceViewerPayload.setEditable(false);
 
-                sourceViewerHeader.setEditable(editable);
-                sourceViewerPayload.setEditable(editable);
-                sourceViewerSignature.setEditable(editable);
+                sourceViewerSignature.setText(null);
+                sourceViewerSignature.setEditable(false);
 
-                sourceViewerHeader.setText(joseDecoder.getDecoded(joseParts[0]).getBytes());
-                sourceViewerPayload.setText(joseDecoder.getDecoded(joseParts[1]).getBytes());
-                sourceViewerSignature.setText(helpers.stringToBytes(joseParts[2]));
+                editorAttackerPanel.setEnabled(false);
             }
             // Set JOSE parameter values
             else if (joseParameterName != null) {
+
                 // Retrieve JOSE parameter
                 IParameter parameter = helpers.getRequestParameter(content, joseParameterName);
 
-                sourceViewerRaw.setText(parameter.getValue().getBytes());
-                sourceViewerRaw.setEditable(editable);
-
-                String[] joseParts = joseDecoder.getComponents(parameter.getValue(), 3);
+                String[] joseParts = Decoder.getComponents(parameter.getValue(), 3);
 
                 sourceViewerHeader.setEditable(editable);
                 sourceViewerPayload.setEditable(editable);
                 sourceViewerSignature.setEditable(editable);
 
-                sourceViewerHeader.setText(joseDecoder.getDecoded(joseParts[0]).getBytes());
-                sourceViewerPayload.setText(joseDecoder.getDecoded(joseParts[1]).getBytes());
-                sourceViewerSignature.setText(helpers.stringToBytes(joseParts[2]));
+                String header = Decoder.getDecoded(joseParts[0]);
+                String payload = Decoder.getDecoded(joseParts[1]);
+                String signature = joseParts[2];
+
+                sourceViewerHeader.setText(helpers.stringToBytes(header));
+                sourceViewerPayload.setText(helpers.stringToBytes(payload));
+                sourceViewerSignature.setText(helpers.stringToBytes(signature));
+
+                editorAttackerPanel.updateAttackList();
             }
 
             // Remember the displayed content
@@ -185,33 +186,11 @@ public class JwtEditor implements IMessageEditorTabFactory {
         // TODO: Outsource Header mofification function
         @Override
         public byte[] getMessage() {
-            // Determine whether the user modified the raw data
-            if (sourceViewerRaw.isTextModified()) {
-                byte[] text = sourceViewerRaw.getText();
-
-                if (joseHeader != null && joseHeaderValue != null) {
-                    IRequestInfo requestInfo = helpers.analyzeRequest(currentMessage);
-                    List<String> headers = requestInfo.getHeaders();
-
-                    int index = 0;
-                    for (String header : headers) {
-                        if (header.equals(joseHeader)) {
-                            headers.set(index, header.replace(joseHeaderValue, helpers.bytesToString(text)));
-                        }
-                        index++;
-                    }
-
-                    return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage, requestInfo.getBodyOffset(), currentMessage.length));
-                } else {
-                    // Update the request with the new parameter value
-                    return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, helpers.bytesToString(text), IParameter.PARAM_URL));
-                }
-
-            } else if (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified()) {
+            if (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified()) {
                 String[] components = {
-                    joseDecoder.getEncoded(sourceViewerHeader.getText()),
-                    joseDecoder.getEncoded(sourceViewerPayload.getText()),
-                    helpers.bytesToString(sourceViewerSignature.getText()),
+                        Decoder.getEncoded(sourceViewerHeader.getText()),
+                        Decoder.getEncoded(sourceViewerPayload.getText()),
+                        helpers.bytesToString(sourceViewerSignature.getText())
                 };
 
                 // Update the request with the new parameter value
@@ -222,7 +201,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
                     int index = 0;
                     for (String header: headers) {
                         if (header.equals(joseHeader)) {
-                            headers.set(index, header.replace(joseHeaderValue, joseDecoder.concatComponents(components)));
+                            headers.set(index, header.replace(joseHeaderValue, Decoder.concatComponents(components)));
                         }
                         index++;
                     }
@@ -231,7 +210,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
                 }
                 // Update the request with the new parameter value
                 else if (joseParameterName != null) {
-                    return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, joseDecoder.concatComponents(components), IParameter.PARAM_URL));
+                    return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, Decoder.concatComponents(components), IParameter.PARAM_URL));
                 }
                 // Some issue occurred, should not happen
                 else {
@@ -241,16 +220,48 @@ public class JwtEditor implements IMessageEditorTabFactory {
             } else {
                 return currentMessage;
             }
+
         }
 
         @Override
         public boolean isModified() {
-            return (sourceViewerRaw.isTextModified() || sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified());
+            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified() || this.isModified);
+            this.isModified = false;
+            return isModified;
         }
 
         @Override
         public byte[] getSelectedData() {
-            return sourceViewerRaw.getSelectedText();
+            return null;
+        }
+
+        /**
+         * Update all related source viewer editors
+         * @param header The header JSON string
+         * @param payload The payload JSON string
+         * @param signature The signature base64 string
+         */
+        public void updateSourceViewer(String header, String payload, String signature) {
+            sourceViewerHeader.setText(helpers.stringToBytes(header));
+            sourceViewerPayload.setText(helpers.stringToBytes(payload));
+            sourceViewerSignature.setText(helpers.stringToBytes(signature));
+            this.isModified = true;
+        }
+
+        /**
+         * Get the header value from sourceViewerHeader editor as string
+         * @return Header JSON string
+         */
+        public String getHeader() {
+            return helpers.bytesToString(sourceViewerHeader.getText());
+        }
+
+        /**
+         * Get the payload value from sourceViewerPayload editor as string
+         * @return Payload JSON string
+         */
+        public String getPayload() {
+            return helpers.bytesToString(sourceViewerPayload.getText());
         }
     }
 }
