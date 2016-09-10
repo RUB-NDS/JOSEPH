@@ -22,14 +22,11 @@ import burp.*;
 
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
-import eu.dety.burp.joseph.attacks.KeyConfusion.KeyConfusion;
-import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionInfo;
+import eu.dety.burp.joseph.utilities.Converter;
 import eu.dety.burp.joseph.utilities.Decoder;
-import eu.dety.burp.joseph.utilities.Jwk;
 import eu.dety.burp.joseph.utilities.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.awt.*;
 import java.io.UnsupportedEncodingException;
@@ -153,7 +150,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                 try {
                     Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
 
-                    List<PublicKey> publicKeys = Jwk.getRsaPublicKeys(publickKeyValueJson);
+                    List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
 
                     for (PublicKey publicKey : publicKeys) {
                         loggerInstance.log(getClass(), "Encoded PubKey: " + Base64.encodeBase64String(publicKey.getEncoded()) + "\nFormat: " + publicKey.getFormat(), Logger.LogLevel.DEBUG);
@@ -360,7 +357,7 @@ public class KeyConfusionInfo implements IAttackInfo {
 
                 try {
                     Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
-                    modifiedKey = transformKeyByPayload(payloadTypeId, Jwk.getRsaPublicKeys(publickKeyValueJson).get(0));
+                    modifiedKey = transformKeyByPayload(payloadTypeId, Converter.getRsaPublicKeysByJwk(publickKeyValueJson).get(0));
 
                 } catch (Exception e) {
                     loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);

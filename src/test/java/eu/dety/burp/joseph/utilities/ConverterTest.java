@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class JwkTest {
+public class ConverterTest {
 
     @Test
     public void getRsaPublicKeyWithSingleRsaJwkInputReturnsListWithSingleRsaPublicKeyObject() throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException {
@@ -44,7 +45,7 @@ public class JwkTest {
         BigInteger publicExponent = new BigInteger("65537");
         PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
 
-        List<PublicKey> publicKeyList = Jwk.getRsaPublicKeys(jwk);
+        List<PublicKey> publicKeyList = Converter.getRsaPublicKeysByJwk(jwk);
 
         assertNotNull(publicKeyList);
         assertEquals(publicKeyList.size(), 1);
@@ -55,7 +56,7 @@ public class JwkTest {
     public void getRsaPublicKeyWithSingleEcJwkInputReturnsEmptyList() throws ParseException {
         Object jwk = new JSONParser().parse("{\"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"use\":\"enc\", \"kid\":\"1\"}");
 
-        List<PublicKey> publicKeyList = Jwk.getRsaPublicKeys(jwk);
+        List<PublicKey> publicKeyList = Converter.getRsaPublicKeysByJwk(jwk);
 
         assertNotNull(publicKeyList);
         assertEquals(new ArrayList<PublicKey>(), publicKeyList);
@@ -69,7 +70,7 @@ public class JwkTest {
         BigInteger publicExponent = new BigInteger("65537");
         PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
 
-        List<PublicKey> publicKeyList = Jwk.getRsaPublicKeys(jwk);
+        List<PublicKey> publicKeyList = Converter.getRsaPublicKeysByJwk(jwk);
 
         assertNotNull(publicKeyList);
         assertEquals(publicKeyList.size(), 1);
@@ -88,12 +89,34 @@ public class JwkTest {
         BigInteger publicExponent2 = new BigInteger("65537");
         PublicKey publicKey2 = KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus2, publicExponent2));
 
-        List<PublicKey> publicKeyList = Jwk.getRsaPublicKeys(jwk);
+        List<PublicKey> publicKeyList = Converter.getRsaPublicKeysByJwk(jwk);
 
         assertNotNull(publicKeyList);
         assertEquals(publicKeyList.size(), 2);
         assertEquals(publicKey, publicKeyList.get(0));
         assertEquals(publicKey2, publicKeyList.get(1));
+    }
+
+    @Test
+    public void getRsaPublicKeyByPemStringReturnsCorrectRsaPublicKeyObject() throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException {
+        String pemString = "-----BEGIN PUBLIC KEY-----\n" +
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqNyaO8jKmo/vfcFmxVNx\n" +
+                "mJD4s+pJah9v/y7TxT1EGLLHZhAjZji7cZ+tyu5XDX6X9Mv3Cw5teQu9cdlTbdFp\n" +
+                "rS9jRasnMlOfqI0V7jc7MOpa3n7AOeAYW9kFCL0qykKEs5B1f+F4zNAxp0hdE3eQ\n" +
+                "KYCbCprXjHKF1CfH28C0Qk+GUtaRJbLaUybBoGvQ7vW/fdVUkuk3lOgnzF9dgrm0\n" +
+                "8u11QLQpkF5glpC9ydiuWPNEKuOzTOGcgT3kA9XxliBLmuXO6OjDxxzzoDokMg82\n" +
+                "rsQ9XQOE9E3MRF2THfeMyQW7lRO63DOPCM3OBboSlUJQxWFVlA+YbMMUU7G0LdFX\n" +
+                "lQIDAQAB\n" +
+                "-----END PUBLIC KEY-----\n";
+
+        RSAPublicKey publicKey = Converter.getRsaPublicKeyByPemString(pemString);
+
+        BigInteger modulus = new BigInteger("21316818368993447071015504638669801307527791584419862690177839595942029205894278985540228412443487713781149000078791190623276463454823320959362260326199842987421361386139414049320560418755520845179985115136181677185147622508697723189907444611574225122510119509110186633493415018035262172045096131517158872141869399939837654786497010314012641458269735824601371910054201921752066689022132849085664346125596962587379664190262614011733894298373034667307278544652193891973668886039046311943231827345356203903687328889718549241623336004630871090544516461376300794799815319108967915139001745002800408170876902995920807876501");
+        BigInteger publicExponent = new BigInteger("65537");
+
+        RSAPublicKey expectedPublicKey = (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
+
+        assertEquals(expectedPublicKey, publicKey);
     }
 
 }
