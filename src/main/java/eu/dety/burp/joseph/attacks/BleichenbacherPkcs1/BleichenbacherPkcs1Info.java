@@ -21,8 +21,8 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1;
 import burp.*;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
+import eu.dety.burp.joseph.utilities.Converter;
 import eu.dety.burp.joseph.utilities.Decoder;
-import eu.dety.burp.joseph.utilities.Jwk;
 import eu.dety.burp.joseph.utilities.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.simple.parser.JSONParser;
@@ -33,7 +33,10 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Security;
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 import java.util.List;
@@ -133,50 +136,32 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
             throw new AttackPreparationFailedException(bundle.getString("PROVIDE_PUBKEY"));
         }
 
-        try {
-            Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
-            List<PublicKey> publicKeys = Jwk.getRsaPublicKeys(publickKeyValueJson);
-            pubKey = (RSAPublicKey)publicKeys.get(0);
+        // Parse public key according to selected format
+        int publicKeyFormat = publicKeySelection.getSelectedIndex();
 
-        } catch (Exception e) {
-            throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
+        switch (publicKeyFormat) {
+            // JWK (JSON)
+            case 1:
+                loggerInstance.log(getClass(), "Key format is JWK:  " + publicKeyValue, Logger.LogLevel.DEBUG);
+
+                try {
+                    Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
+                    List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
+                    pubKey = (RSAPublicKey)publicKeys.get(0);
+
+                } catch (Exception e) {
+                    loggerInstance.log(getClass(), "Error on transforming to RSAPublicKey:  " + e.getMessage(), Logger.LogLevel.ERROR);
+                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
+                }
+
+                break;
+            // PEM (String)
+            default:
+                pubKey = Converter.getRsaPublicKeyByPemString(publicKeyValue);
+                if(pubKey == null) {
+                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
+                }
         }
-
-        // TODO: Support PEM
-//        // Parse public key according to selected format
-//        int publicKeyFormat = publicKeySelection.getSelectedIndex();
-//
-//        switch (publicKeyFormat) {
-//            // JWK (JSON)
-//            case 1:
-//                loggerInstance.log(getClass(), "Key format is JWK:  " + publicKeyValue, Logger.LogLevel.DEBUG);
-//
-//                try {
-//                    Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
-//                    List<PublicKey> publicKeys = Jwk.getRsaPublicKeys(publickKeyValueJson);
-//                    publicKey = (RSAPublicKey)publicKeys.get(0);
-//
-//                } catch (Exception e) {
-//                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
-//                }
-//
-//                break;
-//            // PEM (String)
-//            default:
-//                loggerInstance.log(getClass(), "Key format is PEM:  " + publicKeyValue, Logger.LogLevel.DEBUG);
-//
-//                try {
-//                    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(publicKeyValue));
-//                    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//                    publicKey = (RSAPublicKey)keyFactory.generatePublic(keySpec);
-//
-//
-//                } catch (Exception e) {
-//                    loggerInstance.log(getClass(), "Error on transforming to RSAPublicKey:  " + e.getMessage(), Logger.LogLevel.ERROR);
-//                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
-//                }
-//
-//        }
 
         HashMap<payloadType, byte[]> encryptedKeys;
 
@@ -240,7 +225,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         publicKey = new JTextArea(10, 50);
         publicKey.setLineWrap(true);
 
-        // publicKeySelectionListModel.addElement("PEM (String)");
+        publicKeySelectionListModel.addElement("PEM (String)");
         publicKeySelectionListModel.addElement("JWK (JSON)");
 
         publicKeySelection.setModel(publicKeySelectionListModel);
