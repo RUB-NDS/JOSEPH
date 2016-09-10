@@ -183,7 +183,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
         }
 
         // TODO: Beautify!
-        // TODO: Outsource Header mofification function
+        // TODO: Outsource Header modification function
         @Override
         public byte[] getMessage() {
             if (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified()) {

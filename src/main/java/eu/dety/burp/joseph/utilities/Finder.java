@@ -37,7 +37,7 @@ public class Finder {
         Pattern jwtPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)", Pattern.CASE_INSENSITIVE);
         Matcher jwtMatcher = jwtPattern.matcher(candidate);
 
-        return jwtMatcher.matches();
+        return jwtMatcher.find();
     }
 
     /**
@@ -49,7 +49,7 @@ public class Finder {
         Pattern jwePattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)", Pattern.CASE_INSENSITIVE);
         Matcher jweMatcher = jwePattern.matcher(candidate);
 
-        return jweMatcher.matches();
+        return jweMatcher.find();
     }
 
     /**
