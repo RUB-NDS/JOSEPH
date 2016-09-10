@@ -184,7 +184,6 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
             JSONParser jsonParser = new JSONParser();
 
-            // TODO: Check if exists before calling get() to prevent NullPointerException
             try {
                 FileReader configFileReader = new FileReader(configFile);
                 JSONObject configObj = (JSONObject)jsonParser.parse(configFileReader);
@@ -207,7 +206,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "The config file can not be parsed!\n\nError:\n" + e.toString(), "Error parsing config file", JOptionPane.ERROR_MESSAGE);
                 loggerInstance.log(getClass(), "Config file can not be parsed!\n" + e.toString(), Logger.LogLevel.ERROR);
             } catch (NullPointerException e) {
-                JOptionPane.showMessageDialog(this, "The config file needs to contain any option values!\n\nError:\n" + e.toString(), "Error parsing config file", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "The config file needs to contain all option values!\n\nError:\n" + e.toString(), "Error parsing config file", JOptionPane.ERROR_MESSAGE);
                 loggerInstance.log(getClass(), "The config file needs to contain any option values!\n" + e.toString(), Logger.LogLevel.ERROR);
             } catch (Exception e) {
                 loggerInstance.log(getClass(), e.toString(), Logger.LogLevel.ERROR);
