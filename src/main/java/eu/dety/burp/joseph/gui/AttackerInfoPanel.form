@@ -60,7 +60,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="attackerInfoContentLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;How to:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Navigate to the PROXY tab&lt;/li&gt;&lt;li&gt;Right click on a (marked) request with an JOSE value&lt;/li&gt;&lt;li&gt;Click &quot;Send to JOSEPH&quot;&lt;/li&gt;&lt;/html&gt;"/>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;How to:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Navigate to the PROXY tab&lt;/li&gt;&lt;li&gt;Right click on a (marked) request with a JOSE value&lt;/li&gt;&lt;li&gt;Click &quot;Send to JOSEPH&quot;&lt;/li&gt;&lt;/html&gt;"/>
       </Properties>
     </Component>
   </SubComponents>

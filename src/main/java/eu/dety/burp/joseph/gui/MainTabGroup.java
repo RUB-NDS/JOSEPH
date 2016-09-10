@@ -45,6 +45,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     private int globalTabCounter = 0;
 
     // Sub tabs within JOSEPH MainTabGroup
+    private ManualPanel manualPanel;
     private DecoderPanel decoderPanel;
     private HelpPanel helpPanel;
     private PreferencesPanel preferencesPanel;
@@ -232,12 +233,14 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
      */
     private void initComponents(){
         // Create panel instances
+        manualPanel = new ManualPanel();
         decoderPanel = new DecoderPanel(callbacks);
-        helpPanel = new HelpPanel();
         preferencesPanel = new PreferencesPanel();
+        helpPanel = new HelpPanel();
 
         // Add panel instances as tabs
         this.addTab(bundle.getString("ATTACKER"), attackerTabGroup);
+        this.addTab(bundle.getString("MANUAL"), manualPanel);
         this.addTab(bundle.getString("DECODER"), decoderPanel);
         this.addTab(bundle.getString("PREFERENCES"), preferencesPanel);
         this.addTab(bundle.getString("HELP"), helpPanel);

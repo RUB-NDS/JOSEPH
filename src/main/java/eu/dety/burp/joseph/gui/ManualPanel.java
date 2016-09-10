@@ -18,15 +18,9 @@
  */
 package eu.dety.burp.joseph.gui;
 
+public class ManualPanel extends javax.swing.JPanel {
 
-/**
- * Attacker info tab with information about how to use the JOSEPH attacker
- * @author Dennis Detering
- * @version 1.0
- */
-public class AttackerInfoPanel extends javax.swing.JPanel {
-
-    public AttackerInfoPanel() {
+    public ManualPanel() {
         initComponents();
     }
 
@@ -39,48 +33,45 @@ public class AttackerInfoPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        attackerInfoHeadlineLabel = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        attackerInfoContentLabel = new javax.swing.JLabel();
+        inputLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        inputValue = new javax.swing.JTextArea();
 
-        attackerInfoHeadlineLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
-        attackerInfoHeadlineLabel.setText(bundle.getString("LOGGING_HEADLINE")); // NOI18N
-        attackerInfoHeadlineLabel.setName("attackerInfoHeadlineLabel"); // NOI18N
+        inputLabel.setText(bundle.getString("JOSE_INPUT_LABEL")); // NOI18N
 
-        attackerInfoContentLabel.setText("<html><b>How to:</b><ul><li>Navigate to the PROXY tab</li><li>Right click on a (marked) request with a JOSE value</li><li>Click \"Send to JOSEPH\"</li></html>");
+        inputValue.setColumns(20);
+        inputValue.setRows(5);
+        jScrollPane1.setViewportView(inputValue);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(attackerInfoContentLabel)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(attackerInfoHeadlineLabel)
-                        .addGap(0, 173, Short.MAX_VALUE))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(inputLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(attackerInfoHeadlineLabel)
+                .addComponent(inputLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(attackerInfoContentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(156, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(330, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel attackerInfoContentLabel;
-    private javax.swing.JLabel attackerInfoHeadlineLabel;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel inputLabel;
+    private javax.swing.JTextArea inputValue;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
