@@ -23,10 +23,12 @@ import eu.dety.burp.joseph.gui.EditorAttackerPanel;
 import eu.dety.burp.joseph.gui.PreferencesPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 
 /**
  * JSON Web Token (JWE) Editor.
@@ -39,7 +41,6 @@ public class JweEditor implements IMessageEditorTabFactory {
     private static final Logger loggerInstance = Logger.getInstance();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
-    private String joseParameterName = null;
 
     /**
      * Create JweEditor instance.
@@ -66,15 +67,13 @@ public class JweEditor implements IMessageEditorTabFactory {
         private boolean editable;
         private byte[] currentMessage;
         private boolean isModified = false;
+        private JoseParameter joseParameter = null;
 
         private ITextEditor sourceViewerHeader;
         private ITextEditor sourceViewerCek;
         private ITextEditor sourceViewerIv;
         private ITextEditor sourceViewerCiphertext;
         private ITextEditor sourceViewerTag;
-
-        // private ITextEditor sourceViewerAad;
-        // private EditorAttackerPanel editorAttackerPanel;
 
         JweEditorTab(IMessageEditorController controller, boolean editable) {
             this.editable = editable;
@@ -113,20 +112,36 @@ public class JweEditor implements IMessageEditorTabFactory {
         public boolean isEnabled(byte[] content, boolean isRequest) {
             // Enable this tab for requests containing a JOSE parameter
             if(isRequest) {
-                for(Object param: PreferencesPanel.getParameterNames().toArray()) {
-                    if(helpers.getRequestParameter(content, param.toString()) != null && Finder.checkJwePattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
-                        joseParameterName = helpers.getRequestParameter(content, param.toString()).getName();
+                IRequestInfo requestInfo = helpers.analyzeRequest(content);
+
+                // Search for JOSE header
+                for (String header : requestInfo.getHeaders()) {
+                    if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER") && Finder.checkJwePattern(header)) {
+                        joseParameter = new JoseParameter(header);
+
+                        loggerInstance.log(getClass(), "HTTP Header with JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
+                        return true;
+                    }
+                }
+
+                // Search for JOSE parameter
+                for (IParameter param : requestInfo.getParameters()) {
+                    if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwePattern(param.getValue())) {
+                        joseParameter = new JoseParameter(param);
+
                         loggerInstance.log(getClass(), "JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
                         return true;
                     }
                 }
+
             }
             return false;
         }
 
         @Override
         public void setMessage(byte[] content, boolean isRequest) {
-            if (content == null) {
+            if (content == null || joseParameter == null) {
+
                 // Clear displayed content
                 sourceViewerHeader.setText(null);
                 sourceViewerHeader.setEditable(false);
@@ -143,12 +158,8 @@ public class JweEditor implements IMessageEditorTabFactory {
                 sourceViewerTag.setText(null);
                 sourceViewerTag.setEditable(false);
 
-                // editorAttackerPanel.setEnabled(false);
-            } else if (joseParameterName != null) {
-                // Retrieve JOSE parameter
-                IParameter parameter = helpers.getRequestParameter(content, joseParameterName);
-
-                String[] joseParts = Decoder.getComponents(parameter.getValue(), 5);
+            } else {
+                String[] joseParts = Decoder.getComponents(joseParameter.getJoseValue(), 5);
 
                 sourceViewerHeader.setEditable(editable);
                 sourceViewerCek.setEditable(editable);
@@ -167,8 +178,6 @@ public class JweEditor implements IMessageEditorTabFactory {
                 sourceViewerIv.setText(helpers.stringToBytes(iv));
                 sourceViewerCiphertext.setText(helpers.stringToBytes(ciphertext));
                 sourceViewerTag.setText(helpers.stringToBytes(tag));
-
-                // editorAttackerPanel.updateAttackList();
             }
 
             // Remember the displayed content
@@ -177,16 +186,36 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         @Override
         public byte[] getMessage() {
-            String[] components = {
-                Decoder.getEncoded(sourceViewerHeader.getText()),
-                helpers.bytesToString(sourceViewerCek.getText()),
-                helpers.bytesToString(sourceViewerIv.getText()),
-                helpers.bytesToString(sourceViewerCiphertext.getText()),
-                helpers.bytesToString(sourceViewerTag.getText())
-            };
+            if (this.isModified()) {
+                String[] components = {
+                        Decoder.getEncoded(sourceViewerHeader.getText()),
+                        helpers.bytesToString(sourceViewerCek.getText()),
+                        helpers.bytesToString(sourceViewerIv.getText()),
+                        helpers.bytesToString(sourceViewerCiphertext.getText()),
+                        helpers.bytesToString(sourceViewerTag.getText())
+                };
 
-            // Update the request with the new parameter value
-            return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, Decoder.concatComponents(components), IParameter.PARAM_URL));
+                switch(joseParameter.getOriginType()) {
+                    // Update the request with the new header value
+                    case Header:
+                        IRequestInfo requestInfo = helpers.analyzeRequest(currentMessage);
+                        java.util.List<String> headers = requestInfo.getHeaders();
+
+                        for (int i = 0; i < headers.size(); i++) {
+                            if (headers.get(i).startsWith(joseParameter.getName())) {
+                                headers.set(i, headers.get(i).replace(joseParameter.getJoseValue(), Decoder.concatComponents(components)));
+                            }
+                        }
+
+                        return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage,requestInfo.getBodyOffset(), currentMessage.length));
+
+                    // Update the request with the new parameter value
+                    case Parameter:
+                        return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameter.getName(), Decoder.concatComponents(components), joseParameter.getParameterType()));
+                }
+
+            }
+            return currentMessage;
         }
 
         @Override
@@ -208,7 +237,6 @@ public class JweEditor implements IMessageEditorTabFactory {
          * @param iv The IV base64string
          * @param ciphertext The ciphertext base64string
          * @param tag The AuthTag base64string
-
          */
         public void updateSourceViewer(String header, String cek, String iv, String ciphertext, String tag) {
             sourceViewerHeader.setText(helpers.stringToBytes(header));

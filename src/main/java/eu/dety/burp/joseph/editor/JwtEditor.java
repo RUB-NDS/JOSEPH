@@ -23,6 +23,7 @@ import burp.*;
 import eu.dety.burp.joseph.gui.EditorAttackerPanel;
 import eu.dety.burp.joseph.gui.PreferencesPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 import eu.dety.burp.joseph.utilities.Finder;
 
@@ -42,10 +43,6 @@ public class JwtEditor implements IMessageEditorTabFactory {
     private static final Logger loggerInstance = Logger.getInstance();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
-    private String joseHeader = null;
-    private String joseHeaderValue = null;
-    private String joseParameterName = null;
-
 
     /**
      * Create JwtEditor instance.
@@ -72,6 +69,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
         private boolean editable;
         private byte[] currentMessage;
         private boolean isModified = false;
+        private JoseParameter joseParameter = null;
 
         private ITextEditor sourceViewerHeader;
         private ITextEditor sourceViewerPayload;
@@ -116,59 +114,43 @@ public class JwtEditor implements IMessageEditorTabFactory {
                 // Search for JOSE header
                 for (String header : requestInfo.getHeaders()) {
                     if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER") && Finder.checkJwtPattern(header)) {
-                        joseHeader = header;
-                        joseHeaderValue = Finder.getJwtValue(joseHeader);
+                        joseParameter = new JoseParameter(header);
 
-                        loggerInstance.log(getClass(), "Authorization HTTP Header with JOSE value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
+                        loggerInstance.log(getClass(), "HTTP Header with JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
                         return true;
                     }
                 }
 
                 // Search for JOSE parameter
-                for(Object param: PreferencesPanel.getParameterNames().toArray()) {
-                    if(helpers.getRequestParameter(content, param.toString()) != null && Finder.checkJwtPattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
-                        joseParameterName = helpers.getRequestParameter(content, param.toString()).getName();
+                for (IParameter param : requestInfo.getParameters()) {
+                    if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwtPattern(param.getValue())) {
+                        joseParameter = new JoseParameter(param);
 
                         loggerInstance.log(getClass(), "JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
                         return true;
                     }
                 }
+
             }
             return false;
         }
 
         @Override
         public void setMessage(byte[] content, boolean isRequest) {
-            if (content == null) {
+            if (content == null || joseParameter == null) {
+
                 // Clear displayed content
-            }
-            // Set JOSE header values
-            else if (joseHeader != null) {
+                sourceViewerHeader.setText(null);
+                sourceViewerHeader.setEditable(false);
 
-                String[] joseParts = Decoder.getComponents(joseHeaderValue, 3);
+                sourceViewerPayload.setText(null);
+                sourceViewerPayload.setEditable(false);
 
-                sourceViewerHeader.setEditable(editable);
-                sourceViewerPayload.setEditable(editable);
-                sourceViewerSignature.setEditable(editable);
+                sourceViewerSignature.setText(null);
+                sourceViewerSignature.setEditable(false);
 
-                String header = Decoder.getDecoded(joseParts[0]);
-                String payload = Decoder.getDecoded(joseParts[1]);
-                String signature = joseParts[2];
-
-                sourceViewerHeader.setText(helpers.stringToBytes(header));
-                sourceViewerPayload.setText(helpers.stringToBytes(payload));
-                sourceViewerSignature.setText(helpers.stringToBytes(signature));
-
-                editorAttackerPanel.updateAttackList();
-
-            }
-            // Set JOSE parameter values
-            else if (joseParameterName != null) {
-
-                // Retrieve JOSE parameter
-                IParameter parameter = helpers.getRequestParameter(content, joseParameterName);
-
-                String[] joseParts = Decoder.getComponents(parameter.getValue(), 3);
+            } else {
+                String[] joseParts = Decoder.getComponents(joseParameter.getJoseValue(), 3);
 
                 sourceViewerHeader.setEditable(editable);
                 sourceViewerPayload.setEditable(editable);
@@ -189,40 +171,36 @@ public class JwtEditor implements IMessageEditorTabFactory {
             currentMessage = content;
         }
 
-        // TODO: Beautify!
-        // TODO: Outsource Header modification function
         @Override
         public byte[] getMessage() {
-            if (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified() || this.isModified) {
+            if (this.isModified()) {
                 String[] components = {
                         Decoder.getEncoded(sourceViewerHeader.getText()),
                         Decoder.getEncoded(sourceViewerPayload.getText()),
                         helpers.bytesToString(sourceViewerSignature.getText())
                 };
 
-                // Update the request with the new parameter value
-                if (joseHeader != null && joseHeaderValue != null) {
-                    IRequestInfo requestInfo = helpers.analyzeRequest(currentMessage);
-                    List<String> headers = requestInfo.getHeaders();
+                switch(joseParameter.getOriginType()) {
+                    // Update the request with the new header value
+                    case Header:
+                        IRequestInfo requestInfo = helpers.analyzeRequest(currentMessage);
+                        List<String> headers = requestInfo.getHeaders();
 
-                    int index = 0;
-                    for (String header: headers) {
-                        if (header.equals(joseHeader)) {
-                            headers.set(index, header.replace(joseHeaderValue, Decoder.concatComponents(components)));
+                        for (int i = 0; i < headers.size(); i++) {
+                            if (headers.get(i).startsWith(joseParameter.getName())) {
+                                headers.set(i, headers.get(i).replace(joseParameter.getJoseValue(), Decoder.concatComponents(components)));
+                            }
                         }
-                        index++;
-                    }
 
-                    return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage,requestInfo.getBodyOffset(), currentMessage.length));
+                        return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage,requestInfo.getBodyOffset(), currentMessage.length));
+
+                    // Update the request with the new parameter value
+                    case Parameter:
+                        return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameter.getName(), Decoder.concatComponents(components), joseParameter.getParameterType()));
                 }
-                // Update the request with the new parameter value
-                else if (joseParameterName != null) {
-                    return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, Decoder.concatComponents(components), IParameter.PARAM_URL));
-                }
+
             }
-
             return currentMessage;
-
         }
 
         @Override
