@@ -144,16 +144,23 @@ public class JwtEditor implements IMessageEditorTabFactory {
             }
             // Set JOSE header values
             else if (joseHeader != null) {
-                sourceViewerHeader.setText(null);
-                sourceViewerHeader.setEditable(false);
 
-                sourceViewerPayload.setText(null);
-                sourceViewerPayload.setEditable(false);
+                String[] joseParts = Decoder.getComponents(joseHeaderValue, 3);
 
-                sourceViewerSignature.setText(null);
-                sourceViewerSignature.setEditable(false);
+                sourceViewerHeader.setEditable(editable);
+                sourceViewerPayload.setEditable(editable);
+                sourceViewerSignature.setEditable(editable);
 
-                editorAttackerPanel.setEnabled(false);
+                String header = Decoder.getDecoded(joseParts[0]);
+                String payload = Decoder.getDecoded(joseParts[1]);
+                String signature = joseParts[2];
+
+                sourceViewerHeader.setText(helpers.stringToBytes(header));
+                sourceViewerPayload.setText(helpers.stringToBytes(payload));
+                sourceViewerSignature.setText(helpers.stringToBytes(signature));
+
+                editorAttackerPanel.updateAttackList();
+
             }
             // Set JOSE parameter values
             else if (joseParameterName != null) {
@@ -186,7 +193,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
         // TODO: Outsource Header modification function
         @Override
         public byte[] getMessage() {
-            if (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified()) {
+            if (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified() || this.isModified) {
                 String[] components = {
                         Decoder.getEncoded(sourceViewerHeader.getText()),
                         Decoder.getEncoded(sourceViewerPayload.getText()),
@@ -212,22 +219,17 @@ public class JwtEditor implements IMessageEditorTabFactory {
                 else if (joseParameterName != null) {
                     return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, Decoder.concatComponents(components), IParameter.PARAM_URL));
                 }
-                // Some issue occurred, should not happen
-                else {
-                    return currentMessage;
-                }
-
-            } else {
-                return currentMessage;
             }
+
+            return currentMessage;
 
         }
 
         @Override
         public boolean isModified() {
-            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified() || this.isModified);
+            boolean isModifiedResult = (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified() || this.isModified);
             this.isModified = false;
-            return isModified;
+            return isModifiedResult;
         }
 
         @Override
