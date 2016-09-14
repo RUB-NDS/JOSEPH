@@ -20,13 +20,11 @@ package eu.dety.burp.joseph.attacks;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
-import burp.IParameter;
 import burp.IRequestInfo;
 import eu.dety.burp.joseph.utilities.JoseParameter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,7 +39,7 @@ public interface IAttackInfo {
      * Prepare the attack by loading all necessary parameter
      * @param requestResponse {@link IHttpRequestResponse} requestResponse message
      * @param requestInfo {@link IRequestInfo} analyzed request
-     * @param parameter {@link IParameter} JOSE parameter
+     * @param parameter {@link JoseParameter} JOSE parameter
      * @throws AttackPreparationFailedException if error occurs during preparation step
      * @return IAttack instance of attack
      */

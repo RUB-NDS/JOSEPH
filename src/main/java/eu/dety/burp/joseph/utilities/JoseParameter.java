@@ -21,7 +21,6 @@ package eu.dety.burp.joseph.utilities;
 import burp.IExtensionHelpers;
 import burp.IParameter;
 import burp.IRequestInfo;
-import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionAttackRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +68,7 @@ public class JoseParameter {
     }
 
     /**
-     * Return according origin type
+     * Get according origin type
      * @return {@link OriginType}
      */
     public OriginType getOriginType() {
@@ -77,7 +76,7 @@ public class JoseParameter {
     }
 
     /**
-     * Return according jose type
+     * Get according jose type
      * @return {@link JoseType}
      */
     public JoseType getJoseType() {
@@ -85,7 +84,7 @@ public class JoseParameter {
     }
 
     /**
-     * Return the name of the parameter/header
+     * Get the name of the parameter/header
      * @return The name as string
      */
     public String getName() {
@@ -93,7 +92,7 @@ public class JoseParameter {
     }
 
     /**
-     * Return the full value of the parameter/header
+     * Get the full value of the parameter/header
      * @return The value as string
      */
     public String getValue() {
@@ -101,7 +100,7 @@ public class JoseParameter {
     }
 
     /**
-     * Return the extracted jose value of the parameter/header
+     * Get the extracted jose value of the parameter/header
      * @return The jose value as string
      */
     public String getJoseValue() {
@@ -109,13 +108,21 @@ public class JoseParameter {
     }
 
     /**
-     * Return the {@link IParameter} type
+     * Get the {@link IParameter} type
      * @return The parameter type as Byte
      */
     public Byte getParameterType() {
         return (this.getOriginType() == OriginType.PARAMETER) ? parameter.getType() : null;
     }
 
+    /**
+     * Update a given request
+     * @param request The original request as byte array
+     * @param parameter {@link JoseParameter} parameter with JOSE value
+     * @param helpers {@link IExtensionHelpers} Burp extension helpers
+     * @param newValue Value as string to update request with
+     * @return The updated request as byte array
+     */
     public static byte[] updateRequest(byte[] request, JoseParameter parameter, IExtensionHelpers helpers, String newValue) {
 
         switch(parameter.getOriginType()) {

@@ -75,12 +75,12 @@ public class AttackerPanel extends JPanel {
 
         // Search for JOSE header
         for (String header : requestInfo.getHeaders()) {
-            if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER") && Finder.checkJwtPattern(header)) {
+            if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0]) && Finder.checkJwtPattern(header)) {
                 joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
                 break;
             }
 
-            if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER") && Finder.checkJwePattern(header)) {
+            if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0]) && Finder.checkJwePattern(header)) {
                 joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWE);
                 break;
             }

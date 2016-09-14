@@ -68,8 +68,8 @@ public class Marker implements IHttpListener {
 
         // Search for authorization header
         for (String header : requestInfo.getHeaders()) {
-            if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER")) {
-                loggerInstance.log(getClass(), "Authorization HTTP HEADER with type bearer found.", Logger.LogLevel.DEBUG);
+            if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0])) {
+                loggerInstance.log(getClass(), "HTTP HEADER with JOSE value found.", Logger.LogLevel.DEBUG);
                 jwtFound = Finder.checkJwtPattern(header);
                 jweFound = Finder.checkJwePattern(header);
                 break;

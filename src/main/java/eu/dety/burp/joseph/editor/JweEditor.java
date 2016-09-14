@@ -85,16 +85,12 @@ public class JweEditor implements IMessageEditorTabFactory {
             sourceViewerCiphertext = callbacks.createTextEditor();
             sourceViewerTag = callbacks.createTextEditor();
 
-            JweEditorTabPanel.addTab("HEADER", sourceViewerHeader.getComponent());
+            JweEditorTabPanel.addTab("Header", sourceViewerHeader.getComponent());
             JweEditorTabPanel.addTab("CEK (base64)", sourceViewerCek.getComponent());
             JweEditorTabPanel.addTab("IV (base64)", sourceViewerIv.getComponent());
             JweEditorTabPanel.addTab("Ciphertext (base64)", sourceViewerCiphertext.getComponent());
             JweEditorTabPanel.addTab("AuthTag (base64)", sourceViewerTag.getComponent());
 
-//            editorAttackerPanel = new EditorAttackerPanel(callbacks, this);
-//            if(editable) {
-//                JweEditorTabPanel.addTab("Attacker", editorAttackerPanel);
-//            }
         }
 
         @Override
@@ -115,10 +111,10 @@ public class JweEditor implements IMessageEditorTabFactory {
 
                 // Search for JOSE header
                 for (String header : requestInfo.getHeaders()) {
-                    if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER") && Finder.checkJwePattern(header)) {
+                    if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0]) && Finder.checkJwePattern(header)) {
                         joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWE);
 
-                        loggerInstance.log(getClass(), "HTTP HEADER with JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
+                        loggerInstance.log(getClass(), "HTTP header with JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
                         return true;
                     }
                 }
@@ -248,7 +244,7 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the header value from sourceViewerHeader editor as string
-         * @return HEADER JSON string
+         * @return Header JSON string
          */
         public String getHeader() {
             return helpers.bytesToString(sourceViewerHeader.getText());

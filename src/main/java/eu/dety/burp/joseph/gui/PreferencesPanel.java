@@ -45,7 +45,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
     // Configuration options
     private static int logLevel = 1;
     private static boolean highlighting = true;
-    private static final List<String> defaultParameterNames = Arrays.asList("access_token", "token");
+    private static final List<String> defaultParameterNames = Arrays.asList("access_token", "token", "Authorization");
 
     private static DefaultListModel<String> parameterNamesListModel = new DefaultListModel<>();
     

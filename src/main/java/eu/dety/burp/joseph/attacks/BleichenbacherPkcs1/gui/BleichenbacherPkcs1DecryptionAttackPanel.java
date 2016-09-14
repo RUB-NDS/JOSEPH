@@ -19,7 +19,6 @@
 
 package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
 
-import burp.IParameter;
 import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1;
 import eu.dety.burp.joseph.utilities.*;
 import org.apache.commons.codec.binary.Base64;
