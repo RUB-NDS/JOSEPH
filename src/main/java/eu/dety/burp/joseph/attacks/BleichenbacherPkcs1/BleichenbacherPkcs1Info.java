@@ -23,6 +23,7 @@ import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.utilities.Converter;
 import eu.dety.burp.joseph.utilities.Decoder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.simple.parser.JSONParser;
@@ -60,7 +61,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
-    private IParameter parameter;
+    private JoseParameter parameter;
     private RSAPublicKey pubKey;
 
 
@@ -123,7 +124,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     @Override
-    public BleichenbacherPkcs1 prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
+    public BleichenbacherPkcs1 prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
@@ -175,12 +176,12 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         // Prepare requests
         for(Map.Entry<payloadType, byte[]> cek: encryptedKeys.entrySet()) {
             byte[] request = this.requestResponse.getRequest();
-            String[] components = Decoder.getComponents(this.parameter.getValue());
+            String[] components = Decoder.getComponents(this.parameter.getJoseValue());
             components[1] = Decoder.base64UrlEncode(cek.getValue());
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
+            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
             request = helpers.updateParameter(request, updatedParameter);
 
             requests.add(new BleichenbacherPkcs1AttackRequest(request, cek.getKey().ordinal(), cek.getValue(), cek.getKey().name()));
@@ -281,7 +282,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
      * Get the parameter with the JOSE value
      * @return {@link IParameter} parameter
      */
-    public IParameter getParameter() {
+    public JoseParameter getParameter() {
         return this.parameter;
     }
 

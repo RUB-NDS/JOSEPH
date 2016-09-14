@@ -21,6 +21,7 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1;
 import burp.*;
 import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui.BleichenbacherPkcs1DecryptionAttackPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 import org.apache.commons.codec.binary.Base64;
 
@@ -29,7 +30,6 @@ import java.math.BigInteger;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Algorithm code heavily based on the WS-Attacker
@@ -43,13 +43,12 @@ import java.util.ResourceBundle;
  */
 class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, BigInteger> {
     private static final Logger loggerInstance = Logger.getInstance();
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
 
     private BleichenbacherPkcs1DecryptionAttackPanel panelReference;
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
-    private IParameter parameter;
+    private JoseParameter parameter;
 
     private boolean msgIsPkcs = true;
     private BigInteger c0;
@@ -65,7 +64,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     private byte[] encryptedKey;
     private int amountRequests = 0;
 
-    BleichenbacherPkcs1DecryptionAttackExecutor(BleichenbacherPkcs1DecryptionAttackPanel panelReference, IBurpExtenderCallbacks callbacks, RSAPublicKey pubKey, IHttpRequestResponse requestResponse, IParameter parameter, BleichenbacherPkcs1Oracle oracle, boolean msgIsPkcs) {
+    BleichenbacherPkcs1DecryptionAttackExecutor(BleichenbacherPkcs1DecryptionAttackPanel panelReference, IBurpExtenderCallbacks callbacks, RSAPublicKey pubKey, IHttpRequestResponse requestResponse, JoseParameter parameter, BleichenbacherPkcs1Oracle oracle, boolean msgIsPkcs) {
         this.panelReference = panelReference;
         this.requestResponse = requestResponse;
         this.parameter = parameter;
@@ -184,7 +183,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
+            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
             request = helpers.updateParameter(request, updatedParameter);
 
             response = callbacks.makeHttpRequest(this.httpService, request);
@@ -252,7 +251,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
+            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
             request = helpers.updateParameter(request, updatedParameter);
 
             response = callbacks.makeHttpRequest(this.httpService, request);
@@ -286,7 +285,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
+            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
             request = helpers.updateParameter(request, updatedParameter);
 
             response = callbacks.makeHttpRequest(this.httpService, request);
@@ -342,7 +341,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
+            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
             request = helpers.updateParameter(request, updatedParameter);
 
             response = callbacks.makeHttpRequest(this.httpService, request);

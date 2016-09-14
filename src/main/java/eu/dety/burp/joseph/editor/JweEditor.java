@@ -19,7 +19,6 @@
 package eu.dety.burp.joseph.editor;
 
 import burp.*;
-import eu.dety.burp.joseph.gui.EditorAttackerPanel;
 import eu.dety.burp.joseph.gui.PreferencesPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
@@ -86,7 +85,7 @@ public class JweEditor implements IMessageEditorTabFactory {
             sourceViewerCiphertext = callbacks.createTextEditor();
             sourceViewerTag = callbacks.createTextEditor();
 
-            JweEditorTabPanel.addTab("Header", sourceViewerHeader.getComponent());
+            JweEditorTabPanel.addTab("HEADER", sourceViewerHeader.getComponent());
             JweEditorTabPanel.addTab("CEK (base64)", sourceViewerCek.getComponent());
             JweEditorTabPanel.addTab("IV (base64)", sourceViewerIv.getComponent());
             JweEditorTabPanel.addTab("Ciphertext (base64)", sourceViewerCiphertext.getComponent());
@@ -117,9 +116,9 @@ public class JweEditor implements IMessageEditorTabFactory {
                 // Search for JOSE header
                 for (String header : requestInfo.getHeaders()) {
                     if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER") && Finder.checkJwePattern(header)) {
-                        joseParameter = new JoseParameter(header);
+                        joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWE);
 
-                        loggerInstance.log(getClass(), "HTTP Header with JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
+                        loggerInstance.log(getClass(), "HTTP HEADER with JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
                         return true;
                     }
                 }
@@ -127,7 +126,7 @@ public class JweEditor implements IMessageEditorTabFactory {
                 // Search for JOSE parameter
                 for (IParameter param : requestInfo.getParameters()) {
                     if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwePattern(param.getValue())) {
-                        joseParameter = new JoseParameter(param);
+                        joseParameter = new JoseParameter(param, JoseParameter.JoseType.JWE);
 
                         loggerInstance.log(getClass(), "JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
                         return true;
@@ -197,7 +196,7 @@ public class JweEditor implements IMessageEditorTabFactory {
 
                 switch(joseParameter.getOriginType()) {
                     // Update the request with the new header value
-                    case Header:
+                    case HEADER:
                         IRequestInfo requestInfo = helpers.analyzeRequest(currentMessage);
                         java.util.List<String> headers = requestInfo.getHeaders();
 
@@ -210,7 +209,7 @@ public class JweEditor implements IMessageEditorTabFactory {
                         return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage,requestInfo.getBodyOffset(), currentMessage.length));
 
                     // Update the request with the new parameter value
-                    case Parameter:
+                    case PARAMETER:
                         return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameter.getName(), Decoder.concatComponents(components), joseParameter.getParameterType()));
                 }
 
@@ -249,7 +248,7 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the header value from sourceViewerHeader editor as string
-         * @return Header JSON string
+         * @return HEADER JSON string
          */
         public String getHeader() {
             return helpers.bytesToString(sourceViewerHeader.getText());

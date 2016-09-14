@@ -114,9 +114,9 @@ public class JwtEditor implements IMessageEditorTabFactory {
                 // Search for JOSE header
                 for (String header : requestInfo.getHeaders()) {
                     if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER") && Finder.checkJwtPattern(header)) {
-                        joseParameter = new JoseParameter(header);
+                        joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
 
-                        loggerInstance.log(getClass(), "HTTP Header with JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
+                        loggerInstance.log(getClass(), "HTTP HEADER with JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
                         return true;
                     }
                 }
@@ -124,7 +124,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
                 // Search for JOSE parameter
                 for (IParameter param : requestInfo.getParameters()) {
                     if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwtPattern(param.getValue())) {
-                        joseParameter = new JoseParameter(param);
+                        joseParameter = new JoseParameter(param, JoseParameter.JoseType.JWS);
 
                         loggerInstance.log(getClass(), "JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
                         return true;
@@ -180,24 +180,26 @@ public class JwtEditor implements IMessageEditorTabFactory {
                         helpers.bytesToString(sourceViewerSignature.getText())
                 };
 
-                switch(joseParameter.getOriginType()) {
-                    // Update the request with the new header value
-                    case Header:
-                        IRequestInfo requestInfo = helpers.analyzeRequest(currentMessage);
-                        List<String> headers = requestInfo.getHeaders();
+                return JoseParameter.updateRequest(currentMessage, joseParameter, helpers, Decoder.concatComponents(components));
 
-                        for (int i = 0; i < headers.size(); i++) {
-                            if (headers.get(i).startsWith(joseParameter.getName())) {
-                                headers.set(i, headers.get(i).replace(joseParameter.getJoseValue(), Decoder.concatComponents(components)));
-                            }
-                        }
-
-                        return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage,requestInfo.getBodyOffset(), currentMessage.length));
-
-                    // Update the request with the new parameter value
-                    case Parameter:
-                        return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameter.getName(), Decoder.concatComponents(components), joseParameter.getParameterType()));
-                }
+//                switch(joseParameter.getOriginType()) {
+//                    // Update the request with the new header value
+//                    case HEADER:
+//                        IRequestInfo requestInfo = helpers.analyzeRequest(currentMessage);
+//                        List<String> headers = requestInfo.getHeaders();
+//
+//                        for (int i = 0; i < headers.size(); i++) {
+//                            if (headers.get(i).startsWith(joseParameter.getName())) {
+//                                headers.set(i, headers.get(i).replace(joseParameter.getJoseValue(), Decoder.concatComponents(components)));
+//                            }
+//                        }
+//
+//                        return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage,requestInfo.getBodyOffset(), currentMessage.length));
+//
+//                    // Update the request with the new parameter value
+//                    case PARAMETER:
+//                        return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameter.getName(), Decoder.concatComponents(components), joseParameter.getParameterType()));
+//                }
 
             }
             return currentMessage;
@@ -230,7 +232,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the header value from sourceViewerHeader editor as string
-         * @return Header JSON string
+         * @return HEADER JSON string
          */
         public String getHeader() {
             return helpers.bytesToString(sourceViewerHeader.getText());

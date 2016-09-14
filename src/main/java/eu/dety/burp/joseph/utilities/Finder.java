@@ -53,14 +53,15 @@ public class Finder {
     }
 
     /**
-     * Return JOSE value if given JWT candidate matches regex pattern
-     * @param candidate String containing the JWT candidate value.
+     * Return JOSE value if given candidate matches regex pattern
+     * @param candidate String containing the JOSE candidate value.
      * @return String with matched JOSE value.
      */
-    public static String getJwtValue(String candidate) {
+    public static String getJoseValue(String candidate) {
         Pattern jwtPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?([a-zA-Z0-9\\-_\\.]+)*)", Pattern.CASE_INSENSITIVE);
         Matcher jwtMatcher = jwtPattern.matcher(candidate);
 
         return (jwtMatcher.find()) ? jwtMatcher.group(0) : null;
     }
+
 }

@@ -18,7 +18,13 @@
  */
 package eu.dety.burp.joseph.utilities;
 
+import burp.IExtensionHelpers;
 import burp.IParameter;
+import burp.IRequestInfo;
+import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionAttackRequest;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class JoseParameter {
     private IParameter parameter = null;
@@ -29,35 +35,37 @@ public class JoseParameter {
     /**
      * Construct with {@link IParameter} input
      */
-    public JoseParameter(IParameter parameter) {
-        this.originType = OriginType.Parameter;
+    public JoseParameter(IParameter parameter, JoseType joseType) {
+        this.originType = OriginType.PARAMETER;
         this.parameter = parameter;
+        this.joseType = joseType;
     }
 
     /**
      * Construct with header string input
      */
-    public JoseParameter(String header) {
-        this.originType = OriginType.Header;
+    public JoseParameter(String header, JoseType joseType) {
+        this.originType = OriginType.HEADER;
         this.header = header;
+        this.joseType = joseType;
     }
 
     /**
      *  Origin of the parameter, might be one of:
-     *  <li>{@link #Parameter}</li>
-     *  <li>{@link #Header}</li>
+     *  <li>{@link #PARAMETER}</li>
+     *  <li>{@link #HEADER}</li>
      */
     public enum OriginType {
-        Parameter, Header
+        PARAMETER, HEADER
     }
 
     /**
      *  Jose type of the parameter, might be one of:
-     *  <li>{@link #Jws}</li>
-     *  <li>{@link #Jwe}</li>
+     *  <li>{@link #JWS}</li>
+     *  <li>{@link #JWE}</li>
      */
     public enum JoseType {
-        Jws, Jwe
+        UNKNOWN, JWS, JWE
     }
 
     /**
@@ -81,7 +89,7 @@ public class JoseParameter {
      * @return The name as string
      */
     public String getName() {
-        return (this.getOriginType() == OriginType.Parameter) ? parameter.getName() : header.split(":", 2)[0];
+        return (this.getOriginType() == OriginType.PARAMETER) ? parameter.getName() : header.split(":", 2)[0];
     }
 
     /**
@@ -89,7 +97,7 @@ public class JoseParameter {
      * @return The value as string
      */
     public String getValue() {
-        return (this.getOriginType() == OriginType.Parameter) ? parameter.getValue().trim() : header.split(":", 2)[1].trim();
+        return (this.getOriginType() == OriginType.PARAMETER) ? parameter.getValue().trim() : header.split(":", 2)[1].trim();
     }
 
     /**
@@ -97,7 +105,7 @@ public class JoseParameter {
      * @return The jose value as string
      */
     public String getJoseValue() {
-        return (this.getOriginType() == OriginType.Parameter) ? Finder.getJwtValue(parameter.getValue()) : Finder.getJwtValue(header);
+        return (this.getOriginType() == OriginType.PARAMETER) ? Finder.getJoseValue(parameter.getValue()) : Finder.getJoseValue(header);
     }
 
     /**
@@ -105,7 +113,37 @@ public class JoseParameter {
      * @return The parameter type as Byte
      */
     public Byte getParameterType() {
-        return (this.getOriginType() == OriginType.Parameter) ? parameter.getType() : null;
+        return (this.getOriginType() == OriginType.PARAMETER) ? parameter.getType() : null;
     }
+
+    public static byte[] updateRequest(byte[] request, JoseParameter parameter, IExtensionHelpers helpers, String newValue) {
+
+        switch(parameter.getOriginType()) {
+            // Update the request with the new header value
+            case HEADER:
+                IRequestInfo requestInfo = helpers.analyzeRequest(request);
+                List<String> headers = requestInfo.getHeaders();
+
+                for (int i = 0; i < headers.size(); i++) {
+                    if (headers.get(i).startsWith(parameter.getName())) {
+                        headers.set(i, headers.get(i).replace(parameter.getJoseValue(), newValue));
+                        break;
+                    }
+                }
+
+                request =  helpers.buildHttpMessage(headers, Arrays.copyOfRange(request, requestInfo.getBodyOffset(), request.length));
+                break;
+
+            // Update the request with the new parameter value
+            case PARAMETER:
+                IParameter tmpParameter = helpers.buildParameter(parameter.getName(), newValue, parameter.getParameterType());
+                request = helpers.updateParameter(request, tmpParameter);
+                break;
+        }
+
+        return request;
+
+    }
+
 
 }

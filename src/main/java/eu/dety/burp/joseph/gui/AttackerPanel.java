@@ -25,6 +25,7 @@ import eu.dety.burp.joseph.attacks.*;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
@@ -49,7 +50,7 @@ public class AttackerPanel extends JPanel {
     private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
     private IHttpRequestResponse requestResponse;
     private IRequestInfo requestInfo;
-    private IParameter parameter = null;
+    private JoseParameter joseParameter = null;
     private String type = "?";
     private String algorithm = "?";
     private IAttackInfo selectedAttack = null;
@@ -72,21 +73,38 @@ public class AttackerPanel extends JPanel {
         // Register all available attacks
         registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
 
-        // Find the JOSE parameter
-        for (IParameter param : requestInfo.getParameters()) {
-            if(PreferencesPanel.getParameterNames().contains(param.getName())) {
-                if (Finder.checkJwtPattern(param.getValue()) || Finder.checkJwePattern(param.getValue())) {
-                    parameter = param;
-                    break;
-                }
+        // Search for JOSE header
+        for (String header : requestInfo.getHeaders()) {
+            if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER") && Finder.checkJwtPattern(header)) {
+                joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
+                break;
+            }
+
+            if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER") && Finder.checkJwePattern(header)) {
+                joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWE);
+                break;
             }
         }
+
+        // Search for JOSE parameter
+        for (IParameter param : requestInfo.getParameters()) {
+            if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwtPattern(param.getValue())) {
+                joseParameter = new JoseParameter(param, JoseParameter.JoseType.JWS);
+                break;
+            }
+
+            if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwePattern(param.getValue())) {
+                joseParameter = new JoseParameter(param, JoseParameter.JoseType.JWE);
+                break;
+            }
+        }
+
 
         // Initialize UI components
         initComponents();
 
         // Parse the JOSE value to an JSONObject
-        JSONObject[] joseJSONComponents = Decoder.getJsonComponents(parameter.getValue());
+        JSONObject[] joseJSONComponents = Decoder.getJsonComponents(joseParameter.getJoseValue());
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
         if(joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
@@ -94,8 +112,8 @@ public class AttackerPanel extends JPanel {
         typeValue.setText(type);
         algorithmValue.setText(algorithm);
 
-        loggerInstance.log(getClass(), "JOSE Parameter Name: " + parameter.getName(), Logger.LogLevel.DEBUG);
-        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . "
+        loggerInstance.log(getClass(), "JOSE PARAMETER Name: " + joseParameter.getName(), Logger.LogLevel.DEBUG);
+        loggerInstance.log(getClass(), "JOSE PARAMETER Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . "
                 + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.LogLevel.DEBUG);
 
         // Build available attacks list
@@ -278,7 +296,7 @@ public class AttackerPanel extends JPanel {
         try {
             // Prepare the selected attack
             loggerInstance.log(selectedAttack.getClass(), "Preparing attack...", Logger.LogLevel.DEBUG);
-            IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
+            IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, joseParameter);
 
             // Perform the selected attack
             loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.LogLevel.DEBUG);

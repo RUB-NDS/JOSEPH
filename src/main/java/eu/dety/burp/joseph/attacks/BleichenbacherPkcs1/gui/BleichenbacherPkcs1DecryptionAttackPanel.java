@@ -21,10 +21,7 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
 
 import burp.IParameter;
 import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1;
-import eu.dety.burp.joseph.utilities.Crypto;
-import eu.dety.burp.joseph.utilities.Decoder;
-import eu.dety.burp.joseph.utilities.DecryptionFailedException;
-import eu.dety.burp.joseph.utilities.Logger;
+import eu.dety.burp.joseph.utilities.*;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.swing.*;
@@ -100,7 +97,7 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
      * Actions to perform if attack has been finished
      * @param result Byte array of the calculated key
      */
-    public void attackDoneAction(byte[] result, IParameter joseParameter) {
+    public void attackDoneAction(byte[] result, JoseParameter joseParameter) {
         attackTimer.stop();
         startAttackButton.setEnabled(true);
         cancelAttackButton.setEnabled(false);

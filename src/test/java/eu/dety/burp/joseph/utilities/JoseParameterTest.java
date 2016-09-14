@@ -20,7 +20,6 @@ package eu.dety.burp.joseph.utilities;
 
 import static org.junit.Assert.*;
 
-import burp.IRequestInfo;
 import org.junit.Test;
 
 public class JoseParameterTest {
@@ -28,16 +27,16 @@ public class JoseParameterTest {
     @Test
     public void checkJoseParameterCorrectlyInitializesWithHeaderInput() {
         String header = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        JoseParameter joseParameter = new JoseParameter(header);
+        JoseParameter joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
 
         assertNotNull(joseParameter);
-        assertEquals(JoseParameter.OriginType.Header, joseParameter.getOriginType());
+        assertEquals(JoseParameter.OriginType.HEADER, joseParameter.getOriginType());
     }
 
     @Test
     public void checkGetNameOnJoseParameterWithHeaderInputReturnsCorrectNameString() {
         String header = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        JoseParameter joseParameter = new JoseParameter(header);
+        JoseParameter joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
 
         assertEquals("Authorization", joseParameter.getName());
     }
@@ -45,7 +44,7 @@ public class JoseParameterTest {
     @Test
     public void checkGetValueOnJoseParameterWithHeaderInputReturnsCorrectNameString() {
         String header = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        JoseParameter joseParameter = new JoseParameter(header);
+        JoseParameter joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
 
         assertEquals("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", joseParameter.getValue());
     }
@@ -53,7 +52,7 @@ public class JoseParameterTest {
     @Test
     public void checkGetJoseValueOnJoseParameterWithHeaderInputReturnsCorrectNameString() {
         String header = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        JoseParameter joseParameter = new JoseParameter(header);
+        JoseParameter joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
 
         assertEquals("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", joseParameter.getJoseValue());
     }

@@ -22,6 +22,7 @@ import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IParameter;
 import burp.IRequestInfo;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,7 +45,7 @@ public interface IAttackInfo {
      * @throws AttackPreparationFailedException if error occurs during preparation step
      * @return IAttack instance of attack
      */
-    IAttack prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException;
+    IAttack prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException;
 
     /**
      * Get unique attack ID

