@@ -112,30 +112,6 @@ public class SignatureExclusionInfo implements IAttackInfo {
                 byte[] tmpRequest = JoseParameter.updateRequest(this.requestResponse.getRequest(), this.parameter, helpers, tmpParameterValue);
                 requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal() , noneAlgVariation.getValue()));
 
-
-//                switch(parameter.getOriginType()) {
-//                    // Update the request with the new header value
-//                    case HEADER:
-//                        List<String> headers = requestInfo.getHeaders();
-//
-//                        for (int i = 0; i < headers.size(); i++) {
-//                            if (headers.get(i).startsWith(parameter.getName())) {
-//                                headers.set(i, headers.get(i).replace(parameter.getJoseValue(), tmpParameterValue));
-//                            }
-//                        }
-//
-//                        tmpRequest =  helpers.buildHttpMessage(headers, Arrays.copyOfRange(this.requestResponse.getRequest(), requestInfo.getBodyOffset(), tmpRequest.length));
-//                        requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal() , noneAlgVariation.getValue()));
-//                        break;
-//
-//                    // Update the request with the new parameter value
-//                    case PARAMETER:
-//                        IParameter tmpParameter = helpers.buildParameter(this.parameter.getName(), tmpParameterValue, this.parameter.getParameterType());
-//                        tmpRequest = helpers.updateParameter(tmpRequest, tmpParameter);
-//                        requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal() , noneAlgVariation.getValue()));
-//                        break;
-//                }
-
             } catch (Exception e) {
                 throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
             }

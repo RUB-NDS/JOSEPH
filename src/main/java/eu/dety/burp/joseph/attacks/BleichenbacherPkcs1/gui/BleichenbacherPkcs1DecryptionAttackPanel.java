@@ -116,7 +116,7 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
 
             resultKeyValue.setText(Decoder.bytesToHex(result));
 
-            String[] components = Decoder.getComponents(joseParameter.getValue());
+            String[] components = Decoder.getComponents(joseParameter.getJoseValue());
 
             try {
                 byte[] content = Crypto.decryptAES(components[0], result, Base64.decodeBase64(components[2]), Base64.decodeBase64(components[3]), Base64.decodeBase64(components[4]));

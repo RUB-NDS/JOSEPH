@@ -99,7 +99,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         loggerInstance.log(getClass(), "B computed: " + this.bigB.toString(16), Logger.LogLevel.INFO);
         loggerInstance.log(getClass(), "Blocksize: " + blockSize + " bytes", Logger.LogLevel.INFO);
 
-        String[] components = Decoder.getComponents(this.parameter.getValue());
+        String[] components = Decoder.getComponents(this.parameter.getJoseValue());
 
         encryptedKey = Base64.decodeBase64(components[1]);
 
@@ -178,13 +178,12 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             send = prepareMsg(ciphered, this.si);
 
             request = this.requestResponse.getRequest();
-            String[] components = Decoder.getComponents(this.parameter.getValue());
+            String[] components = Decoder.getComponents(this.parameter.getJoseValue());
             components[1] = Decoder.base64UrlEncode(send);
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
-            request = helpers.updateParameter(request, updatedParameter);
+            request = JoseParameter.updateRequest(request, this.parameter, helpers, newComponentsConcatenated);
 
             response = callbacks.makeHttpRequest(this.httpService, request);
             updateAmountRequest();
@@ -246,13 +245,12 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             send = prepareMsg( this.c0, this.si );
 
             request = this.requestResponse.getRequest();
-            String[] components = Decoder.getComponents(this.parameter.getValue());
+            String[] components = Decoder.getComponents(this.parameter.getJoseValue());
             components[1] = Decoder.base64UrlEncode(send);
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
-            request = helpers.updateParameter(request, updatedParameter);
+            request = JoseParameter.updateRequest(request, this.parameter, helpers, newComponentsConcatenated);
 
             response = callbacks.makeHttpRequest(this.httpService, request);
             updateAmountRequest();
@@ -280,13 +278,12 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             send = prepareMsg( this.c0, this.si );
 
             request = this.requestResponse.getRequest();
-            String[] components = Decoder.getComponents(this.parameter.getValue());
+            String[] components = Decoder.getComponents(this.parameter.getJoseValue());
             components[1] = Decoder.base64UrlEncode(send);
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
-            request = helpers.updateParameter(request, updatedParameter);
+            request = JoseParameter.updateRequest(request, this.parameter, helpers, newComponentsConcatenated);
 
             response = callbacks.makeHttpRequest(this.httpService, request);
             updateAmountRequest();
@@ -336,13 +333,12 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             send = prepareMsg( this.c0, this.si );
 
             request = this.requestResponse.getRequest();
-            String[] components = Decoder.getComponents(this.parameter.getValue());
+            String[] components = Decoder.getComponents(this.parameter.getJoseValue());
             components[1] = Decoder.base64UrlEncode(send);
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
-            request = helpers.updateParameter(request, updatedParameter);
+            request = JoseParameter.updateRequest(request, this.parameter, helpers, newComponentsConcatenated);
 
             response = callbacks.makeHttpRequest(this.httpService, request);
             updateAmountRequest();

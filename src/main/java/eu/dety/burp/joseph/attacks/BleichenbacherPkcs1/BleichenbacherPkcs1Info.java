@@ -181,10 +181,9 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
-            request = helpers.updateParameter(request, updatedParameter);
+            byte[] tmpRequest = JoseParameter.updateRequest(request, this.parameter, helpers, newComponentsConcatenated);
 
-            requests.add(new BleichenbacherPkcs1AttackRequest(request, cek.getKey().ordinal(), cek.getValue(), cek.getKey().name()));
+            requests.add(new BleichenbacherPkcs1AttackRequest(tmpRequest, cek.getKey().ordinal(), cek.getValue(), cek.getKey().name()));
             loggerInstance.log(getClass(), "Generated CEK: " + Decoder.base64UrlEncode(cek.getValue()), Logger.LogLevel.DEBUG);
         }
 

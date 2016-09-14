@@ -259,11 +259,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                     String[] newComponents = {encodedHeaderReplacedAlgorithm, components[1], newSignature};
                     String newComponentsConcatenated = Decoder.concatComponents(newComponents);
 
-//                    IParameter updatedParameter = helpers.buildParameter(this.parameter.getName(), newComponentsConcatenated, this.parameter.getParameterType());
-//                    request = helpers.updateParameter(request, updatedParameter);
-
                     byte[] tmpRequest = JoseParameter.updateRequest(this.requestResponse.getRequest(), this.parameter, helpers, newComponentsConcatenated);
-
                     requests.add(new KeyConfusionAttackRequest(tmpRequest, publicKey.getKey().ordinal(), algorithm, publicKey.getValue(), publicKey.getValue().length()));
                 } catch (Exception e) {
                     throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
