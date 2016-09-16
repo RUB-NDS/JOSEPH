@@ -38,7 +38,10 @@ public class Logger {
     private static PrintWriter stderr = null;
 
     /**
-     * LogLevel enum defining the log types
+     * LogLevel enum defining the log types, might be one of:
+     * <li>{@link #ERROR}</li>
+     * <li>{@link #INFO}</li>
+     * <li>{@link #DEBUG}</li>
      */
     public enum LogLevel {
         ERROR, INFO, DEBUG

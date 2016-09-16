@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 
 import burp.*;
 import eu.dety.burp.joseph.BurpExtenderCallbacksMock;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -99,6 +100,52 @@ public class SignatureExclusionTest {
         SignatureExclusionInfo signatureExclusion = new SignatureExclusionInfo(callbacks);
 
         assertEquals(expected, signatureExclusion.updateValuesByPayload(SignatureExclusionInfo.payloadType.MIXED, header, payload));
+    }
+
+    @Test
+    public void isSuitableWithJwsPayloadTypeAndDifferentAlgorithmsReturnsTrue() {
+        IBurpExtenderCallbacks callbacks = new BurpExtenderCallbacksMock();
+
+        SignatureExclusionInfo signatureExclusion = new SignatureExclusionInfo(callbacks);
+
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "HS256"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "HS384"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "HS512"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "RS256"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "RS384"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "RS512"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "ES256"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "ES384"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "ES512"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "PS256"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "PS384"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "PS512"));
+        assertTrue(signatureExclusion.isSuitable(JoseParameter.JoseType.JWS, "none"));
+    }
+
+    @Test
+    public void isSuitableWithJwePayloadTypeAndDifferentAlgorithmsReturnsFalse() {
+        IBurpExtenderCallbacks callbacks = new BurpExtenderCallbacksMock();
+
+        SignatureExclusionInfo signatureExclusion = new SignatureExclusionInfo(callbacks);
+
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "RSA1_5"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "RSA-OAEP"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "RSA-OAEP-256"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "A128KW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "A192KW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "A256KW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "dir"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "ECDH-ES"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "ECDH-ES+A128KW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "ECDH-ES+A192KW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "ECDH-ES+A256KW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "A128GCMKW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "A192GCMKW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "A256GCMKW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "PBES2-HS256+A128KW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "PBES2-HS384+A192KW"));
+        assertFalse(signatureExclusion.isSuitable(JoseParameter.JoseType.JWE, "PBES2-HS512+A256KW"));
     }
 
 }
