@@ -20,6 +20,7 @@ package eu.dety.burp.joseph.utilities;
 
 import static org.junit.Assert.*;
 
+import burp.IParameter;
 import org.junit.Test;
 
 public class JoseParameterTest {
@@ -42,7 +43,7 @@ public class JoseParameterTest {
     }
 
     @Test
-    public void checkGetValueOnJoseParameterWithHeaderInputReturnsCorrectNameString() {
+    public void checkGetValueOnJoseParameterWithHeaderInputReturnsCorrectValueString() {
         String header = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
         JoseParameter joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
 
@@ -50,12 +51,62 @@ public class JoseParameterTest {
     }
 
     @Test
-    public void checkGetJoseValueOnJoseParameterWithHeaderInputReturnsCorrectNameString() {
+    public void checkGetJoseValueOnJoseParameterWithHeaderInputReturnsCorrectJoseValueString() {
         String header = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
         JoseParameter joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
 
         assertEquals("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", joseParameter.getJoseValue());
     }
 
+    @Test
+    public void checkJoseParameterCorrectlyInitializesWithParameterInput() {
+        BurpParameterMock parameter = new BurpParameterMock("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", IParameter.PARAM_URL);
+        JoseParameter joseParameter = new JoseParameter(parameter, JoseParameter.JoseType.JWS);
+
+        assertNotNull(joseParameter);
+        assertEquals(JoseParameter.OriginType.PARAMETER, joseParameter.getOriginType());
+    }
+
+    @Test
+    public void checkGetNameOnJoseParameterWithParameterInputReturnsCorrectNameString() {
+        BurpParameterMock parameter = new BurpParameterMock("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", IParameter.PARAM_URL);
+        JoseParameter joseParameter = new JoseParameter(parameter, JoseParameter.JoseType.JWS);
+
+        assertEquals("token", joseParameter.getName());
+    }
+
+    @Test
+    public void checkGetValueOnJoseParameterWithParameterInputReturnsCorrectValueString() {
+        BurpParameterMock parameter = new BurpParameterMock("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", IParameter.PARAM_URL);
+        JoseParameter joseParameter = new JoseParameter(parameter, JoseParameter.JoseType.JWS);
+
+        assertEquals("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", joseParameter.getValue());
+    }
+
+    @Test
+    public void checkGetJoseValueOnJoseParameterWithParameterInputReturnsCorrectJoseValueString() {
+        BurpParameterMock parameter = new BurpParameterMock("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", IParameter.PARAM_URL);
+        JoseParameter joseParameter = new JoseParameter(parameter, JoseParameter.JoseType.JWS);
+
+        assertEquals("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", joseParameter.getJoseValue());
+    }
+
+    @Test
+    public void checkJoseParameterCorrectlyInitializesWithBodyParameterInput() {
+        BurpParameterMock parameter = new BurpParameterMock("post-parameter", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", IParameter.PARAM_BODY);
+        JoseParameter joseParameter = new JoseParameter(parameter, JoseParameter.JoseType.JWS);
+
+        assertNotNull(joseParameter);
+        assertEquals(JoseParameter.OriginType.PARAMETER, joseParameter.getOriginType());
+    }
+
+    @Test
+    public void checkJoseParameterCorrectlyInitializesWithCookieParameterInput() {
+        BurpParameterMock parameter = new BurpParameterMock("cookie-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", IParameter.PARAM_COOKIE);
+        JoseParameter joseParameter = new JoseParameter(parameter, JoseParameter.JoseType.JWS);
+
+        assertNotNull(joseParameter);
+        assertEquals(JoseParameter.OriginType.PARAMETER, joseParameter.getOriginType());
+    }
 
 }
