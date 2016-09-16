@@ -19,7 +19,6 @@
 package eu.dety.burp.joseph.gui;
 
 import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
 import eu.dety.burp.joseph.attacks.AttackLoader;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
@@ -37,18 +36,15 @@ import java.util.ResourceBundle;
 public class EditorAttackerPanel extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
-    private final IBurpExtenderCallbacks callbacks;
-    private final IExtensionHelpers helpers;
     private JwtEditor.JwtEditorTab jwtEditorReference;
 
     private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
     private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
-    private String type = "?";
     private String algorithm = "?";
     private IAttackInfo selectedAttack = null;
 
     private HashMap<String, ? extends Enum> payloads;
-    private JComboBox payloadSelection = new JComboBox<>();
+    private JComboBox<String> payloadSelection = new JComboBox<>();
     private DefaultComboBoxModel<String> payloadSelectionListModel =  new DefaultComboBoxModel<>();
 
     private String header = "";
@@ -63,8 +59,6 @@ public class EditorAttackerPanel extends JPanel {
      * @param callbacks {@link IBurpExtenderCallbacks} extender callbacks
      */
     public EditorAttackerPanel(IBurpExtenderCallbacks callbacks, JwtEditor.JwtEditorTab jwtEditorReference) {
-        this.callbacks = callbacks;
-        this.helpers = callbacks.getHelpers();
         this.jwtEditorReference = jwtEditorReference;
 
         // Register all available attacks
@@ -85,7 +79,6 @@ public class EditorAttackerPanel extends JPanel {
         // If the keys "alg" and "typ" exist, get their value and update informational fields
         JSONObject headerJson = new JSONObject(header);
         if(headerJson.has("alg")) algorithm = headerJson.getString("alg");
-        if(headerJson.has("typ")) type = headerJson.getString("typ");
 
         // Build available attacks list
         for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
