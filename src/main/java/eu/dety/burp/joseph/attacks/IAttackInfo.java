@@ -22,6 +22,7 @@ import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IRequestInfo;
 import eu.dety.burp.joseph.utilities.JoseParameter;
+import eu.dety.burp.joseph.utilities.JoseParameter.JoseType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -78,11 +79,11 @@ public interface IAttackInfo {
 
     /**
      * Check whether attack is suitable based on algorithm and type values
-     * @param type {@link JoseParameter.JoseType} of the parameter
+     * @param type {@link JoseType} of the parameter
      * @param algorithm JOSE header algorithm value string
      * @return True if attack is suitable
      */
-    boolean isSuitable(JoseParameter.JoseType type, String algorithm);
+    boolean isSuitable(JoseType type, String algorithm);
 
     /**
      * Get IHttpRequestResponse object used for this attack
