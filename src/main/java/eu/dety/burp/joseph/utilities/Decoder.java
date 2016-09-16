@@ -21,6 +21,7 @@ package eu.dety.burp.joseph.utilities;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+
 import java.nio.charset.Charset;
 import java.util.Arrays;
 

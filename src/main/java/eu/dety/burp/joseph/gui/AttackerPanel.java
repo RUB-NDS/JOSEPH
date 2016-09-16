@@ -19,20 +19,25 @@
 package eu.dety.burp.joseph.gui;
 
 
-import burp.*;
-
-import eu.dety.burp.joseph.attacks.*;
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import burp.IHttpRequestResponse;
+import burp.IRequestInfo;
+import eu.dety.burp.joseph.attacks.AttackLoader;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
+import eu.dety.burp.joseph.attacks.IAttack;
+import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**

@@ -21,9 +21,9 @@ package eu.dety.burp.joseph.gui;
 import burp.*;
 import eu.dety.burp.joseph.scanner.Marker;
 import eu.dety.burp.joseph.utilities.Finder;
-import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javax.swing.*;
 
 /**
  * The main window, the parent window for all tabs.

@@ -19,16 +19,14 @@
 package eu.dety.burp.joseph.editor;
 
 import burp.*;
-
 import eu.dety.burp.joseph.gui.EditorAttackerPanel;
-import eu.dety.burp.joseph.gui.PreferencesPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
+import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
-import eu.dety.burp.joseph.utilities.Finder;
 
-import javax.swing.JTabbedPane;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * JSON Web Token (JWT) Editor.

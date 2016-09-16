@@ -20,8 +20,8 @@ package eu.dety.burp.joseph.gui.table;
 
 import eu.dety.burp.joseph.utilities.Logger;
 
-import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 
 /**
  * Helper class for the attack table.

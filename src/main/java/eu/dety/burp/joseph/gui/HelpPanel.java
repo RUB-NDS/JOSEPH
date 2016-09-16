@@ -18,7 +18,7 @@
  */
 package eu.dety.burp.joseph.gui;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
 /**
  * Help tab with information about this extension

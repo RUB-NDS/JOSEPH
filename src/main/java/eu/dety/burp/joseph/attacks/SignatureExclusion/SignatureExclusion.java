@@ -18,14 +18,15 @@
  */
 package eu.dety.burp.joseph.attacks.SignatureExclusion;
 
-import burp.*;
+import burp.IBurpExtenderCallbacks;
+import burp.IHttpRequestResponse;
+import burp.IHttpService;
 import eu.dety.burp.joseph.attacks.IAttack;
 import eu.dety.burp.joseph.gui.AttackerResultWindow;
 import eu.dety.burp.joseph.gui.table.TableEntry;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;

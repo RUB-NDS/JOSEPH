@@ -18,15 +18,10 @@
  */
 package eu.dety.burp.joseph.scanner;
 
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IHttpListener;
-import burp.IHttpRequestResponse;
-import burp.IRequestInfo;
-
+import burp.*;
 import eu.dety.burp.joseph.gui.PreferencesPanel;
-import eu.dety.burp.joseph.utilities.Logger;
 import eu.dety.burp.joseph.utilities.Finder;
+import eu.dety.burp.joseph.utilities.Logger;
 
 import java.util.Objects;
 import java.util.ResourceBundle;

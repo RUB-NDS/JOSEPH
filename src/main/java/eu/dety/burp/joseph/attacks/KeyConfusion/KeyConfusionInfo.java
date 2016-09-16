@@ -18,11 +18,12 @@
  */
 package eu.dety.burp.joseph.attacks.KeyConfusion;
 
-import burp.*;
-
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import burp.IHttpRequestResponse;
+import burp.IRequestInfo;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
-import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionAttackRequest;
 import eu.dety.burp.joseph.utilities.Converter;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.JoseParameter;
@@ -30,6 +31,9 @@ import eu.dety.burp.joseph.utilities.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.parser.JSONParser;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.swing.*;
 import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.security.PublicKey;
@@ -37,9 +41,6 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.swing.*;
 
 
 /**

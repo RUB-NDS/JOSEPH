@@ -21,13 +21,12 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui.BleichenbacherPkcs1TableEntry;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.dety.burp.joseph.utilities.Logger;
 import org.simmetrics.StringMetric;
 import org.simmetrics.metrics.StringMetrics;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Bleichenbacher PKCS1 Oracle

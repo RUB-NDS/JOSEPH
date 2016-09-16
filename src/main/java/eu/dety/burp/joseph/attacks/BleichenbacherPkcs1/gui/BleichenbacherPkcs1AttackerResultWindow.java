@@ -21,7 +21,6 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpService;
 import burp.IMessageEditor;
-import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1Oracle;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
@@ -33,8 +32,9 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Attacker Result Window

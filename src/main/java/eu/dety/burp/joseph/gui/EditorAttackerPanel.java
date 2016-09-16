@@ -18,13 +18,11 @@
  */
 package eu.dety.burp.joseph.gui;
 
-import burp.*;
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
 import eu.dety.burp.joseph.attacks.AttackLoader;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
-import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1Info;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
-import eu.dety.burp.joseph.attacks.KeyConfusion.KeyConfusionInfo;
-import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionInfo;
 import eu.dety.burp.joseph.editor.JwtEditor;
 import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
