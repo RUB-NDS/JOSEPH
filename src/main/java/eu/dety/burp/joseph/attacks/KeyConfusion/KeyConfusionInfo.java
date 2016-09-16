@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -135,7 +135,7 @@ public class KeyConfusionInfo implements IAttackInfo {
         String publicKeyValue = publicKey.getText();
 
         // Throw error if public key value is empty
-        if(publicKeyValue.isEmpty()) {
+        if (publicKeyValue.isEmpty()) {
             throw new AttackPreparationFailedException(bundle.getString("PROVIDE_PUBKEY"));
         }
 
@@ -184,7 +184,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                 loggerInstance.log(getClass(), "Key format is PEM:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
                 // Simple check if String has valid format
-                if(!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MII")) {
+                if (!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MII")) {
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
                 }
 
@@ -239,7 +239,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                     String encodedHeaderReplacedAlgorithm = Decoder.getEncoded(decodedHeaderReplacedAlgorithm);
 
                     String macAlg;
-                    switch(algorithm) {
+                    switch (algorithm) {
                         case "HS384":
                             macAlg = "HmacSHA384";
                             break;
@@ -251,7 +251,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                     }
 
                     // Generate signature
-                    String newSignature = generateSignature(macAlg, helpers.stringToBytes(publicKey.getValue()), helpers.stringToBytes(Decoder.concatComponents(new String[] {encodedHeaderReplacedAlgorithm, components[1]})));
+                    String newSignature = generateSignature(macAlg, helpers.stringToBytes(publicKey.getValue()), helpers.stringToBytes(Decoder.concatComponents(new String[]{encodedHeaderReplacedAlgorithm, components[1]})));
 
                     // Build new JWT String and update parameter
                     String[] newComponents = {encodedHeaderReplacedAlgorithm, components[1], newSignature};
@@ -294,7 +294,7 @@ public class KeyConfusionInfo implements IAttackInfo {
         // Create combobox and textarea to add public key (in different formats)
         JLabel publicKeyLabel = new JLabel(bundle.getString("PUBKEY_FORMAT"));
         publicKeySelection = new JComboBox<>();
-        DefaultComboBoxModel<String> publicKeySelectionListModel= new DefaultComboBoxModel<>();
+        DefaultComboBoxModel<String> publicKeySelectionListModel = new DefaultComboBoxModel<>();
         publicKey = new JTextArea(10, 50);
         publicKey.setLineWrap(true);
 
@@ -362,7 +362,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                 loggerInstance.log(getClass(), "Key format is PEM:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
                 // Simple check if String has valid format
-                if(!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MII")) {
+                if (!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MII")) {
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
                 }
 
@@ -375,7 +375,7 @@ public class KeyConfusionInfo implements IAttackInfo {
         String algorithm = (jwtMatcher.find()) ? jwtMatcher.group(1) : "HS256";
 
         String macAlg;
-        switch(algorithm) {
+        switch (algorithm) {
             case "HS384":
                 macAlg = "HmacSHA384";
                 break;
@@ -392,9 +392,9 @@ public class KeyConfusionInfo implements IAttackInfo {
         HashMap<String, String> result = new HashMap<>();
         result.put("header", header);
         result.put("payload", payload);
-        result.put("signature", generateSignature(macAlg, helpers.stringToBytes(modifiedKey), helpers.stringToBytes(Decoder.concatComponents(new String[] {Decoder.base64UrlEncode(helpers.stringToBytes(header)), Decoder.base64UrlEncode(helpers.stringToBytes(payload))}))));
+        result.put("signature", generateSignature(macAlg, helpers.stringToBytes(modifiedKey), helpers.stringToBytes(Decoder.concatComponents(new String[]{Decoder.base64UrlEncode(helpers.stringToBytes(header)), Decoder.base64UrlEncode(helpers.stringToBytes(payload))}))));
 
-        if(publicKeyValue.isEmpty()) {
+        if (publicKeyValue.isEmpty()) {
             return result;
         }
 
@@ -418,7 +418,7 @@ public class KeyConfusionInfo implements IAttackInfo {
     private String transformKeyByPayload(Enum payloadTypeId, String key) {
         String modifiedKey;
 
-        switch((payloadType)payloadTypeId) {
+        switch ((payloadType) payloadTypeId) {
             case ORIGINAL_WITHOUT_HEADER_FOOTER:
                 modifiedKey = key.replace("-----BEGIN PUBLIC KEY-----\n", "").replace("-----END PUBLIC KEY-----", "").replace("-----BEGIN RSA PUBLIC KEY-----\n", "").replace("-----END RSA PUBLIC KEY-----", "");
                 break;
@@ -478,7 +478,7 @@ public class KeyConfusionInfo implements IAttackInfo {
 
         String modifiedKey;
 
-        switch((payloadType)payloadTypeId) {
+        switch ((payloadType) payloadTypeId) {
             case PKCS1:
                 modifiedKey = Base64.encodeBase64String(Arrays.copyOfRange(key.getEncoded(), 24, key.getEncoded().length));
                 break;

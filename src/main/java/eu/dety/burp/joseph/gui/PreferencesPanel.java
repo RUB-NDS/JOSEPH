@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -47,7 +47,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
     private static final List<String> defaultParameterNames = Arrays.asList("access_token", "token", "Authorization");
 
     private static DefaultListModel<String> parameterNamesListModel = new DefaultListModel<>();
-    
+
     public PreferencesPanel() {
         initComponents();
 
@@ -82,13 +82,13 @@ public class PreferencesPanel extends javax.swing.JPanel {
             loggerInstance.log(getClass(), e.toString(), Logger.LogLevel.ERROR);
         }
     }
-    
+
     /**
      * Get the log level
      * 0 = ERROR, 1 = INFO, 2 = DEBUG
      * @return The Log level.
      */
-    public static int getLogLevel(){
+    public static int getLogLevel() {
         return logLevel;
     }
 
@@ -96,7 +96,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
      * Set the logging level
      * 0 = ERROR, 1 = INFO, 2 = DEBUG
      */
-    private void setLogLevel(int logLvl){
+    private void setLogLevel(int logLvl) {
         logLevel = logLvl;
     }
 
@@ -104,14 +104,14 @@ public class PreferencesPanel extends javax.swing.JPanel {
      * Get the highlighting option value
      * @return The highlighting option value.
      */
-    public static boolean getHighlighting(){
+    public static boolean getHighlighting() {
         return highlighting;
     }
 
     /**
      * Set the highlighting option
      */
-    private void setHighlighting(boolean highlight){
+    private void setHighlighting(boolean highlight) {
         highlighting = highlight;
     }
 
@@ -119,7 +119,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
      * Get the parameter names
      * @return The parameter names string list.
      */
-    public static List<Object> getParameterNames(){
+    public static List<Object> getParameterNames() {
         return Arrays.asList(parameterNamesListModel.toArray());
     }
 
@@ -135,7 +135,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
             return;
         }
 
-        if (!configFile.isDirectory() && configFile.canWrite()){
+        if (!configFile.isDirectory() && configFile.canWrite()) {
 
             JSONObject configObj = new JSONObject();
             configObj.put("logLevel", getLogLevel());
@@ -185,16 +185,16 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
             try {
                 FileReader configFileReader = new FileReader(configFile);
-                JSONObject configObj = (JSONObject)jsonParser.parse(configFileReader);
+                JSONObject configObj = (JSONObject) jsonParser.parse(configFileReader);
 
-                setLogLevel(((Long)configObj.get("logLevel")).intValue());
+                setLogLevel(((Long) configObj.get("logLevel")).intValue());
                 logLevelCombo.setSelectedIndex(getLogLevel());
 
-                setHighlighting(((boolean)configObj.get("highlighting")));
+                setHighlighting(((boolean) configObj.get("highlighting")));
                 highlightCheckbox.setSelected(getHighlighting());
 
                 parameterNamesListModel.clear();
-                for (String param : (List<String>)configObj.get("parameterNames")) {
+                for (String param : (List<String>) configObj.get("parameterNames")) {
                     parameterNamesListModel.addElement(param);
                 }
 
@@ -248,7 +248,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
         loggingHeadlineLabel.setName("loggingHeadlineLabel"); // NOI18N
 
         logLevelCombo.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
-        logLevelCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ERROR", "INFO", "DEBUG" }));
+        logLevelCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"ERROR", "INFO", "DEBUG"}));
         logLevelCombo.setName("logLevelCombo"); // NOI18N
         logLevelCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -312,59 +312,59 @@ public class PreferencesPanel extends javax.swing.JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator1)
-            .addComponent(jSeparator2)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(logLevelLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(logLevelCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(parameterNamesHelp)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
-                            .addComponent(parameterNamesTextField))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(parameterNamesRemoveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(parameterNamesAddButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(saveConfigButton)
-                    .addComponent(highlightCheckbox)
-                    .addComponent(loggingHeadlineLabel))
-                .addContainerGap(221, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jSeparator1)
+                        .addComponent(jSeparator2)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(logLevelLabel)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(logLevelCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(parameterNamesHelp)
+                                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+                                                        .addComponent(parameterNamesTextField))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(parameterNamesRemoveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(parameterNamesAddButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addComponent(saveConfigButton)
+                                        .addComponent(highlightCheckbox)
+                                        .addComponent(loggingHeadlineLabel))
+                                .addContainerGap(221, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(loggingHeadlineLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(logLevelLabel)
-                    .addComponent(logLevelCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(highlightCheckbox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(parameterNamesHelp)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(parameterNamesAddButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(parameterNamesRemoveButton)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(parameterNamesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(saveConfigButton)
-                .addContainerGap(135, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(loggingHeadlineLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(logLevelLabel)
+                                        .addComponent(logLevelCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addComponent(highlightCheckbox)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(parameterNamesHelp)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(parameterNamesAddButton)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(parameterNamesRemoveButton)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(parameterNamesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(saveConfigButton)
+                                .addContainerGap(135, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -382,13 +382,13 @@ public class PreferencesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_parameterNamesAddButtonActionPerformed
 
     private void parameterNamesRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parameterNamesRemoveButtonActionPerformed
-        for(int paramIndex : parameterNamesList.getSelectedIndices()) {
+        for (int paramIndex : parameterNamesList.getSelectedIndices()) {
             parameterNamesListModel.removeElementAt(paramIndex);
         }
     }//GEN-LAST:event_parameterNamesRemoveButtonActionPerformed
 
     private void parameterNamesTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_parameterNamesTextFieldKeyPressed
-        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             String newParameter = parameterNamesTextField.getText();
 
             if (!newParameter.equals("")) {

@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,7 +28,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
     private ArrayList<BleichenbacherPkcs1TableEntry> tableEntries;
     private String[] columnName = {"#", "Payload type", "Payload", "Status", "Length", "Time", "PKCS1 Conform?"};
 
-    
+
     /**
      * Construct a new table helper
      * @param tableEntries A list of table entries.
@@ -41,7 +41,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
      * Get the tableEntries list.
      * @return The list of {@link BleichenbacherPkcs1TableEntry}.
      */
-    public ArrayList<BleichenbacherPkcs1TableEntry> getTableEntries(){
+    public ArrayList<BleichenbacherPkcs1TableEntry> getTableEntries() {
         return tableEntries;
     }
 
@@ -55,7 +55,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
             int row = tableEntries.size();
             tableEntries.add(entry);
             fireTableRowsInserted(row, row);
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
         return true;
@@ -69,7 +69,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
         try {
             tableEntries.clear();
             fireTableDataChanged();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
         return true;
@@ -80,8 +80,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
      * @return Number of rows.
      */
     @Override
-    public int getRowCount()
-    {
+    public int getRowCount() {
         return tableEntries.size();
     }
 
@@ -90,8 +89,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
      * @return Number of columns.
      */
     @Override
-    public int getColumnCount()
-    {
+    public int getColumnCount() {
         return columnName.length;
     }
 
@@ -118,8 +116,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
     @Override
     public Class getColumnClass(int column) {
 
-        switch (column)
-        {
+        switch (column) {
             case 0:
                 return Integer.class;
             case 3:
@@ -139,9 +136,9 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
 
-        if(columnIndex == 6) {
+        if (columnIndex == 6) {
             BleichenbacherPkcs1TableEntry entry = tableEntries.get(rowIndex);
-            entry.setIsValid((boolean)value);
+            entry.setIsValid((boolean) value);
             fireTableCellUpdated(rowIndex, columnIndex);
         }
 
@@ -154,12 +151,10 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
      * @return Value for the specified entry. Null if not found.
      */
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex)
-    {
+    public Object getValueAt(int rowIndex, int columnIndex) {
         BleichenbacherPkcs1TableEntry entry = tableEntries.get(rowIndex);
 
-        switch (columnIndex)
-        {
+        switch (columnIndex) {
             case 0:
                 return entry.getEntryIndex();
             case 1:

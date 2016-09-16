@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -86,7 +86,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
             JwtEditorTabPanel.addTab("Base64(Signature)", sourceViewerSignature.getComponent());
 
             editorAttackerPanel = new EditorAttackerPanel(callbacks, this);
-            if(editable) {
+            if (editable) {
                 JwtEditorTabPanel.addTab("Attacker", editorAttackerPanel);
             }
         }
@@ -104,11 +104,11 @@ public class JwtEditor implements IMessageEditorTabFactory {
         @Override
         public boolean isEnabled(byte[] content, boolean isRequest) {
             // Enable this tab for requests containing a JOSE parameter
-            if(isRequest) {
+            if (isRequest) {
                 IRequestInfo requestInfo = helpers.analyzeRequest(content);
 
                 JoseParameter joseParameterCheck = Finder.checkHeaderAndParameterForJwtPattern(requestInfo);
-                if(joseParameterCheck != null) {
+                if (joseParameterCheck != null) {
                     joseParameter = joseParameterCheck;
                     return true;
                 }

@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -65,7 +65,7 @@ public class ConverterTest {
     @Test
     public void getRsaPublicKeyWithTwoKeysRsaAndEcJwkInputReturnsListWithSingleRsaPublicKeyObject() throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException {
         Object jwk = new JSONParser().parse("{\"keys\":[{\"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"use\":\"enc\", \"kid\":\"1\"},{\"kty\":\"RSA\", \"n\": \"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2 QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\", \"e\":\"AQAB\", \"alg\":\"RS256\", \"kid\":\"2011-04-29\"}]}");
-        
+
         BigInteger modulus = new BigInteger("-5682458471133998388349435224633069349339468533284902336027705964449388702650944577143355769222747143645802928997396746788844516020279137866835783191591333722847996520065852710220990368127004199808401899736680560956431068787853232744544770599290862357208116339307372204787434279492353211428856678472586090071739438019744959023980640454937307928948909285462577350157199294652794553602056459172956409144930859767392952162694193223130644537748426311422152249961861449835863678305650703998634078098161038037616498189346650489296709705191330089861202606165927388552774443778601636463150652207936779357119888256103014675837");
         BigInteger publicExponent = new BigInteger("65537");
         PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, publicExponent));

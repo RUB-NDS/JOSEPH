@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -111,7 +111,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
                 String tmpParameterValue = Decoder.concatComponents(tmpNewComponents);
 
                 byte[] tmpRequest = JoseParameter.updateRequest(this.requestResponse.getRequest(), this.parameter, helpers, tmpParameterValue);
-                requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal() , noneAlgVariation.getValue()));
+                requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal(), noneAlgVariation.getValue()));
 
             } catch (Exception e) {
                 throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
@@ -162,7 +162,9 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, payloadType> getPayloadList() {return payloads; }
+    public HashMap<String, payloadType> getPayloadList() {
+        return payloads;
+    }
 
     @Override
     public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload) {
@@ -174,7 +176,6 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
         return result;
     }
-
 
 
 }

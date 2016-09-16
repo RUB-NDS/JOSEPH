@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -116,7 +116,7 @@ public class AttackerPanel extends JPanel {
         }
 
         // Log error if joseParameter is null (should never happen)
-        if(joseParameter == null) {
+        if (joseParameter == null) {
             loggerInstance.log(getClass(), "Error: No JOSE value found!", Logger.LogLevel.ERROR);
         }
 
@@ -127,8 +127,8 @@ public class AttackerPanel extends JPanel {
         JSONObject[] joseJSONComponents = Decoder.getJsonComponents(joseParameter.getJoseValue());
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
-        if(joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
-        if(joseJSONComponents[0].has("typ")) type = joseJSONComponents[0].getString("typ");
+        if (joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
+        if (joseJSONComponents[0].has("typ")) type = joseJSONComponents[0].getString("typ");
         typeValue.setText(type);
         algorithmValue.setText(algorithm);
 
@@ -137,7 +137,7 @@ public class AttackerPanel extends JPanel {
                 + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.LogLevel.DEBUG);
 
         // Build available attacks list
-        for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
+        for (Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
             // If attack is suitable for given JOSE type, add it to attackListModel
             if (attack.getValue().isSuitable(joseParameter.getJoseType(), algorithm)) {
                 attackListModel.addElement(attack.getKey());
@@ -226,53 +226,53 @@ public class AttackerPanel extends JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(typeLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(typeValue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(algorithmLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(algorithmValue))
-                    .addComponent(attackListLabel)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadButton))
-                    .addComponent(attackInfoName)
-                    .addComponent(attackInfoDescription)
-                    .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(attackButton))
-                .addContainerGap(261, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(typeLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(typeValue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(algorithmLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(algorithmValue))
+                                        .addComponent(attackListLabel)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(loadButton))
+                                        .addComponent(attackInfoName)
+                                        .addComponent(attackInfoDescription)
+                                        .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(attackButton))
+                                .addContainerGap(261, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(typeLabel)
-                    .addComponent(algorithmLabel)
-                    .addComponent(typeValue)
-                    .addComponent(algorithmValue))
-                .addGap(18, 18, 18)
-                .addComponent(attackListLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(loadButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(attackInfoName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(attackInfoDescription)
-                .addGap(18, 18, 18)
-                .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(attackButton)
-                .addContainerGap(120, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(typeLabel)
+                                        .addComponent(algorithmLabel)
+                                        .addComponent(typeValue)
+                                        .addComponent(algorithmValue))
+                                .addGap(18, 18, 18)
+                                .addComponent(attackListLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(loadButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(attackInfoName)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(attackInfoDescription)
+                                .addGap(18, 18, 18)
+                                .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(attackButton)
+                                .addContainerGap(120, Short.MAX_VALUE))
         );
 
         attackInfoName.getAccessibleContext().setAccessibleName("attackInfoName");
@@ -299,7 +299,7 @@ public class AttackerPanel extends JPanel {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         boolean hasExtraUI = selectedAttack.getExtraUI(extraPanel, constraints);
 
-        if(hasExtraUI) {
+        if (hasExtraUI) {
             extraPanel.setEnabled(true);
             extraPanel.revalidate();
             extraPanel.repaint();

