@@ -78,11 +78,11 @@ public interface IAttackInfo {
 
     /**
      * Check whether attack is suitable based on algorithm and type values
-     * @param type JOSE header type value string
+     * @param type {@link JoseParameter.JoseType} of the parameter
      * @param algorithm JOSE header algorithm value string
      * @return True if attack is suitable
      */
-    boolean isSuitable(String type, String algorithm);
+    boolean isSuitable(JoseParameter.JoseType type, String algorithm);
 
     /**
      * Get IHttpRequestResponse object used for this attack

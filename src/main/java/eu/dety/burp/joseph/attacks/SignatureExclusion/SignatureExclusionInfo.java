@@ -143,8 +143,9 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public boolean isSuitable(String type, String algorithm) {
-        return (this.parameter.getJoseType() == JoseParameter.JoseType.JWS);
+    public boolean isSuitable(JoseParameter.JoseType type, String algorithm) {
+
+        return (type == JoseParameter.JoseType.JWS);
     }
 
     @Override

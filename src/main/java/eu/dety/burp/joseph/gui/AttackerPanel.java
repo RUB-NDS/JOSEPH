@@ -119,7 +119,7 @@ public class AttackerPanel extends JPanel {
         // Build available attacks list
         for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
             // If attack is suitable for given JOSE type, add it to attackListModel
-            if (attack.getValue().isSuitable(type, algorithm)) {
+            if (attack.getValue().isSuitable(joseParameter.getJoseType(), algorithm)) {
                 attackListModel.addElement(attack.getKey());
             }
         }

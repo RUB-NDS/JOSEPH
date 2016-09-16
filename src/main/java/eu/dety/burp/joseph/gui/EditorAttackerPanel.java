@@ -26,6 +26,7 @@ import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.attacks.KeyConfusion.KeyConfusionInfo;
 import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionInfo;
 import eu.dety.burp.joseph.editor.JwtEditor;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 import org.json.JSONObject;
 
@@ -91,7 +92,7 @@ public class EditorAttackerPanel extends JPanel {
         // Build available attacks list
         for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
             // If attack is suitable for given JOSE type, add it to attackListModel
-            if (attack.getValue().isSuitable(type, algorithm)) {
+            if (attack.getValue().isSuitable(JoseParameter.JoseType.JWS, algorithm)) {
                 attackListModel.addElement(attack.getKey());
             }
         }
