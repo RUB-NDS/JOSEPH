@@ -125,9 +125,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                         closeButton.setMargin(new Insets(0, 0, 0, 0));
                         closeButton.setForeground(Color.gray);
 
-                        // Close button mouse listener
-                        // performing the tab removal on mouse click
-                        // and defining hover effects
+                        // Close button mouse listener performing the tab removal on mouse click and defining hover effects
                         closeButton.addMouseListener(new MouseListener() {
 
                             @Override
