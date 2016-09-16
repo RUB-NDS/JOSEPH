@@ -21,7 +21,6 @@ package eu.dety.burp.joseph.utilities;
 import static org.junit.Assert.*;
 
 import org.json.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 

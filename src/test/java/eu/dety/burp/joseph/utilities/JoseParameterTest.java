@@ -21,6 +21,7 @@ package eu.dety.burp.joseph.utilities;
 import static org.junit.Assert.*;
 
 import burp.IParameter;
+import eu.dety.burp.joseph.BurpParameterMock;
 import org.junit.Test;
 
 public class JoseParameterTest {

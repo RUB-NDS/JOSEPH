@@ -74,7 +74,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
     private static final int amountRequests = noneAlgVariations.size();
 
     // Types of payload variation
-    private enum payloadType {
+    public enum payloadType {
         LOWERCASE,
         CAPITALIZED,
         UPPERCASE,
@@ -144,7 +144,6 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
     @Override
     public boolean isSuitable(JoseParameter.JoseType type, String algorithm) {
-
         return (type == JoseParameter.JoseType.JWS);
     }
 

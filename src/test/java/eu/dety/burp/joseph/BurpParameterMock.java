@@ -25,12 +25,12 @@ import burp.IParameter;
  * to mock Burp's behavior for parameters
  * to be able to write according unit tests.
  */
-class BurpParameterMock implements IParameter {
+public class BurpParameterMock implements IParameter {
     private String name;
     private String value;
     private byte type;
 
-    BurpParameterMock(String name, String value, byte type) {
+    public BurpParameterMock(String name, String value, byte type) {
         this.name = name;
         this.value = value;
         this.type = type;
