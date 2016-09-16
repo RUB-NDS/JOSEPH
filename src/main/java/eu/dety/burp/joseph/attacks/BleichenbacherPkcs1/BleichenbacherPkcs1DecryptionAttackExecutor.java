@@ -137,7 +137,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             stepThree(i);
 
             loggerInstance.log(getClass(), "Step 4: Computing the solution.", Logger.LogLevel.INFO);
-            solutionFound = stepFour(i);
+            solutionFound = stepFour();
             i++;
         }
 
@@ -446,7 +446,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     }
 
 
-    private boolean stepFour(final int i) {
+    private boolean stepFour() {
         boolean resultFound = false;
 
         if (this.m.length == 1 && this.m[0].lower.compareTo(this.m[0].upper) == 0) {

@@ -24,6 +24,7 @@ import eu.dety.burp.joseph.utilities.*;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;
@@ -199,7 +200,7 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
 
         currentSLabel.setText(bundle.getString("FOUND_S")); // NOI18N
 
-        resultKeyLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        resultKeyLabel.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         resultKeyLabel.setText(bundle.getString("RESULT_CEK")); // NOI18N
 
         cekFormatButtonGroup.add(cekFormatHex);
@@ -253,7 +254,7 @@ public class BleichenbacherPkcs1DecryptionAttackPanel extends javax.swing.JPanel
         resultContentValue.setBorder(null);
         jScrollPane2.setViewportView(resultContentValue);
 
-        resultContentLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        resultContentLabel.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         resultContentLabel.setText(bundle.getString("RESULT_CONTENT")); // NOI18N
 
         jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

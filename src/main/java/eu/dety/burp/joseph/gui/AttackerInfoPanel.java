@@ -19,6 +19,8 @@
 package eu.dety.burp.joseph.gui;
 
 
+import java.awt.*;
+
 /**
  * Attacker info tab with information about how to use the JOSEPH attacker
  * @author Dennis Detering
@@ -43,7 +45,7 @@ public class AttackerInfoPanel extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         attackerInfoContentLabel = new javax.swing.JLabel();
 
-        attackerInfoHeadlineLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        attackerInfoHeadlineLabel.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
         attackerInfoHeadlineLabel.setText(bundle.getString("LOGGING_HEADLINE")); // NOI18N
         attackerInfoHeadlineLabel.setName("attackerInfoHeadlineLabel"); // NOI18N

@@ -88,7 +88,6 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
                 int column = evt.getColumn();
                 if (column == 6) {
                     TableModel model = table.getTableModel();
-                    String columnName = model.getColumnName(column);
                     Boolean checked = (Boolean) model.getValueAt(row, column);
 
                     BleichenbacherPkcs1TableEntry entry = table.getEntry(row);

@@ -254,9 +254,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
     @Override
     public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload) throws AttackPreparationFailedException {
-        HashMap<String, String> result = new HashMap<>();
-
-        return result;
+        return new HashMap<>();
     }
 
     /**

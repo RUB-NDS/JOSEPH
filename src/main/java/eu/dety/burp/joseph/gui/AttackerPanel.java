@@ -184,7 +184,7 @@ public class AttackerPanel extends JPanel {
         extraPanel = new javax.swing.JPanel();
         attackButton = new javax.swing.JButton();
 
-        typeLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        typeLabel.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         typeLabel.setText("Type:");
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
@@ -204,10 +204,10 @@ public class AttackerPanel extends JPanel {
             }
         });
 
-        algorithmLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        algorithmLabel.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         algorithmLabel.setText("Algorithm:");
 
-        attackInfoName.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        attackInfoName.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         attackInfoName.setEnabled(false);
 
         attackInfoDescription.setEnabled(false);

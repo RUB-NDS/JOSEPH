@@ -24,6 +24,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileReader;
@@ -242,7 +243,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
         setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
 
-        loggingHeadlineLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        loggingHeadlineLabel.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
         loggingHeadlineLabel.setText(bundle.getString("LOGGING_HEADLINE")); // NOI18N
         loggingHeadlineLabel.setName("loggingHeadlineLabel"); // NOI18N
@@ -260,7 +261,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
         logLevelLabel.setText(bundle.getString("LOGLEVEL")); // NOI18N
         logLevelLabel.setName("logLevelLabel"); // NOI18N
 
-        highlightCheckbox.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        highlightCheckbox.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         highlightCheckbox.setText(bundle.getString("HIGHLIGHTING")); // NOI18N
         highlightCheckbox.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         highlightCheckbox.setName("highlightCheckbox"); // NOI18N

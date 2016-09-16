@@ -19,6 +19,7 @@
 package eu.dety.burp.joseph.gui;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Help tab with information about this extension
@@ -44,7 +45,7 @@ public class HelpPanel extends JPanel {
         descriptionLabel = new javax.swing.JLabel();
         copyrightLabel = new javax.swing.JLabel();
 
-        headlineLabel.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        headlineLabel.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 18)); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
         headlineLabel.setText(bundle.getString("NAME_WITH_VERSION")); // NOI18N
 
