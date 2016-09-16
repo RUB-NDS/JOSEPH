@@ -77,12 +77,6 @@ public interface IAttackInfo {
     boolean getExtraUI(JPanel extraPanel, GridBagConstraints constraints);
 
     /**
-     * Get list of suitable JOSE types
-     * @return List of suitable JOSE types
-     */
-    List<String> getSuitableTypes();
-
-    /**
      * Check whether attack is suitable based on algorithm and type values
      * @param type JOSE header type value string
      * @param algorithm JOSE header algorithm value string

@@ -70,9 +70,6 @@ public class KeyConfusionInfo implements IAttackInfo {
             "<em>public key</em> is mistakenly used as <em>mac secret</em>.<br/>" +
             "Such a vulnerability occurs when the endpoint expects a RSA signed token and does not correctly check the actually used or allowed algorithm.</html>";
 
-    // List of types this attack is suitable for
-    private static final List<String> suitableTypes = Arrays.asList("jwt", "jws");
-
     // Array of algorithms to test
     private static final String[] algorithms = {"HS256", "HS384", "HS512"};
 
@@ -287,11 +284,6 @@ public class KeyConfusionInfo implements IAttackInfo {
     }
 
     @Override
-    public List<String> getSuitableTypes() {
-        return suitableTypes;
-    }
-
-    @Override
     public int getAmountRequests() {
         return amountRequests;
     }
@@ -324,7 +316,7 @@ public class KeyConfusionInfo implements IAttackInfo {
 
     @Override
     public boolean isSuitable(String type, String algorithm) {
-        return true;
+        return (this.parameter.getJoseType() == JoseParameter.JoseType.JWS);
     }
 
     @Override

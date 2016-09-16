@@ -55,9 +55,6 @@ public class SignatureExclusionInfo implements IAttackInfo {
             "by using the <em>None</em> algorithm and removing the signature.<br/>" +
             "In order to perform filter evasion, different capitalization is used as algorithm value.</html>";
 
-    // List of types this attack is suitable for
-    private static final List<String> suitableTypes = Arrays.asList("jwt", "jws");
-
     // Hashmap of "none" algorithm type variations
     private static final HashMap<payloadType, String> noneAlgVariations = new HashMap<payloadType, String>() {{
         put(payloadType.LOWERCASE, "none");
@@ -136,11 +133,6 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public List<String> getSuitableTypes() {
-        return suitableTypes;
-    }
-
-    @Override
     public int getAmountRequests() {
         return amountRequests;
     }
@@ -152,14 +144,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
     @Override
     public boolean isSuitable(String type, String algorithm) {
-        // TODO: How to check suitablility best?
-        // Should work for all JWT and JWS
-
-//        if(type != null && !type.equals("")) {
-//            return this.getSuitableTypes().contains(type.toLowerCase());
-//        }
-
-        return true;
+        return (this.parameter.getJoseType() == JoseParameter.JoseType.JWS);
     }
 
     @Override

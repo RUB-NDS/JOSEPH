@@ -72,13 +72,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     private static final String name = "Bleichenbacher RSA PKCS#1 v1.5";
 
     // Attack description
-    private static final String description = "<html>The <em>Bleichenbacher RSA PKCS#1 v1.5</em> attack exploits a vulnerability where ...</html>";
-
-    // List of types this attack is suitable for
-    private static final List<String> suitableTypes = Arrays.asList("jwe");
-
-    // Array of algorithms to test
-    private static final String[] algorithms = {"RSA1_5", "RSA-OAEP", "RSA-OAEP-256"};
+    private static final String description = "<html>The <em>Bleichenbacher RSA PKCS#1 v1.5</em> attack (aka. Million Message Attack) " +
+            "exploits a vulnerability where the receiving party may be abused as validity oracle of the PKCS#1 v1.5 conformity.</html>";
 
     // Amount of requests needed
     private int amountRequests = 0;
@@ -207,11 +202,6 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     @Override
-    public List<String> getSuitableTypes() {
-        return suitableTypes;
-    }
-
-    @Override
     public int getAmountRequests() {
         return amountRequests;
     }
@@ -244,7 +234,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
     @Override
     public boolean isSuitable(String type, String algorithm) {
-        return true;
+        return (this.parameter.getJoseType() == JoseParameter.JoseType.JWE);
     }
 
     @Override
