@@ -20,6 +20,8 @@ package eu.dety.burp.joseph.gui;
 
 import burp.*;
 import eu.dety.burp.joseph.scanner.Marker;
+import eu.dety.burp.joseph.utilities.Finder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import java.awt.*;
@@ -90,12 +92,6 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
         if (messages != null && messages.length == 1) {
 
             final IHttpRequestResponse message = messages[0];
-
-            // Check if message has been marked by JOSEPH extension (or if tool is repeater)
-            // TODO: Other check than highlight
-            if(!Objects.equals(message.getHighlight(), Marker.getHighlightColor()) && iContextMenuInvocation.getToolFlag() != IBurpExtenderCallbacks.TOOL_REPEATER) {
-                return null;
-            }
 
             java.util.List<JMenuItem> list = new ArrayList<>();
             JMenuItem menuItem = new JMenuItem(bundle.getString("SEND2JOSEPH"));
@@ -172,14 +168,26 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
                         attackerTabGroup.setTabComponentAt(attackerTabGroup.indexOfTab(captionTitleValue), tabCaptionPanel);
 
-                        // TODO: Highlight MainTabGroup (like on "send to repeater")
-
                     } catch (Exception e) {
                         loggerInstance.log(MainTabGroup.class, e.getMessage(), Logger.LogLevel.ERROR);
                     }
                 }
             });
             list.add(menuItem);
+
+            // Check if message has been marked by JOSEPH extension (or if tool is repeater)
+            if(!Objects.equals(message.getHighlight(), Marker.getHighlightColor()) && iContextMenuInvocation.getToolFlag() != IBurpExtenderCallbacks.TOOL_REPEATER) {
+                menuItem.setEnabled(false);
+            }
+
+            // Additionally check whether JWS or JWE patterns exists
+            IRequestInfo requestInfo = callbacks.getHelpers().analyzeRequest(message);
+            if(Finder.checkHeaderAndParameterForJwtPattern(requestInfo) == null && Finder.checkHeaderAndParameterForJwePattern(requestInfo) == null) {
+                menuItem.setEnabled(false);
+            }
+
+            // TODO: Check if suitable attack exists
+
             return list;
         }
 

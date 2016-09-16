@@ -109,24 +109,10 @@ public class JwtEditor implements IMessageEditorTabFactory {
             if(isRequest) {
                 IRequestInfo requestInfo = helpers.analyzeRequest(content);
 
-                // Search for JOSE header
-                for (String header : requestInfo.getHeaders()) {
-                    if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0]) && Finder.checkJwtPattern(header)) {
-                        joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
-
-                        loggerInstance.log(getClass(), "HTTP header with JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
-                        return true;
-                    }
-                }
-
-                // Search for JOSE parameter
-                for (IParameter param : requestInfo.getParameters()) {
-                    if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwtPattern(param.getValue())) {
-                        joseParameter = new JoseParameter(param, JoseParameter.JoseType.JWS);
-
-                        loggerInstance.log(getClass(), "JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
-                        return true;
-                    }
+                JoseParameter joseParameterCheck = Finder.checkHeaderAndParameterForJwtPattern(requestInfo);
+                if(joseParameterCheck != null) {
+                    joseParameter = joseParameterCheck;
+                    return true;
                 }
 
             }

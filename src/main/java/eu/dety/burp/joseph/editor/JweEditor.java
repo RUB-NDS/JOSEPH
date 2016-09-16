@@ -109,24 +109,10 @@ public class JweEditor implements IMessageEditorTabFactory {
             if(isRequest) {
                 IRequestInfo requestInfo = helpers.analyzeRequest(content);
 
-                // Search for JOSE header
-                for (String header : requestInfo.getHeaders()) {
-                    if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0]) && Finder.checkJwePattern(header)) {
-                        joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWE);
-
-                        loggerInstance.log(getClass(), "HTTP header with JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
-                        return true;
-                    }
-                }
-
-                // Search for JOSE parameter
-                for (IParameter param : requestInfo.getParameters()) {
-                    if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwePattern(param.getValue())) {
-                        joseParameter = new JoseParameter(param, JoseParameter.JoseType.JWE);
-
-                        loggerInstance.log(getClass(), "JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
-                        return true;
-                    }
+                JoseParameter joseParameterCheck = Finder.checkHeaderAndParameterForJwePattern(requestInfo);
+                if(joseParameterCheck != null) {
+                    joseParameter = joseParameterCheck;
+                    return true;
                 }
 
             }

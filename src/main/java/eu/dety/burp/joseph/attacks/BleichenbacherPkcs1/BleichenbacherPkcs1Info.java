@@ -234,7 +234,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
     @Override
     public boolean isSuitable(JoseParameter.JoseType type, String algorithm) {
-        return (type == JoseParameter.JoseType.JWE);
+        return (type == JoseParameter.JoseType.JWE && (algorithm.equals("RSA1_5")));
     }
 
     @Override
