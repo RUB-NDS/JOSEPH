@@ -20,7 +20,6 @@ package eu.dety.burp.joseph.scanner;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
-import burp.IParameter;
 import burp.IHttpListener;
 import burp.IHttpRequestResponse;
 import burp.IRequestInfo;
@@ -63,38 +62,13 @@ public class Marker implements IHttpListener {
      */
     private void checkForJoseLocations(IHttpRequestResponse httpRequestResponse) {
         IRequestInfo requestInfo = helpers.analyzeRequest(httpRequestResponse);
-        boolean jwtFound = false;
-        boolean jweFound = false;
 
-        // Search for authorization header
-        for (String header : requestInfo.getHeaders()) {
-            if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0])) {
-                loggerInstance.log(getClass(), "HTTP HEADER with JOSE value found.", Logger.LogLevel.DEBUG);
-                jwtFound = Finder.checkJwtPattern(header);
-                jweFound = Finder.checkJwePattern(header);
-                break;
-            }
-        }
-
-        if (!jwtFound && !jweFound) {
-            // Search for (specific) parameter
-            for (IParameter param : requestInfo.getParameters()) {
-                if(PreferencesPanel.getParameterNames().contains(param.getName())) {
-                    loggerInstance.log(getClass(), String.format("Possible JOSE parameter found: %s.", param.getName()), Logger.LogLevel.DEBUG);
-                    jwtFound = Finder.checkJwtPattern(param.getValue());
-                    jweFound = Finder.checkJwePattern(param.getValue());
-
-                    if (jwtFound || jweFound) break;
-                }
-            }
-        }
-
-        if (jwtFound) {
+        if (Finder.checkHeaderAndParameterForJwtPattern(requestInfo) != null) {
             markRequestResponse(httpRequestResponse, bundle.getString("JWT"));
             loggerInstance.log(getClass(), "JSON Web Token found!", Logger.LogLevel.DEBUG);
         }
 
-        if (jweFound) {
+        if (Finder.checkHeaderAndParameterForJwePattern(requestInfo) != null) {
             markRequestResponse(httpRequestResponse, bundle.getString("JWE"));
             loggerInstance.log(getClass(), "JSON Web Encryption found!", Logger.LogLevel.DEBUG);
         }
