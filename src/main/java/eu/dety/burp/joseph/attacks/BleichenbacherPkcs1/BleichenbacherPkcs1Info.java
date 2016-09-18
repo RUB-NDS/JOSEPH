@@ -96,7 +96,6 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     // Hashmap of available payloads with a verbose name (including the payloadType)
     private static final HashMap<String, payloadType> payloads = new HashMap<String, payloadType>() {{
         put(String.format("No Null Byte (0x%02X)", payloadType.NoNullByte.ordinal()), payloadType.NoNullByte);
-
         put(String.format("Null Byte in Padding (0x%02X)", payloadType.NullByteInPadding.ordinal()), payloadType.NullByteInPadding);
         put(String.format("Null Byte in PKCS Padding (0x%02X)", payloadType.NullByteInPkcsPadding.ordinal()), payloadType.NullByteInPkcsPadding);
         put(String.format("Symmetric Key of Size 8 (0x%02X)", payloadType.SymmetricKeyOfSize8.ordinal()), payloadType.SymmetricKeyOfSize8);

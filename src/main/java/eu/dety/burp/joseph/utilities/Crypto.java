@@ -31,7 +31,7 @@ import java.util.List;
 
 public class Crypto {
 
-    public static final List<String> JOSE_HMAC_ALGS = Arrays.asList("HS256", "HS384", "HS512");
+    public static final List<String> JWS_HMAC_ALGS = Arrays.asList("HS256", "HS384", "HS512");
 
     public static String getMacAlgorithmByJoseAlgorithm(String algorithm, String fallback) {
         switch (algorithm) {

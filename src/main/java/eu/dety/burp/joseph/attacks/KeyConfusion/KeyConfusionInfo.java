@@ -28,8 +28,6 @@ import eu.dety.burp.joseph.utilities.*;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.parser.JSONParser;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
 import java.awt.*;
 import java.io.UnsupportedEncodingException;
@@ -65,7 +63,7 @@ public class KeyConfusionInfo implements IAttackInfo {
 
     // Attack description
     private static final String description = "<html>The <em>Key Confusion</em> attack exploits a vulnerability where a " +
-            "<em>public key</em> is mistakenly used as <em>mac secret</em>.<br/>" +
+            "<em>public key</em> is mistakenly used as <em>MAC secret</em>.<br/>" +
             "Such a vulnerability occurs when the endpoint expects a RSA signed token and does not correctly check the actually used or allowed algorithm.</html>";
 
     // Array of algorithms to test
@@ -351,7 +349,7 @@ public class KeyConfusionInfo implements IAttackInfo {
 
         String macAlg = Crypto.getMacAlgorithmByJoseAlgorithm(algorithm, "HmacSHA256");
 
-        if (!Crypto.JOSE_HMAC_ALGS.contains(algorithm)) algorithm = "HS256";
+        if (!Crypto.JWS_HMAC_ALGS.contains(algorithm)) algorithm = "HS256";
 
         header = header.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + algorithm + "\"");
 
@@ -432,7 +430,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                 break;
 
             case PKCS8_WITH_LF_HEAD_FOOT_END_LF:
-                modifiedKey = "-----BEGIN PUBLIC KEY-----\n" + base64Pem.encodeToString(key.getEncoded()) + "-----END PUBLIC KEY-----\n";
+                modifiedKey = transformKeyByPayload(payloadType.PKCS8_WITH_LF_HEAD_FOOT, key) + "\n";
                 break;
 
             case PKCS8:

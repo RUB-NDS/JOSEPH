@@ -78,32 +78,6 @@ public class AttackerPanel extends JPanel {
         // Register all available attacks
         registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
 
-//        // Search for JOSE header
-//        for (String header : requestInfo.getHeaders()) {
-//            if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0]) && Finder.checkJwtPattern(header)) {
-//                joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
-//                break;
-//            }
-//
-//            if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0]) && Finder.checkJwePattern(header)) {
-//                joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWE);
-//                break;
-//            }
-//        }
-//
-//        // Search for JOSE parameter
-//        for (IParameter param : requestInfo.getParameters()) {
-//            if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwtPattern(param.getValue())) {
-//                joseParameter = new JoseParameter(param, JoseParameter.JoseType.JWS);
-//                break;
-//            }
-//
-//            if (PreferencesPanel.getParameterNames().contains(param.getName()) && Finder.checkJwePattern(param.getValue())) {
-//                joseParameter = new JoseParameter(param, JoseParameter.JoseType.JWE);
-//                break;
-//            }
-//        }
-
         // Search for JOSE header
         JoseParameter joseParameterJwtCheck = Finder.checkHeaderAndParameterForJwtPattern(this.requestInfo);
         if (joseParameterJwtCheck != null) {
@@ -142,6 +116,13 @@ public class AttackerPanel extends JPanel {
             if (attack.getValue().isSuitable(joseParameter.getJoseType(), algorithm)) {
                 attackListModel.addElement(attack.getKey());
             }
+        }
+
+        // Disable attackList and loadButton with short information if no suitable attack is available
+        if (attackListModel.getSize() == 0) {
+            attackList.setEnabled(false);
+            loadButton.setEnabled(false);
+            attackListModel.addElement("No available attack found!");
         }
     }
 
