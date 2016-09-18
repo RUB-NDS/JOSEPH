@@ -27,8 +27,24 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 
 public class Crypto {
+
+    public static final List<String> JOSE_HMAC_ALGS = Arrays.asList("HS256", "HS384", "HS512");
+
+    public static String getMacAlgorithmByJoseAlgorithm(String algorithm, String fallback) {
+        switch (algorithm) {
+            case "HS256":
+                return "HmacSHA256";
+            case "HS384":
+                return "HmacSHA384";
+            case "HS512":
+                return "HmacSHA512";
+            default:
+                return fallback;
+        }
+    }
 
     public static byte[] generateMac(String algorithm, byte[] key, byte[] message) {
         try {

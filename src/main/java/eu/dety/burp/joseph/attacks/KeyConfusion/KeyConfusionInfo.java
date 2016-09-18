@@ -216,17 +216,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                     String decodedHeaderReplacedAlgorithm = decodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + algorithm + "\"");
                     String encodedHeaderReplacedAlgorithm = Decoder.getEncoded(decodedHeaderReplacedAlgorithm);
 
-                    String macAlg;
-                    switch (algorithm) {
-                        case "HS384":
-                            macAlg = "HmacSHA384";
-                            break;
-                        case "HS512":
-                            macAlg = "HmacSHA512";
-                            break;
-                        default:
-                            macAlg = "HmacSHA256";
-                    }
+                    String macAlg = Crypto.getMacAlgorithmByJoseAlgorithm(algorithm, "HmacSHA256");
 
                     // Generate signature
                     String newSignature = Decoder.getEncoded(Crypto.generateMac(macAlg, helpers.stringToBytes(publicKey.getValue()), helpers.stringToBytes(Decoder.concatComponents(new String[]{encodedHeaderReplacedAlgorithm, components[1]}))));
@@ -359,18 +349,9 @@ public class KeyConfusionInfo implements IAttackInfo {
 
         String algorithm = (jwtMatcher.find()) ? jwtMatcher.group(1) : "HS256";
 
-        String macAlg;
-        switch (algorithm) {
-            case "HS384":
-                macAlg = "HmacSHA384";
-                break;
-            case "HS512":
-                macAlg = "HmacSHA512";
-                break;
-            default:
-                algorithm = "HS256";
-                macAlg = "HmacSHA256";
-        }
+        String macAlg = Crypto.getMacAlgorithmByJoseAlgorithm(algorithm, "HmacSHA256");
+
+        if (!Crypto.JOSE_HMAC_ALGS.contains(algorithm)) algorithm = "HS256";
 
         header = header.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + algorithm + "\"");
 
