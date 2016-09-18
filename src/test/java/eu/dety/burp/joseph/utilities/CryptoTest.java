@@ -26,6 +26,14 @@ import static org.junit.Assert.assertArrayEquals;
 public class CryptoTest {
 
     @Test
+    public void testGenerateMac() {
+        byte[] message = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzb21lIjoicGF5bG9hZCJ9".getBytes();
+        byte[] expected = new byte[] {(byte) 38, (byte) 136, (byte) 117, (byte) 71, (byte) 103, (byte) 88, (byte) 206, (byte) 68, (byte) 111, (byte) 14, (byte) 74, (byte) 175, (byte) 222, (byte) 204, (byte) 160, (byte) 155, (byte) 150, (byte) 50, (byte) 43, (byte) 193, (byte) 162, (byte) 225, (byte) 40, (byte) 89, (byte) 169, (byte) 184, (byte) 74, (byte) 218, (byte) 12, (byte) 92, (byte) 179, (byte) 101};
+
+        assertArrayEquals(expected, Crypto.generateMac("HmacSHA256", "secret".getBytes(), message));
+    }
+
+    @Test
     public void testAes128CBCDecryption() {
         String header = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0";
         byte[] key = new byte[]{(byte) 203, (byte) 149, (byte) 25, (byte) 91, (byte) 80, (byte) 61, (byte) 177, (byte) 225, (byte) 234, (byte) 189, (byte) 180, (byte) 18, (byte) 236, (byte) 116, (byte) 74, (byte) 190, (byte) 133, (byte) 116, (byte) 187, (byte) 231, (byte) 76, (byte) 185, (byte) 187, (byte) 180, (byte) 173, (byte) 225, (byte) 196, (byte) 240, (byte) 249, (byte) 201, (byte) 166, (byte) 19};

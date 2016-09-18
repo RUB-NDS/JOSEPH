@@ -21,6 +21,7 @@ package eu.dety.burp.joseph.utilities;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -28,6 +29,18 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 public class Crypto {
+
+    public static byte[] generateMac(String algorithm, byte[] key, byte[] message) {
+        try {
+            Mac mac = Mac.getInstance(algorithm);
+            SecretKeySpec secret_key = new SecretKeySpec(key, algorithm);
+            mac.init(secret_key);
+
+            return mac.doFinal(message);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public static byte[] decryptAES(String header, byte[] key, byte[] iv, byte[] cipherBytes, byte[] authTag) throws DecryptionFailedException {
         byte[] decryptedContent;

@@ -29,6 +29,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -109,18 +110,28 @@ public class Converter {
      * @return {@link RSAPublicKey} or null
      */
     public static RSAPublicKey getRsaPublicKeyByPemString(String pemInput) {
-        String pubKey = pemInput.replaceAll("(-+BEGIN PUBLIC KEY-+\\r?\\n|-+END PUBLIC KEY-+\\r?\\n?)", "");
         RSAPublicKey publicKey = null;
 
+        String pubKey = pemInput.replaceAll("(-+BEGIN PUBLIC KEY-+\\r?\\n|-+END PUBLIC KEY-+\\r?\\n?)", "");
+
+        // PKCS8
         try {
             byte[] keyBytes = Base64.decodeBase64(pubKey);
 
             X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             publicKey = (RSAPublicKey) keyFactory.generatePublic(spec);
-        } catch (Exception e) {
-            loggerInstance.log(Converter.class, "Error during pem to RSAPublicKey conversion: " + e.getMessage(), Logger.LogLevel.ERROR);
-        }
+        } catch (Exception e) {}
+
+        // PKCS1
+        try {
+            byte[] keyBytes = Base64.decodeBase64(pubKey);
+            keyBytes = Arrays.copyOfRange(keyBytes, 24, keyBytes.length);
+
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            publicKey = (RSAPublicKey) keyFactory.generatePublic(spec);
+        } catch (Exception e) {}
 
         return publicKey;
     }

