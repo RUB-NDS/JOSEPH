@@ -240,7 +240,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
      */
     private void initComponents() {
         // Create panel instances
-        manualPanel = new ManualPanel();
+        manualPanel = new ManualPanel(callbacks);
         decoderPanel = new DecoderPanel(callbacks);
         preferencesPanel = new PreferencesPanel();
         helpPanel = new HelpPanel();

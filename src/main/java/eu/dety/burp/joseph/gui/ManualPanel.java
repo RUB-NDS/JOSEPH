@@ -18,8 +18,11 @@
  */
 package eu.dety.burp.joseph.gui;
 
+import burp.IBurpExtenderCallbacks;
+import eu.dety.burp.joseph.attacks.AttackLoader;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
-import eu.dety.burp.joseph.utilities.Logger;
+import eu.dety.burp.joseph.utilities.*;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,10 +42,36 @@ public class ManualPanel extends javax.swing.JPanel {
     private JComboBox<String> payloadSelection = new JComboBox<>();
     private DefaultComboBoxModel<String> payloadSelectionListModel = new DefaultComboBoxModel<>();
 
-    ManualPanel() {
+    private JoseParameter joseValue = null;
+
+    ManualPanel(IBurpExtenderCallbacks callbacks) {
+        // Register all available attacks
+        registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
+
         initComponents();
     }
 
+
+    /**
+     * Update the attack list
+     */
+    public void updateAttackList() {
+        attackListModel.removeAllElements();
+
+        String algorithm = null;
+
+        // If the keys "alg" and "typ" exist, get their value and update informational fields
+        JSONObject headerJson = Decoder.getJsonComponents(this.joseValue.getJoseValue())[0];
+        if (headerJson.has("alg")) algorithm = headerJson.getString("alg");
+
+        // Build available attacks list
+        for (Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
+            // If attack is suitable for given JOSE type, add it to attackListModel
+            if (attack.getValue().isSuitable(this.joseValue.getJoseType(), algorithm)) {
+                attackListModel.addElement(attack.getKey());
+            }
+        }
+    }
 
     /**
      * Clean up attack specific UI changes
@@ -203,6 +232,20 @@ public class ManualPanel extends javax.swing.JPanel {
 
     private void loadJoseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadJoseButtonActionPerformed
         loggerInstance.log(getClass(), "Load JOSE button clicked!", Logger.LogLevel.DEBUG);
+
+        String inputValueText = inputValue.getText();
+
+        if (!inputValueText.isEmpty()) {
+            try {
+                joseValue = new JoseParameter(Finder.getJoseValue(inputValueText));
+            } catch (InvalidJoseValueException e) {
+                JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), bundle.getString("INVALID_JOSE_VALUE").toUpperCase(), JOptionPane.ERROR_MESSAGE);
+                loggerInstance.log(selectedAttack.getClass(), "ERROR: " + e.getMessage(), Logger.LogLevel.ERROR);
+                return;
+            }
+
+            updateAttackList();
+        }
     }//GEN-LAST:event_loadJoseButtonActionPerformed
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
