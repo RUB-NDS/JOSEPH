@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -20,13 +20,43 @@ package eu.dety.burp.joseph.utilities;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 
 public class Crypto {
+
+    public static final List<String> JWS_HMAC_ALGS = Arrays.asList("HS256", "HS384", "HS512");
+
+    public static String getMacAlgorithmByJoseAlgorithm(String algorithm, String fallback) {
+        switch (algorithm) {
+            case "HS256":
+                return "HmacSHA256";
+            case "HS384":
+                return "HmacSHA384";
+            case "HS512":
+                return "HmacSHA512";
+            default:
+                return fallback;
+        }
+    }
+
+    public static byte[] generateMac(String algorithm, byte[] key, byte[] message) {
+        try {
+            Mac mac = Mac.getInstance(algorithm);
+            SecretKeySpec secret_key = new SecretKeySpec(key, algorithm);
+            mac.init(secret_key);
+
+            return mac.doFinal(message);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public static byte[] decryptAES(String header, byte[] key, byte[] iv, byte[] cipherBytes, byte[] authTag) throws DecryptionFailedException {
         byte[] decryptedContent;
@@ -36,7 +66,7 @@ public class Crypto {
         int keyLen;
         String cipherInstance;
 
-        switch(encAlg) {
+        switch (encAlg) {
             case "A128CBC-HS256":
                 keyLen = 16;
                 cipherInstance = "AES/CBC/PKCS5Padding";

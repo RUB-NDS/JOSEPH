@@ -1,39 +1,32 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package eu.dety.burp.joseph.editor;
 
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IMessageEditorController;
-import burp.IMessageEditorTab;
-import burp.IMessageEditorTabFactory;
-import burp.IParameter;
-import burp.ITextEditor;
-
+import burp.*;
 import eu.dety.burp.joseph.gui.EditorAttackerPanel;
-import eu.dety.burp.joseph.gui.PreferencesPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
-import eu.dety.burp.joseph.utilities.Logger;
 import eu.dety.burp.joseph.utilities.Finder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
+import eu.dety.burp.joseph.utilities.Logger;
 
-import javax.swing.JTabbedPane;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * JSON Web Token (JWT) Editor.
@@ -46,7 +39,6 @@ public class JwtEditor implements IMessageEditorTabFactory {
     private static final Logger loggerInstance = Logger.getInstance();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
-    private String joseParameterName = null;
 
     /**
      * Create JwtEditor instance.
@@ -73,6 +65,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
         private boolean editable;
         private byte[] currentMessage;
         private boolean isModified = false;
+        private JoseParameter joseParameter = null;
 
         private ITextEditor sourceViewerHeader;
         private ITextEditor sourceViewerPayload;
@@ -93,7 +86,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
             JwtEditorTabPanel.addTab("Base64(Signature)", sourceViewerSignature.getComponent());
 
             editorAttackerPanel = new EditorAttackerPanel(callbacks, this);
-            if(editable) {
+            if (editable) {
                 JwtEditorTabPanel.addTab("Attacker", editorAttackerPanel);
             }
         }
@@ -111,21 +104,23 @@ public class JwtEditor implements IMessageEditorTabFactory {
         @Override
         public boolean isEnabled(byte[] content, boolean isRequest) {
             // Enable this tab for requests containing a JOSE parameter
-            if(isRequest) {
-                for(Object param: PreferencesPanel.getParameterNames().toArray()) {
-                    if(helpers.getRequestParameter(content, param.toString()) != null && Finder.checkJwtPattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
-                        joseParameterName = helpers.getRequestParameter(content, param.toString()).getName();
-                        loggerInstance.log(getClass(), "JWT value found, enable JwtEditor.", Logger.LogLevel.DEBUG);
-                        return true;
-                    }
+            if (isRequest) {
+                IRequestInfo requestInfo = helpers.analyzeRequest(content);
+
+                JoseParameter joseParameterCheck = Finder.checkHeaderAndParameterForJwtPattern(requestInfo);
+                if (joseParameterCheck != null) {
+                    joseParameter = joseParameterCheck;
+                    return true;
                 }
+
             }
             return false;
         }
 
         @Override
         public void setMessage(byte[] content, boolean isRequest) {
-            if (content == null) {
+            if (content == null || joseParameter == null) {
+
                 // Clear displayed content
                 sourceViewerHeader.setText(null);
                 sourceViewerHeader.setEditable(false);
@@ -136,12 +131,8 @@ public class JwtEditor implements IMessageEditorTabFactory {
                 sourceViewerSignature.setText(null);
                 sourceViewerSignature.setEditable(false);
 
-                editorAttackerPanel.setEnabled(false);
-            } else if (joseParameterName != null) {
-                // Retrieve JOSE parameter
-                IParameter parameter = helpers.getRequestParameter(content, joseParameterName);
-
-                String[] joseParts = Decoder.getComponents(parameter.getValue(), 3);
+            } else {
+                String[] joseParts = Decoder.getComponents(joseParameter.getJoseValue(), 3);
 
                 sourceViewerHeader.setEditable(editable);
                 sourceViewerPayload.setEditable(editable);
@@ -164,21 +155,23 @@ public class JwtEditor implements IMessageEditorTabFactory {
 
         @Override
         public byte[] getMessage() {
-            String[] components = {
-                Decoder.getEncoded(sourceViewerHeader.getText()),
-                Decoder.getEncoded(sourceViewerPayload.getText()),
-                helpers.bytesToString(sourceViewerSignature.getText())
-            };
+            if (this.isModified()) {
+                String[] components = {
+                        Decoder.getEncoded(sourceViewerHeader.getText()),
+                        Decoder.getEncoded(sourceViewerPayload.getText()),
+                        helpers.bytesToString(sourceViewerSignature.getText())
+                };
 
-            // Update the request with the new parameter value
-            return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, Decoder.concatComponents(components), IParameter.PARAM_URL));
+                return JoseParameter.updateRequest(currentMessage, joseParameter, helpers, Decoder.concatComponents(components));
+            }
+            return currentMessage;
         }
 
         @Override
         public boolean isModified() {
-            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified() || this.isModified);
+            boolean isModifiedResult = (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified() || this.isModified);
             this.isModified = false;
-            return isModified;
+            return isModifiedResult;
         }
 
         @Override

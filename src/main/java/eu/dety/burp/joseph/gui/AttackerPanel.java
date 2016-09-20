@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -19,19 +19,25 @@
 package eu.dety.burp.joseph.gui;
 
 
-import burp.*;
-
-import eu.dety.burp.joseph.attacks.*;
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import burp.IHttpRequestResponse;
+import burp.IRequestInfo;
+import eu.dety.burp.joseph.attacks.AttackLoader;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
+import eu.dety.burp.joseph.attacks.IAttack;
+import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -49,7 +55,7 @@ public class AttackerPanel extends JPanel {
     private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
     private IHttpRequestResponse requestResponse;
     private IRequestInfo requestInfo;
-    private IParameter parameter = null;
+    private JoseParameter joseParameter = null;
     private String type = "?";
     private String algorithm = "?";
     private IAttackInfo selectedAttack = null;
@@ -72,38 +78,51 @@ public class AttackerPanel extends JPanel {
         // Register all available attacks
         registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
 
-        // Find the JOSE parameter
-        for (IParameter param : requestInfo.getParameters()) {
-            if(PreferencesPanel.getParameterNames().contains(param.getName())) {
-                if (Finder.checkJwtPattern(param.getValue()) || Finder.checkJwePattern(param.getValue())) {
-                    parameter = param;
-                    break;
-                }
-            }
+        // Search for JOSE header
+        JoseParameter joseParameterJwtCheck = Finder.checkHeaderAndParameterForJwtPattern(this.requestInfo);
+        if (joseParameterJwtCheck != null) {
+            joseParameter = joseParameterJwtCheck;
+        }
+
+        JoseParameter joseParameterJweCheck = Finder.checkHeaderAndParameterForJwePattern(this.requestInfo);
+        if (joseParameterJweCheck != null) {
+            joseParameter = joseParameterJweCheck;
+        }
+
+        // Log error if joseParameter is null (should never happen)
+        if (joseParameter == null) {
+            loggerInstance.log(getClass(), "Error: No JOSE value found!", Logger.LogLevel.ERROR);
         }
 
         // Initialize UI components
         initComponents();
 
         // Parse the JOSE value to an JSONObject
-        JSONObject[] joseJSONComponents = Decoder.getJsonComponents(parameter.getValue());
+        JSONObject[] joseJSONComponents = Decoder.getJsonComponents(joseParameter.getJoseValue());
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
-        if(joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
-        if(joseJSONComponents[0].has("typ")) type = joseJSONComponents[0].getString("typ");
+        if (joseJSONComponents[0].has("alg")) algorithm = joseJSONComponents[0].getString("alg");
+        if (joseJSONComponents[0].has("typ")) type = joseJSONComponents[0].getString("typ");
         typeValue.setText(type);
         algorithmValue.setText(algorithm);
 
-        loggerInstance.log(getClass(), "JOSE Parameter Name: " + parameter.getName(), Logger.LogLevel.DEBUG);
-        loggerInstance.log(getClass(), "JOSE Parameter Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . "
+        loggerInstance.log(getClass(), "JOSE PARAMETER Name: " + joseParameter.getName(), Logger.LogLevel.DEBUG);
+        loggerInstance.log(getClass(), "JOSE PARAMETER Value (JSON Parsed) " + joseJSONComponents[0].toString() + " . "
                 + joseJSONComponents[1].toString() + " . " + joseJSONComponents[2].toString(), Logger.LogLevel.DEBUG);
 
         // Build available attacks list
-        for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
+        for (Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
             // If attack is suitable for given JOSE type, add it to attackListModel
-            if (attack.getValue().isSuitable(type, algorithm)) {
+            if (attack.getValue().isSuitable(joseParameter.getJoseType(), algorithm)) {
                 attackListModel.addElement(attack.getKey());
             }
+        }
+
+        // Disable attackList and loadButton with short information if no suitable attack is available
+        if (attackListModel.getSize() == 0) {
+            attackList.setEnabled(false);
+            loadButton.setEnabled(false);
+            attackListModel.addElement("No available attack found!");
         }
     }
 
@@ -146,7 +165,7 @@ public class AttackerPanel extends JPanel {
         extraPanel = new javax.swing.JPanel();
         attackButton = new javax.swing.JButton();
 
-        typeLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        typeLabel.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         typeLabel.setText("Type:");
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
@@ -166,10 +185,10 @@ public class AttackerPanel extends JPanel {
             }
         });
 
-        algorithmLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        algorithmLabel.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         algorithmLabel.setText("Algorithm:");
 
-        attackInfoName.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        attackInfoName.setFont(new java.awt.Font("Lucida Grande", Font.BOLD, 13)); // NOI18N
         attackInfoName.setEnabled(false);
 
         attackInfoDescription.setEnabled(false);
@@ -188,53 +207,53 @@ public class AttackerPanel extends JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(typeLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(typeValue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(algorithmLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(algorithmValue))
-                    .addComponent(attackListLabel)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadButton))
-                    .addComponent(attackInfoName)
-                    .addComponent(attackInfoDescription)
-                    .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(attackButton))
-                .addContainerGap(261, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(typeLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(typeValue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(algorithmLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(algorithmValue))
+                                        .addComponent(attackListLabel)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(loadButton))
+                                        .addComponent(attackInfoName)
+                                        .addComponent(attackInfoDescription)
+                                        .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(attackButton))
+                                .addContainerGap(261, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(typeLabel)
-                    .addComponent(algorithmLabel)
-                    .addComponent(typeValue)
-                    .addComponent(algorithmValue))
-                .addGap(18, 18, 18)
-                .addComponent(attackListLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(loadButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(attackInfoName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(attackInfoDescription)
-                .addGap(18, 18, 18)
-                .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(attackButton)
-                .addContainerGap(120, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(typeLabel)
+                                        .addComponent(algorithmLabel)
+                                        .addComponent(typeValue)
+                                        .addComponent(algorithmValue))
+                                .addGap(18, 18, 18)
+                                .addComponent(attackListLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(loadButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(attackInfoName)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(attackInfoDescription)
+                                .addGap(18, 18, 18)
+                                .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(attackButton)
+                                .addContainerGap(120, Short.MAX_VALUE))
         );
 
         attackInfoName.getAccessibleContext().setAccessibleName("attackInfoName");
@@ -261,7 +280,7 @@ public class AttackerPanel extends JPanel {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         boolean hasExtraUI = selectedAttack.getExtraUI(extraPanel, constraints);
 
-        if(hasExtraUI) {
+        if (hasExtraUI) {
             extraPanel.setEnabled(true);
             extraPanel.revalidate();
             extraPanel.repaint();
@@ -278,7 +297,7 @@ public class AttackerPanel extends JPanel {
         try {
             // Prepare the selected attack
             loggerInstance.log(selectedAttack.getClass(), "Preparing attack...", Logger.LogLevel.DEBUG);
-            IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, parameter);
+            IAttack attack = selectedAttack.prepareAttack(callbacks, requestResponse, requestInfo, joseParameter);
 
             // Perform the selected attack
             loggerInstance.log(selectedAttack.getClass(), "Performing attack...", Logger.LogLevel.DEBUG);

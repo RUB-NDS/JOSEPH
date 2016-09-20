@@ -1,33 +1,38 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package eu.dety.burp.joseph.attacks.SignatureExclusion;
 
-import burp.*;
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import burp.IHttpRequestResponse;
+import burp.IRequestInfo;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
-import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusion;
 import eu.dety.burp.joseph.utilities.Decoder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Signature Exclusion Attack Info
@@ -41,7 +46,7 @@ import java.util.List;
 public class SignatureExclusionInfo implements IAttackInfo {
     private IExtensionHelpers helpers;
     private IHttpRequestResponse requestResponse;
-    private IParameter parameter;
+    private JoseParameter parameter;
 
     // Unique identifier for the attack class
     private static final String id = "signature_exclusion";
@@ -54,20 +59,17 @@ public class SignatureExclusionInfo implements IAttackInfo {
             "by using the <em>None</em> algorithm and removing the signature.<br/>" +
             "In order to perform filter evasion, different capitalization is used as algorithm value.</html>";
 
-    // List of types this attack is suitable for
-    private static final List<String> suitableTypes = Arrays.asList("jwt", "jws");
-
     // Hashmap of "none" algorithm type variations
-    private static final HashMap<payloadType, String> noneAlgVariations = new HashMap<payloadType, String>() {{
-        put(payloadType.LOWERCASE, "none");
-        put(payloadType.CAPITALIZED, "None");
-        put(payloadType.UPPERCASE, "NONE");
-        put(payloadType.MIXED, "nOnE");
+    private static final HashMap<PayloadType, String> noneAlgVariations = new HashMap<PayloadType, String>() {{
+        put(PayloadType.LOWERCASE, "none");
+        put(PayloadType.CAPITALIZED, "None");
+        put(PayloadType.UPPERCASE, "NONE");
+        put(PayloadType.MIXED, "nOnE");
     }};
 
-    // Hashmap of available payloads with a verbose name (including the payloadType)
-    private static final HashMap<String, payloadType> payloads = new HashMap<String, payloadType>() {{
-        for (Map.Entry<payloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
+    // Hashmap of available payloads with a verbose name (including the PayloadType)
+    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {{
+        for (Map.Entry<PayloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
             put(String.format("Alg: %s (0x%02X)", noneAlgVariation.getValue(), noneAlgVariation.getKey().ordinal()), noneAlgVariation.getKey());
         }
     }};
@@ -76,7 +78,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
     private static final int amountRequests = noneAlgVariations.size();
 
     // Types of payload variation
-    private enum payloadType {
+    enum PayloadType {
         LOWERCASE,
         CAPITALIZED,
         UPPERCASE,
@@ -91,28 +93,26 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public SignatureExclusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, IParameter parameter) throws AttackPreparationFailedException {
+    public SignatureExclusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
         this.requests.clear();
 
-        for (Map.Entry<payloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
+        for (Map.Entry<PayloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
             try {
                 // Change the "alg" header value for each of the noneAlgVariation entries
                 // and rebuild a valid request
-                byte[] tmpRequest = this.requestResponse.getRequest();
-                String[] tmpComponents = Decoder.getComponents(this.parameter.getValue());
+                String[] tmpComponents = Decoder.getComponents(this.parameter.getJoseValue());
                 String tmpDecodedHeader = Decoder.getDecoded(tmpComponents[0]);
                 String tmpReplaced = tmpDecodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + noneAlgVariation.getValue() + "\"");
                 String tmpReplacedEncoded = Decoder.getEncoded(tmpReplaced);
                 String[] tmpNewComponents = {tmpReplacedEncoded, tmpComponents[1], ""};
                 String tmpParameterValue = Decoder.concatComponents(tmpNewComponents);
 
-                IParameter tmpParameter = helpers.buildParameter(this.parameter.getName(), tmpParameterValue, this.parameter.getType());
-                tmpRequest = helpers.updateParameter(tmpRequest, tmpParameter);
+                byte[] tmpRequest = JoseParameter.updateRequest(this.requestResponse.getRequest(), this.parameter, helpers, tmpParameterValue);
+                requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal(), noneAlgVariation.getValue()));
 
-                requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal() , noneAlgVariation.getValue()));
             } catch (Exception e) {
                 throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
             }
@@ -137,11 +137,6 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public List<String> getSuitableTypes() {
-        return suitableTypes;
-    }
-
-    @Override
     public int getAmountRequests() {
         return amountRequests;
     }
@@ -152,15 +147,8 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public boolean isSuitable(String type, String algorithm) {
-        // TODO: How to check suitablility best?
-        // Should work for all JWT and JWS
-
-//        if(type != null && !type.equals("")) {
-//            return this.getSuitableTypes().contains(type.toLowerCase());
-//        }
-
-        return true;
+    public boolean isSuitable(JoseParameter.JoseType type, String algorithm) {
+        return (type == JoseParameter.JoseType.JWS);
     }
 
     @Override
@@ -174,7 +162,9 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, payloadType> getPayloadList() {return payloads; }
+    public HashMap<String, PayloadType> getPayloadList() {
+        return payloads;
+    }
 
     @Override
     public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload) {
@@ -186,7 +176,6 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
         return result;
     }
-
 
 
 }

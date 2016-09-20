@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,6 +21,7 @@ package eu.dety.burp.joseph.utilities;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
@@ -57,14 +58,14 @@ public class Decoder {
      * @return string array with the separate fixed amount of parts
      */
     public static String[] getComponents(String input, int assureLength) {
-        String [] components = input.split("\\.");
+        String[] components = input.split("\\.");
 
         // If length is already correct return the components
         if (components.length == assureLength) {
             return components;
         }
 
-        String [] output = new String[assureLength];
+        String[] output = new String[assureLength];
         Arrays.fill(output, "");
 
         System.arraycopy(components, 0, output, 0, Math.min(components.length, assureLength));
@@ -91,7 +92,7 @@ public class Decoder {
 
         try {
             output = new String(Base64.decodeBase64(input), Charset.forName("UTF-8"));
-        } catch(Exception e){
+        } catch (Exception e) {
             loggerInstance.log(Decoder.class, e.getMessage(), Logger.LogLevel.ERROR);
         }
 
@@ -145,7 +146,7 @@ public class Decoder {
         String[] components = Decoder.getComponents(input);
 
         JSONObject[] output = new JSONObject[components.length];
-        for(int i = 0; i < components.length; i++) {
+        for (int i = 0; i < components.length; i++) {
             output[i] = Decoder.getDecodedJson(components[i]);
         }
 
@@ -162,7 +163,7 @@ public class Decoder {
 
         try {
             output = base64UrlEncode(input);
-        } catch(Exception e){
+        } catch (Exception e) {
             loggerInstance.log(Decoder.class, e.getMessage(), Logger.LogLevel.ERROR);
         }
 
@@ -179,22 +180,22 @@ public class Decoder {
 
         try {
             output = base64UrlEncode(input.getBytes(Charset.forName("UTF-8")));
-        } catch(Exception e){
+        } catch (Exception e) {
             loggerInstance.log(Decoder.class, e.getMessage(), Logger.LogLevel.ERROR);
         }
 
         return output;
     }
 
-    private final static char[] HEXCHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    private final static char[] HEXCHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     /**
      * Convert byte array to hex string
      * @param bytes Byte array input
      * @return Hex string
      */
-    public static String bytesToHex( final byte[] bytes ) {
-        StringBuilder builder = new StringBuilder( bytes.length * 2 );
+    public static String bytesToHex(final byte[] bytes) {
+        StringBuilder builder = new StringBuilder(bytes.length * 2);
 
         for (byte aByte : bytes) {
             // unsigned right shift of the MSBs
@@ -219,7 +220,7 @@ public class Decoder {
 
         try {
             for (int i = 0; i < len; i += 2) {
-                data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4) + Character.digit(str.charAt(i+1), 16));
+                data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4) + Character.digit(str.charAt(i + 1), 16));
             }
         } catch (Exception e) {
             data = new byte[0];

@@ -1,33 +1,27 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package eu.dety.burp.joseph.scanner;
 
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
-import burp.IHttpListener;
-import burp.IHttpRequestResponse;
-import burp.IRequestInfo;
-
+import burp.*;
 import eu.dety.burp.joseph.gui.PreferencesPanel;
-import eu.dety.burp.joseph.utilities.Logger;
 import eu.dety.burp.joseph.utilities.Finder;
+import eu.dety.burp.joseph.utilities.Logger;
 
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -63,38 +57,13 @@ public class Marker implements IHttpListener {
      */
     private void checkForJoseLocations(IHttpRequestResponse httpRequestResponse) {
         IRequestInfo requestInfo = helpers.analyzeRequest(httpRequestResponse);
-        boolean jwtFound = false;
-        boolean jweFound = false;
 
-        // Search for authorization header
-        for (String header : requestInfo.getHeaders()) {
-            if (header.toUpperCase().startsWith("AUTHORIZATION: BEARER")) {
-                loggerInstance.log(getClass(), "Authorization HTTP Header with type bearer found.", Logger.LogLevel.DEBUG);
-                jwtFound = Finder.checkJwtPattern(header);
-                jweFound = Finder.checkJwePattern(header);
-                break;
-            }
-        }
-
-        if (!jwtFound && !jweFound) {
-            // Search for (specific) parameter
-            for (IParameter param : requestInfo.getParameters()) {
-                if(PreferencesPanel.getParameterNames().contains(param.getName())) {
-                    loggerInstance.log(getClass(), String.format("Possible JOSE parameter found: %s.", param.getName()), Logger.LogLevel.DEBUG);
-                    jwtFound = Finder.checkJwtPattern(param.getValue());
-                    jweFound = Finder.checkJwePattern(param.getValue());
-
-                    if (jwtFound || jweFound) break;
-                }
-            }
-        }
-
-        if (jwtFound) {
+        if (Finder.checkHeaderAndParameterForJwtPattern(requestInfo) != null) {
             markRequestResponse(httpRequestResponse, bundle.getString("JWT"));
             loggerInstance.log(getClass(), "JSON Web Token found!", Logger.LogLevel.DEBUG);
         }
 
-        if (jweFound) {
+        if (Finder.checkHeaderAndParameterForJwePattern(requestInfo) != null) {
             markRequestResponse(httpRequestResponse, bundle.getString("JWE"));
             loggerInstance.log(getClass(), "JSON Web Encryption found!", Logger.LogLevel.DEBUG);
         }

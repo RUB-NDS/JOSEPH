@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -20,8 +20,10 @@ package eu.dety.burp.joseph.gui;
 
 import burp.*;
 import eu.dety.burp.joseph.scanner.Marker;
+import eu.dety.burp.joseph.utilities.Finder;
 import eu.dety.burp.joseph.utilities.Logger;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javax.swing.*;
 
 /**
  * The main window, the parent window for all tabs.
@@ -92,12 +93,6 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
             final IHttpRequestResponse message = messages[0];
 
-            // Check if message has been marked by JOSEPH extension (or if tool is repeater)
-            // TODO: Other check than highlight
-            if(!Objects.equals(message.getHighlight(), Marker.getHighlightColor()) && iContextMenuInvocation.getToolFlag() != IBurpExtenderCallbacks.TOOL_REPEATER) {
-                return null;
-            }
-
             java.util.List<JMenuItem> list = new ArrayList<>();
             JMenuItem menuItem = new JMenuItem(bundle.getString("SEND2JOSEPH"));
             menuItem.addActionListener(new ActionListener() {
@@ -130,9 +125,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                         closeButton.setMargin(new Insets(0, 0, 0, 0));
                         closeButton.setForeground(Color.gray);
 
-                        // Close button mouse listener
-                        // performing the tab removal on mouse click
-                        // and defining hover effects
+                        // Close button mouse listener performing the tab removal on mouse click and defining hover effects
                         closeButton.addMouseListener(new MouseListener() {
 
                             @Override
@@ -145,10 +138,12 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                             }
 
                             @Override
-                            public void mousePressed(MouseEvent e) {}
+                            public void mousePressed(MouseEvent e) {
+                            }
 
                             @Override
-                            public void mouseReleased(MouseEvent e) {}
+                            public void mouseReleased(MouseEvent e) {
+                            }
 
                             @Override
                             public void mouseEntered(MouseEvent e) {
@@ -173,14 +168,26 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
                         attackerTabGroup.setTabComponentAt(attackerTabGroup.indexOfTab(captionTitleValue), tabCaptionPanel);
 
-                        // TODO: Highlight MainTabGroup (like on "send to repeater")
-
                     } catch (Exception e) {
                         loggerInstance.log(MainTabGroup.class, e.getMessage(), Logger.LogLevel.ERROR);
                     }
                 }
             });
             list.add(menuItem);
+
+            // Check if message has been marked by JOSEPH extension (or if tool is repeater)
+            if (!Objects.equals(message.getHighlight(), Marker.getHighlightColor()) && iContextMenuInvocation.getToolFlag() != IBurpExtenderCallbacks.TOOL_REPEATER) {
+                menuItem.setEnabled(false);
+            }
+
+            // Additionally check whether JWS or JWE patterns exists
+            IRequestInfo requestInfo = callbacks.getHelpers().analyzeRequest(message);
+            if (Finder.checkHeaderAndParameterForJwtPattern(requestInfo) == null && Finder.checkHeaderAndParameterForJwePattern(requestInfo) == null) {
+                menuItem.setEnabled(false);
+            }
+
+            // TODO: Check if suitable attack exists
+
             return list;
         }
 
@@ -215,7 +222,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
      * Get the current tab index
      * @return the tab index.
      */
-    public int getGlobalTabCounter(){
+    public int getGlobalTabCounter() {
         return globalTabCounter;
     }
 
@@ -223,7 +230,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
      * Increase the tab index and get new value
      * @return the increased tab index.
      */
-    public int getNewGlobalTabCounter(){
+    public int getNewGlobalTabCounter() {
         globalTabCounter++;
         return globalTabCounter;
     }
@@ -231,7 +238,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
     /**
      * Initialize all necessary components
      */
-    private void initComponents(){
+    private void initComponents() {
         // Create panel instances
         manualPanel = new ManualPanel();
         decoderPanel = new DecoderPanel(callbacks);

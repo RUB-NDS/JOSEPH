@@ -1,17 +1,17 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -19,14 +19,14 @@
 package eu.dety.burp.joseph.editor;
 
 import burp.*;
-import eu.dety.burp.joseph.gui.EditorAttackerPanel;
-import eu.dety.burp.joseph.gui.PreferencesPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.Finder;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 /**
  * JSON Web Token (JWE) Editor.
@@ -39,7 +39,6 @@ public class JweEditor implements IMessageEditorTabFactory {
     private static final Logger loggerInstance = Logger.getInstance();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
-    private String joseParameterName = null;
 
     /**
      * Create JweEditor instance.
@@ -66,15 +65,13 @@ public class JweEditor implements IMessageEditorTabFactory {
         private boolean editable;
         private byte[] currentMessage;
         private boolean isModified = false;
+        private JoseParameter joseParameter = null;
 
         private ITextEditor sourceViewerHeader;
         private ITextEditor sourceViewerCek;
         private ITextEditor sourceViewerIv;
         private ITextEditor sourceViewerCiphertext;
         private ITextEditor sourceViewerTag;
-
-        // private ITextEditor sourceViewerAad;
-        // private EditorAttackerPanel editorAttackerPanel;
 
         JweEditorTab(IMessageEditorController controller, boolean editable) {
             this.editable = editable;
@@ -92,7 +89,6 @@ public class JweEditor implements IMessageEditorTabFactory {
             JweEditorTabPanel.addTab("IV (base64)", sourceViewerIv.getComponent());
             JweEditorTabPanel.addTab("Ciphertext (base64)", sourceViewerCiphertext.getComponent());
             JweEditorTabPanel.addTab("AuthTag (base64)", sourceViewerTag.getComponent());
-            
         }
 
         @Override
@@ -108,21 +104,23 @@ public class JweEditor implements IMessageEditorTabFactory {
         @Override
         public boolean isEnabled(byte[] content, boolean isRequest) {
             // Enable this tab for requests containing a JOSE parameter
-            if(isRequest) {
-                for(Object param: PreferencesPanel.getParameterNames().toArray()) {
-                    if(helpers.getRequestParameter(content, param.toString()) != null && Finder.checkJwePattern(helpers.getRequestParameter(content, param.toString()).getValue())) {
-                        joseParameterName = helpers.getRequestParameter(content, param.toString()).getName();
-                        loggerInstance.log(getClass(), "JWE value found, enable JweEditor.", Logger.LogLevel.DEBUG);
-                        return true;
-                    }
+            if (isRequest) {
+                IRequestInfo requestInfo = helpers.analyzeRequest(content);
+
+                JoseParameter joseParameterCheck = Finder.checkHeaderAndParameterForJwePattern(requestInfo);
+                if (joseParameterCheck != null) {
+                    joseParameter = joseParameterCheck;
+                    return true;
                 }
+
             }
             return false;
         }
 
         @Override
         public void setMessage(byte[] content, boolean isRequest) {
-            if (content == null) {
+            if (content == null || joseParameter == null) {
+
                 // Clear displayed content
                 sourceViewerHeader.setText(null);
                 sourceViewerHeader.setEditable(false);
@@ -139,12 +137,8 @@ public class JweEditor implements IMessageEditorTabFactory {
                 sourceViewerTag.setText(null);
                 sourceViewerTag.setEditable(false);
 
-                // editorAttackerPanel.setEnabled(false);
-            } else if (joseParameterName != null) {
-                // Retrieve JOSE parameter
-                IParameter parameter = helpers.getRequestParameter(content, joseParameterName);
-
-                String[] joseParts = Decoder.getComponents(parameter.getValue(), 5);
+            } else {
+                String[] joseParts = Decoder.getComponents(joseParameter.getJoseValue(), 5);
 
                 sourceViewerHeader.setEditable(editable);
                 sourceViewerCek.setEditable(editable);
@@ -163,8 +157,6 @@ public class JweEditor implements IMessageEditorTabFactory {
                 sourceViewerIv.setText(helpers.stringToBytes(iv));
                 sourceViewerCiphertext.setText(helpers.stringToBytes(ciphertext));
                 sourceViewerTag.setText(helpers.stringToBytes(tag));
-
-                // editorAttackerPanel.updateAttackList();
             }
 
             // Remember the displayed content
@@ -173,21 +165,41 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         @Override
         public byte[] getMessage() {
-            String[] components = {
-                Decoder.getEncoded(sourceViewerHeader.getText()),
-                helpers.bytesToString(sourceViewerCek.getText()),
-                helpers.bytesToString(sourceViewerIv.getText()),
-                helpers.bytesToString(sourceViewerCiphertext.getText()),
-                helpers.bytesToString(sourceViewerTag.getText())
-            };
+            if (this.isModified()) {
+                String[] components = {
+                        Decoder.getEncoded(sourceViewerHeader.getText()),
+                        helpers.bytesToString(sourceViewerCek.getText()),
+                        helpers.bytesToString(sourceViewerIv.getText()),
+                        helpers.bytesToString(sourceViewerCiphertext.getText()),
+                        helpers.bytesToString(sourceViewerTag.getText())
+                };
 
-            // Update the request with the new parameter value
-            return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameterName, Decoder.concatComponents(components), IParameter.PARAM_URL));
+                switch (joseParameter.getOriginType()) {
+                    // Update the request with the new header value
+                    case HEADER:
+                        IRequestInfo requestInfo = helpers.analyzeRequest(currentMessage);
+                        java.util.List<String> headers = requestInfo.getHeaders();
+
+                        for (int i = 0; i < headers.size(); i++) {
+                            if (headers.get(i).startsWith(joseParameter.getName())) {
+                                headers.set(i, headers.get(i).replace(joseParameter.getJoseValue(), Decoder.concatComponents(components)));
+                            }
+                        }
+
+                        return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage, requestInfo.getBodyOffset(), currentMessage.length));
+
+                    // Update the request with the new parameter value
+                    case PARAMETER:
+                        return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameter.getName(), Decoder.concatComponents(components), joseParameter.getParameterType()));
+                }
+
+            }
+            return currentMessage;
         }
 
         @Override
         public boolean isModified() {
-            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerCek.isTextModified() || sourceViewerIv.isTextModified()  || sourceViewerCiphertext.isTextModified() || sourceViewerTag.isTextModified() || this.isModified);
+            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerCek.isTextModified() || sourceViewerIv.isTextModified() || sourceViewerCiphertext.isTextModified() || sourceViewerTag.isTextModified() || this.isModified);
             this.isModified = false;
             return isModified;
         }
@@ -204,7 +216,6 @@ public class JweEditor implements IMessageEditorTabFactory {
          * @param iv The IV base64string
          * @param ciphertext The ciphertext base64string
          * @param tag The AuthTag base64string
-
          */
         public void updateSourceViewer(String header, String cek, String iv, String ciphertext, String tag) {
             sourceViewerHeader.setText(helpers.stringToBytes(header));

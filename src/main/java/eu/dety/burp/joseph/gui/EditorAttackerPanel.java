@@ -1,31 +1,29 @@
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package eu.dety.burp.joseph.gui;
 
-import burp.*;
+import burp.IBurpExtenderCallbacks;
 import eu.dety.burp.joseph.attacks.AttackLoader;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
-import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1Info;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
-import eu.dety.burp.joseph.attacks.KeyConfusion.KeyConfusionInfo;
-import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionInfo;
 import eu.dety.burp.joseph.editor.JwtEditor;
+import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 import org.json.JSONObject;
 
@@ -38,19 +36,16 @@ import java.util.ResourceBundle;
 public class EditorAttackerPanel extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
-    private final IBurpExtenderCallbacks callbacks;
-    private final IExtensionHelpers helpers;
     private JwtEditor.JwtEditorTab jwtEditorReference;
 
     private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
     private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
-    private String type = "?";
     private String algorithm = "?";
     private IAttackInfo selectedAttack = null;
 
     private HashMap<String, ? extends Enum> payloads;
-    private JComboBox payloadSelection = new JComboBox<>();
-    private DefaultComboBoxModel<String> payloadSelectionListModel =  new DefaultComboBoxModel<>();
+    private JComboBox<String> payloadSelection = new JComboBox<>();
+    private DefaultComboBoxModel<String> payloadSelectionListModel = new DefaultComboBoxModel<>();
 
     private String header = "";
     private String payload = "";
@@ -64,8 +59,6 @@ public class EditorAttackerPanel extends JPanel {
      * @param callbacks {@link IBurpExtenderCallbacks} extender callbacks
      */
     public EditorAttackerPanel(IBurpExtenderCallbacks callbacks, JwtEditor.JwtEditorTab jwtEditorReference) {
-        this.callbacks = callbacks;
-        this.helpers = callbacks.getHelpers();
         this.jwtEditorReference = jwtEditorReference;
 
         // Register all available attacks
@@ -85,13 +78,12 @@ public class EditorAttackerPanel extends JPanel {
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
         JSONObject headerJson = new JSONObject(header);
-        if(headerJson.has("alg")) algorithm = headerJson.getString("alg");
-        if(headerJson.has("typ")) type = headerJson.getString("typ");
+        if (headerJson.has("alg")) algorithm = headerJson.getString("alg");
 
         // Build available attacks list
-        for(Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
+        for (Map.Entry<String, IAttackInfo> attack : this.registeredAttacks.entrySet()) {
             // If attack is suitable for given JOSE type, add it to attackListModel
-            if (attack.getValue().isSuitable(type, algorithm)) {
+            if (attack.getValue().isSuitable(JoseParameter.JoseType.JWS, algorithm)) {
                 attackListModel.addElement(attack.getKey());
             }
         }
@@ -157,33 +149,33 @@ public class EditorAttackerPanel extends JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(attackListLabel)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadButton))
-                    .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateButton))
-                .addContainerGap(84, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(attackListLabel)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(loadButton))
+                                        .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(updateButton))
+                                .addContainerGap(84, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(attackListLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(loadButton))
-                .addGap(18, 18, 18)
-                .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(updateButton)
-                .addContainerGap(180, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(attackListLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(attackList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(loadButton))
+                                .addGap(18, 18, 18)
+                                .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(updateButton)
+                                .addContainerGap(180, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -211,7 +203,7 @@ public class EditorAttackerPanel extends JPanel {
 
         payloadSelection.setPreferredSize(new Dimension(350, 25));
 
-        for(Map.Entry<String, ? extends Enum> payload : payloads.entrySet()) {
+        for (Map.Entry<String, ? extends Enum> payload : payloads.entrySet()) {
             payloadSelectionListModel.addElement(payload.getKey());
         }
 

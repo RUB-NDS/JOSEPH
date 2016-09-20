@@ -2,17 +2,17 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,7 +21,6 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpService;
 import burp.IMessageEditor;
-import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1Oracle;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import javax.swing.*;
@@ -33,8 +32,9 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Attacker Result Window
@@ -63,7 +63,7 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
         // Create request and response viewer editors
         final IMessageEditor requestViewer;
         final IMessageEditor responseViewer;
-        requestViewer = callbacks.createMessageEditor(null ,false);
+        requestViewer = callbacks.createMessageEditor(null, false);
         responseViewer = callbacks.createMessageEditor(null, false);
 
         // Create result table
@@ -88,12 +88,11 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
                 int column = evt.getColumn();
                 if (column == 6) {
                     TableModel model = table.getTableModel();
-                    String columnName = model.getColumnName(column);
                     Boolean checked = (Boolean) model.getValueAt(row, column);
 
                     BleichenbacherPkcs1TableEntry entry = table.getEntry(row);
 
-                    if(checked) {
+                    if (checked) {
                         validEntries.add(entry);
                         BleichenbacherPkcs1AttackerResultWindow.this.setTabEnabled(1, true);
 
@@ -123,7 +122,9 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
 
                 IHttpService messageHttpService = entry.getMessage().getHttpService();
                 boolean isHttps = false;
-                if (Objects.equals(messageHttpService.getProtocol(), "https")) { isHttps = true; }
+                if (Objects.equals(messageHttpService.getProtocol(), "https")) {
+                    isHttps = true;
+                }
 
                 callbacks.sendToIntruder(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest());
 
@@ -142,7 +143,9 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
 
                 IHttpService messageHttpService = entry.getMessage().getHttpService();
                 boolean isHttps = false;
-                if (Objects.equals(messageHttpService.getProtocol(), "https")) { isHttps = true; }
+                if (Objects.equals(messageHttpService.getProtocol(), "https")) {
+                    isHttps = true;
+                }
 
                 callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest(), "JWT");
 
@@ -196,7 +199,7 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
      */
     public void setProgressBarValue(int request, int all) {
         // If all requests have been performed, set to 100% and change text to "finished"
-        if(request == all) {
+        if (request == all) {
             this.progressBar.setValue(100);
             this.progressBar.setString("Finished (" + all + " Requests)");
             return;
