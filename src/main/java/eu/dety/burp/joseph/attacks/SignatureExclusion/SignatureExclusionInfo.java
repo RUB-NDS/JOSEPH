@@ -60,16 +60,16 @@ public class SignatureExclusionInfo implements IAttackInfo {
             "In order to perform filter evasion, different capitalization is used as algorithm value.</html>";
 
     // Hashmap of "none" algorithm type variations
-    private static final HashMap<payloadType, String> noneAlgVariations = new HashMap<payloadType, String>() {{
-        put(payloadType.LOWERCASE, "none");
-        put(payloadType.CAPITALIZED, "None");
-        put(payloadType.UPPERCASE, "NONE");
-        put(payloadType.MIXED, "nOnE");
+    private static final HashMap<PayloadType, String> noneAlgVariations = new HashMap<PayloadType, String>() {{
+        put(PayloadType.LOWERCASE, "none");
+        put(PayloadType.CAPITALIZED, "None");
+        put(PayloadType.UPPERCASE, "NONE");
+        put(PayloadType.MIXED, "nOnE");
     }};
 
-    // Hashmap of available payloads with a verbose name (including the payloadType)
-    private static final HashMap<String, payloadType> payloads = new HashMap<String, payloadType>() {{
-        for (Map.Entry<payloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
+    // Hashmap of available payloads with a verbose name (including the PayloadType)
+    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {{
+        for (Map.Entry<PayloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
             put(String.format("Alg: %s (0x%02X)", noneAlgVariation.getValue(), noneAlgVariation.getKey().ordinal()), noneAlgVariation.getKey());
         }
     }};
@@ -78,7 +78,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
     private static final int amountRequests = noneAlgVariations.size();
 
     // Types of payload variation
-    public enum payloadType {
+    enum PayloadType {
         LOWERCASE,
         CAPITALIZED,
         UPPERCASE,
@@ -99,7 +99,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
         this.requests.clear();
 
-        for (Map.Entry<payloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
+        for (Map.Entry<PayloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
             try {
                 // Change the "alg" header value for each of the noneAlgVariation entries
                 // and rebuild a valid request
@@ -162,7 +162,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, payloadType> getPayloadList() {
+    public HashMap<String, PayloadType> getPayloadList() {
         return payloads;
     }
 

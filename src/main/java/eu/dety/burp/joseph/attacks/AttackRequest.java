@@ -54,7 +54,7 @@ abstract public class AttackRequest {
     /**
      * Get the payload type
      * <p>
-     * Each {@link IAttackInfo} class should implement an enum payloadType
+     * Each {@link IAttackInfo} class should implement an enum PayloadType
      * @return ordinal value of payload type
      */
     public int getPayloadType() {

