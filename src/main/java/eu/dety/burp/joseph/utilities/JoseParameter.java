@@ -28,6 +28,7 @@ import java.util.List;
 public class JoseParameter {
     private IParameter parameter = null;
     private String header = null;
+    private String direct = null;
     private OriginType originType = null;
     private JoseType joseType = null;
 
@@ -50,12 +51,31 @@ public class JoseParameter {
     }
 
     /**
+     * Construct with string input and determine JoseType
+     * @throws InvalidJoseValueException
+     */
+    public JoseParameter(String input) throws InvalidJoseValueException {
+        this.originType = OriginType.DIRECT;
+
+        if (Finder.checkJwtPattern(input)) {
+            this.joseType = JoseType.JWS;
+        } else if (Finder.checkJwePattern(input)) {
+            this.joseType = JoseType.JWE;
+        } else {
+            throw new InvalidJoseValueException("Could not parse the given input, no valid JOSE pattern detected!");
+        }
+
+        this.direct = input;
+    }
+
+    /**
      *  Origin of the parameter, might be one of:
      *  <li>{@link #PARAMETER}</li>
      *  <li>{@link #HEADER}</li>
+     *  <li>{@link #DIRECT}</li>
      */
     public enum OriginType {
-        PARAMETER, HEADER
+        PARAMETER, HEADER, DIRECT
     }
 
     /**
@@ -88,7 +108,15 @@ public class JoseParameter {
      * @return The name as string
      */
     public String getName() {
-        return (this.getOriginType() == OriginType.PARAMETER) ? parameter.getName() : header.split(":", 2)[0];
+        switch (this.getOriginType()) {
+            case PARAMETER:
+                return parameter.getName();
+            case HEADER:
+                return header.split(":", 2)[0];
+            case DIRECT:
+            default:
+                return null;
+        }
     }
 
     /**
@@ -96,7 +124,16 @@ public class JoseParameter {
      * @return The value as string
      */
     public String getValue() {
-        return (this.getOriginType() == OriginType.PARAMETER) ? parameter.getValue().trim() : header.split(":", 2)[1].trim();
+        switch (this.getOriginType()) {
+            case PARAMETER:
+                return parameter.getValue().trim();
+            case HEADER:
+                return header.split(":", 2)[1].trim();
+            case DIRECT:
+                return direct;
+            default:
+                return null;
+        }
     }
 
     /**
@@ -104,7 +141,16 @@ public class JoseParameter {
      * @return The jose value as string
      */
     public String getJoseValue() {
-        return (this.getOriginType() == OriginType.PARAMETER) ? Finder.getJoseValue(parameter.getValue()) : Finder.getJoseValue(header);
+        switch (this.getOriginType()) {
+            case PARAMETER:
+                return Finder.getJoseValue(parameter.getValue());
+            case HEADER:
+                return Finder.getJoseValue(header);
+            case DIRECT:
+                return Finder.getJoseValue(direct);
+            default:
+                return null;
+        }
     }
 
     /**

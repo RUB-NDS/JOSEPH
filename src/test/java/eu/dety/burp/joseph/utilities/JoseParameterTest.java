@@ -111,4 +111,42 @@ public class JoseParameterTest {
         assertEquals(JoseParameter.OriginType.PARAMETER, joseParameter.getOriginType());
     }
 
+    @Test
+    public void checkJoseParameterCorrectlyInitializesWithDirectJwtInput() throws InvalidJoseValueException {
+        String input = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
+        JoseParameter joseParameter = new JoseParameter(input);
+
+        assertNotNull(joseParameter);
+        assertEquals(JoseParameter.OriginType.DIRECT, joseParameter.getOriginType());
+        assertEquals(JoseParameter.JoseType.JWS, joseParameter.getJoseType());
+    }
+
+    @Test
+    public void checkJoseParameterCorrectlyInitializesWithDirectJweInput() throws InvalidJoseValueException {
+        String input = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0.ZUv6KX2ACkbX4vxmmRP_klq7vBhkD8rezLWM3o2Z14iptapIL39t1hMgKyqFXHXHsanzGK_ebPEr4ksrrCW6wbMixaPureAjdfvozBP_Yfy7ZLyMXx3AORPD5p6yvwtWY3HILc2Y2v0JUggIhZw1GVumoOc1pbZUn5WRVsnkzI8.Oi4EPrRuKona7h1QSXJdVA.s5JN_1NXdGcjhKC1qeLBgw.T8m2q4Bttn40Juo86nLODw";
+        JoseParameter joseParameter = new JoseParameter(input);
+
+        assertNotNull(joseParameter);
+        assertEquals(JoseParameter.OriginType.DIRECT, joseParameter.getOriginType());
+        assertEquals(JoseParameter.JoseType.JWE, joseParameter.getJoseType());
+    }
+
+    @Test(expected=InvalidJoseValueException.class)
+    public void checkJoseParameterCorrectlyInitializesWithWrongDirectInputThrowsException() throws InvalidJoseValueException {
+        String input = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0.ZUv6KX2ACkbX4vxmmRP_klq7vBhkD8rezLWM3o2Z14iptapIL39t1hMgKyqFXHXHsanzGK_ebPEr4ksrrCW6wbMixaPureAjdfvozBP_Yfy7ZLyMXx3AORPD5p6yvwtWY3HILc2Y2v0JUggIhZw1GVumoOc1pbZUn5WRVsnkzI8.Oi4EPrRuKona7h1QSXJdVA.s5JN_1NXdGcjhKC1qeLBgw";
+        new JoseParameter(input);
+    }
+
+    @Test(expected=InvalidJoseValueException.class)
+    public void checkJoseParameterCorrectlyInitializesWithEmptyDirectInputThrowsException() throws InvalidJoseValueException {
+        String input = "";
+        new JoseParameter(input);
+    }
+
+    @Test(expected=InvalidJoseValueException.class)
+    public void checkJoseParameterCorrectlyInitializesWithNullDirectInputThrowsException() throws InvalidJoseValueException {
+        String input = null;
+        new JoseParameter(input);
+    }
+
 }
