@@ -60,6 +60,20 @@ public class FinderTest {
     }
 
     @Test
+    public void checkJwtPatternWithEmptyInputReturnsFalse() {
+        String token = "";
+
+        assertFalse(Finder.checkJwtPattern(token));
+    }
+
+    @Test
+    public void checkJwtPatternWithNullInputReturnsFalse() {
+        String token = null;
+
+        assertFalse(Finder.checkJwtPattern(token));
+    }
+
+    @Test
     public void checkAuthorizationHeaderWithValidHmacJwtPatternReturnsJwtValue() {
         String token = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
@@ -124,6 +138,20 @@ public class FinderTest {
     @Test
     public void checkJwePatternWithFourComponentJweInputReturnsFalse() {
         String token = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0.MeAxi3xwgEt4aVTHVCWtijYCKAzu4AWbu7WdtqzgxhVbBbXrW_mqo3DGXtNFeRTEEweGDf5g5-2osbFUyYIJsRXj8tyE5HRMzbHBGrimKTTk7HTLv1KSwnKXVCGjy6ROxXjAjKVwGU5MDwP28XwhGAlS6fCYx_nIk-J7wf9YV1NDtDxk9F-s10J9BHJ27-l1M1HIVv7McWw94837UY4fM63BLDAJ70KbQvh_LF8RMdI7F2WXe-vTEcwFmicDi9Q6yvRzbYUhL1I19K4PHs9gTHtM-icRbJzPJvm0HKv0gclsXcsQtZgHNFTm3uLYbV5azYu5g5a5Iey-H1dvtpfbIQ.cwy_JXzA6_ZrdDETzYuPbw.o0qbcF7WeGansYSyRR3nZ82MRVoGnyVt4MdZZ00IgGw";
+
+        assertFalse(Finder.checkJwePattern(token));
+    }
+
+    @Test
+    public void checkJwePatternWithEmptyInputReturnsFalse() {
+        String token = "";
+
+        assertFalse(Finder.checkJwePattern(token));
+    }
+
+    @Test
+    public void checkJwePatternWithNullInputReturnsFalse() {
+        String token = null;
 
         assertFalse(Finder.checkJwePattern(token));
     }

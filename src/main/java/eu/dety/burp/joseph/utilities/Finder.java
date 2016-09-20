@@ -38,6 +38,8 @@ public class Finder {
      * @return boolean whether regex pattern matched or not.
      */
     public static boolean checkJwtPattern(String candidate) {
+        if (candidate == null || candidate.isEmpty()) return false;
+
         Pattern jwtPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)", Pattern.CASE_INSENSITIVE);
         Matcher jwtMatcher = jwtPattern.matcher(candidate);
 
@@ -50,6 +52,8 @@ public class Finder {
      * @return boolean whether regex pattern matched or not.
      */
     public static boolean checkJwePattern(String candidate) {
+        if (candidate == null || candidate.isEmpty()) return false;
+
         Pattern jwePattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)", Pattern.CASE_INSENSITIVE);
         Matcher jweMatcher = jwePattern.matcher(candidate);
 
