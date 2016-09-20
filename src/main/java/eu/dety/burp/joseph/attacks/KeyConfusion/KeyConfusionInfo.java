@@ -78,21 +78,21 @@ public class KeyConfusionInfo implements IAttackInfo {
     // Types of payload variation
     public enum payloadType {
         // Derived from PEM input
-        ORIG,
-        ORIG_NO_HEAD_FOOT,
-        ORIG_NO_LF,
-        ORIG_NO_HEAD_FOOT_LF,
+        ORIGINAL,
+        ORIGINAL_NO_HEADER_FOOTER,
+        ORIGINAL_NO_LF,
+        ORIGINAL_NO_HEADER_FOOTER_LF,
         PKCS1,
-        PKCS1_NO_HEAD_FOOT,
+        PKCS1_NO_HEADER_FOOTER,
         PKCS1_NO_LF,
-        PKCS1_NO_HEAD_FOOT_LF,
+        PKCS1_NO_HEADER_FOOTER_LF,
 
         // Derived from JWK input
         PKCS8,
-        PKCS8_WITH_HEAD_FOOT,
+        PKCS8_WITH_HEADER_FOOTER,
         PKCS8_WITH_LF,
-        PKCS8_WITH_LF_HEAD_FOOT,
-        PKCS8_WITH_LF_HEAD_FOOT_END_LF,
+        PKCS8_WITH_HEADER_FOOTER_LF,
+        PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF,
     }
 
     // Hashmap of available payloads with a verbose name (including the payloadType)
@@ -147,16 +147,16 @@ public class KeyConfusionInfo implements IAttackInfo {
                         publicKeyVariations.put(payloadType.PKCS8, transformKeyByPayload(payloadType.PKCS8, publicKey));
 
                         // With header/footer
-                        publicKeyVariations.put(payloadType.PKCS8_WITH_HEAD_FOOT, transformKeyByPayload(payloadType.PKCS8_WITH_HEAD_FOOT, publicKey));
+                        publicKeyVariations.put(payloadType.PKCS8_WITH_HEADER_FOOTER, transformKeyByPayload(payloadType.PKCS8_WITH_HEADER_FOOTER, publicKey));
 
                         // With line feeds
                         publicKeyVariations.put(payloadType.PKCS8_WITH_LF, transformKeyByPayload(payloadType.PKCS8_WITH_LF, publicKey));
 
                         // With line feeds and header/footer
-                        publicKeyVariations.put(payloadType.PKCS8_WITH_LF_HEAD_FOOT, transformKeyByPayload(payloadType.PKCS8_WITH_LF_HEAD_FOOT, publicKey));
+                        publicKeyVariations.put(payloadType.PKCS8_WITH_HEADER_FOOTER_LF, transformKeyByPayload(payloadType.PKCS8_WITH_HEADER_FOOTER_LF, publicKey));
 
                         // With line feeds and header/footer and additional line feed at end
-                        publicKeyVariations.put(payloadType.PKCS8_WITH_LF_HEAD_FOOT_END_LF, transformKeyByPayload(payloadType.PKCS8_WITH_LF_HEAD_FOOT_END_LF, publicKey));
+                        publicKeyVariations.put(payloadType.PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF, transformKeyByPayload(payloadType.PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF, publicKey));
                     }
 
                 } catch (Exception e) {
@@ -175,28 +175,28 @@ public class KeyConfusionInfo implements IAttackInfo {
 
                 try {
                     // No modification
-                    publicKeyVariations.put(payloadType.ORIG, publicKeyValue);
+                    publicKeyVariations.put(payloadType.ORIGINAL, publicKeyValue);
 
                     // Without header/footer
-                    publicKeyVariations.put(payloadType.ORIG_NO_HEAD_FOOT, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT, publicKeyValue));
+                    publicKeyVariations.put(payloadType.ORIGINAL_NO_HEADER_FOOTER, transformKeyByPayload(payloadType.ORIGINAL_NO_HEADER_FOOTER, publicKeyValue));
 
                     // Without line feeds/carriage returns
-                    publicKeyVariations.put(payloadType.ORIG_NO_LF, transformKeyByPayload(payloadType.ORIG_NO_LF, publicKeyValue));
+                    publicKeyVariations.put(payloadType.ORIGINAL_NO_LF, transformKeyByPayload(payloadType.ORIGINAL_NO_LF, publicKeyValue));
 
                     // Without header/footer and line feeds/carriage returns
-                    publicKeyVariations.put(payloadType.ORIG_NO_HEAD_FOOT_LF, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT_LF, publicKeyValue));
+                    publicKeyVariations.put(payloadType.ORIGINAL_NO_HEADER_FOOTER_LF, transformKeyByPayload(payloadType.ORIGINAL_NO_HEADER_FOOTER_LF, publicKeyValue));
 
                     // PKCS#1, easy but hacky transformation
                     publicKeyVariations.put(payloadType.PKCS1, transformKeyByPayload(payloadType.PKCS1, publicKeyValue));
 
                     // PKCS#1 without header/footer
-                    publicKeyVariations.put(payloadType.PKCS1_NO_HEAD_FOOT, transformKeyByPayload(payloadType.PKCS1_NO_HEAD_FOOT, publicKeyValue));
+                    publicKeyVariations.put(payloadType.PKCS1_NO_HEADER_FOOTER, transformKeyByPayload(payloadType.PKCS1_NO_HEADER_FOOTER, publicKeyValue));
 
                     // PKCS#1 without line feeds/carriage returns
                     publicKeyVariations.put(payloadType.PKCS1_NO_LF, transformKeyByPayload(payloadType.PKCS1_NO_LF, publicKeyValue));
 
                     // PKCS#1 without header/footer and line feeds/carriage returns
-                    publicKeyVariations.put(payloadType.PKCS1_NO_HEAD_FOOT_LF, transformKeyByPayload(payloadType.PKCS1_NO_HEAD_FOOT_LF, publicKeyValue));
+                    publicKeyVariations.put(payloadType.PKCS1_NO_HEADER_FOOTER_LF, transformKeyByPayload(payloadType.PKCS1_NO_HEADER_FOOTER_LF, publicKeyValue));
 
                 } catch (Exception e) {
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
@@ -369,38 +369,38 @@ public class KeyConfusionInfo implements IAttackInfo {
         String modifiedKey;
 
         switch ((payloadType) payloadTypeId) {
-            case ORIG_NO_HEAD_FOOT:
+            case ORIGINAL_NO_HEADER_FOOTER:
                 modifiedKey = key.replace("-----BEGIN PUBLIC KEY-----\n", "")
                                  .replaceAll("-----END PUBLIC KEY-----\\n?", "")
                                  .replace("-----BEGIN RSA PUBLIC KEY-----\n", "")
                                  .replaceAll("-----END RSA PUBLIC KEY-----\\n?", "");
                 break;
 
-            case ORIG_NO_LF:
+            case ORIGINAL_NO_LF:
                 modifiedKey = key.replaceAll("\\r\\n|\\r|\\n", "");
                 break;
 
-            case ORIG_NO_HEAD_FOOT_LF:
-                modifiedKey = transformKeyByPayload(payloadType.ORIG_NO_LF, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT, key));
+            case ORIGINAL_NO_HEADER_FOOTER_LF:
+                modifiedKey = transformKeyByPayload(payloadType.ORIGINAL_NO_LF, transformKeyByPayload(payloadType.ORIGINAL_NO_HEADER_FOOTER, key));
                 break;
 
             case PKCS1:
                 modifiedKey = key.substring(32);
                 break;
 
-            case PKCS1_NO_HEAD_FOOT:
-                modifiedKey = transformKeyByPayload(payloadType.PKCS1, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT, key));
+            case PKCS1_NO_HEADER_FOOTER:
+                modifiedKey = transformKeyByPayload(payloadType.PKCS1, transformKeyByPayload(payloadType.ORIGINAL_NO_HEADER_FOOTER, key));
                 break;
 
             case PKCS1_NO_LF:
-                modifiedKey = transformKeyByPayload(payloadType.PKCS1, transformKeyByPayload(payloadType.ORIG_NO_LF, key));
+                modifiedKey = transformKeyByPayload(payloadType.PKCS1, transformKeyByPayload(payloadType.ORIGINAL_NO_LF, key));
                 break;
 
-            case PKCS1_NO_HEAD_FOOT_LF:
-                modifiedKey = transformKeyByPayload(payloadType.PKCS1, transformKeyByPayload(payloadType.ORIG_NO_HEAD_FOOT_LF, key));
+            case PKCS1_NO_HEADER_FOOTER_LF:
+                modifiedKey = transformKeyByPayload(payloadType.PKCS1, transformKeyByPayload(payloadType.ORIGINAL_NO_HEADER_FOOTER_LF, key));
                 break;
 
-            case ORIG:
+            case ORIGINAL:
             default:
                 modifiedKey = key;
                 break;
@@ -417,7 +417,7 @@ public class KeyConfusionInfo implements IAttackInfo {
 
         switch ((payloadType) payloadTypeId) {
 
-            case PKCS8_WITH_HEAD_FOOT:
+            case PKCS8_WITH_HEADER_FOOTER:
                 modifiedKey = "-----BEGIN PUBLIC KEY-----" + Base64.encodeBase64String(key.getEncoded()) + "-----END PUBLIC KEY-----";
                 break;
 
@@ -425,12 +425,12 @@ public class KeyConfusionInfo implements IAttackInfo {
                 modifiedKey = base64Pem.encodeToString(key.getEncoded());
                 break;
 
-            case PKCS8_WITH_LF_HEAD_FOOT:
+            case PKCS8_WITH_HEADER_FOOTER_LF:
                 modifiedKey = "-----BEGIN PUBLIC KEY-----\n" + base64Pem.encodeToString(key.getEncoded()) + "-----END PUBLIC KEY-----";
                 break;
 
-            case PKCS8_WITH_LF_HEAD_FOOT_END_LF:
-                modifiedKey = transformKeyByPayload(payloadType.PKCS8_WITH_LF_HEAD_FOOT, key) + "\n";
+            case PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF:
+                modifiedKey = transformKeyByPayload(payloadType.PKCS8_WITH_HEADER_FOOTER_LF, key) + "\n";
                 break;
 
             case PKCS8:

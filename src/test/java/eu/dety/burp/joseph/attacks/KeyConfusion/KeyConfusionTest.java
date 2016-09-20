@@ -110,7 +110,7 @@ public class KeyConfusionTest {
                 "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
                 "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.ORIG, input));
+        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.ORIGINAL, input));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class KeyConfusionTest {
                 "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
                 "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.ORIG_NO_HEAD_FOOT, input));
+        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.ORIGINAL_NO_HEADER_FOOTER, input));
     }
 
     @Test
@@ -154,7 +154,7 @@ public class KeyConfusionTest {
                 "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
                 "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.ORIG_NO_LF, input));
+        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.ORIGINAL_NO_LF, input));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class KeyConfusionTest {
                 "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
                 "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.ORIG_NO_HEAD_FOOT_LF, input));
+        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.ORIGINAL_NO_HEADER_FOOTER_LF, input));
     }
 
     @Test
@@ -227,7 +227,7 @@ public class KeyConfusionTest {
                 "swIDAQAB" +
                 "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS1_NO_HEAD_FOOT, input));
+        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS1_NO_HEADER_FOOTER, input));
     }
 
     @Test
@@ -254,7 +254,7 @@ public class KeyConfusionTest {
                 "swIDAQAB" +
                 "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS1_NO_HEAD_FOOT_LF, input));
+        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS1_NO_HEADER_FOOTER_LF, input));
     }
 
     @Test
@@ -300,7 +300,7 @@ public class KeyConfusionTest {
                 "-----END PUBLIC KEY-----";
 
         for (PublicKey publicKey : publicKeys) {
-            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS8_WITH_HEAD_FOOT, publicKey));
+            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS8_WITH_HEADER_FOOTER, publicKey));
         }
     }
 
@@ -356,7 +356,7 @@ public class KeyConfusionTest {
                 "-----END PUBLIC KEY-----";
 
         for (PublicKey publicKey : publicKeys) {
-            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS8_WITH_LF_HEAD_FOOT, publicKey));
+            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS8_WITH_HEADER_FOOTER_LF, publicKey));
         }
     }
 
@@ -376,7 +376,7 @@ public class KeyConfusionTest {
                 "-----END PUBLIC KEY-----\n";
 
         for (PublicKey publicKey : publicKeys) {
-            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS8_WITH_LF_HEAD_FOOT_END_LF, publicKey));
+            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.payloadType.PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF, publicKey));
         }
     }
 
