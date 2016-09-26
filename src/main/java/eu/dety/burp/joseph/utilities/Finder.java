@@ -68,6 +68,11 @@ public class Finder {
         return (jwsMatcher.find()) ? jwsMatcher.group(0) : null;
     }
 
+    /**
+     * Return {@link JoseParameter} object if JWS value could be found in parameters or HTTP headers
+     * @param requestInfo {@link IRequestInfo} object
+     * @return {@link JoseParameter} with found JWS parameter/header
+     */
     public static JoseParameter checkHeaderAndParameterForJwsPattern(IRequestInfo requestInfo) {
         JoseParameter joseParameter = null;
 
@@ -88,6 +93,11 @@ public class Finder {
         return joseParameter;
     }
 
+    /**
+     * Return {@link JoseParameter} object if JWE value could be found in parameters or HTTP headers
+     * @param requestInfo {@link IRequestInfo} object
+     * @return {@link JoseParameter} with found JWE parameter/header
+     */
     public static JoseParameter checkHeaderAndParameterForJwePattern(IRequestInfo requestInfo) {
         JoseParameter joseParameter = null;
 
