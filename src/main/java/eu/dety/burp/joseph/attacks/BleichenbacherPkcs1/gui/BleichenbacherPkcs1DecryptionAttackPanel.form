@@ -168,7 +168,7 @@
           <Font name="Lucida Grande" size="13" style="1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="eu/dety/burp/joseph/resources/JOSEPH.properties" key="RESULT_CECK" replaceFormat="java.util.ResourceBundle.getBundle(&quot;JOSEPH&quot;).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="eu/dety/burp/joseph/resources/JOSEPH.properties" key="RESULT_CEK" replaceFormat="java.util.ResourceBundle.getBundle(&quot;JOSEPH&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -201,7 +201,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="attackDescription">
       <Properties>
-        <Property name="text" type="java.lang.String" value="This is some description text..."/>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;em&gt;Note: This attack will take several minutes and performs thousands of requests to the server!&lt;/em&gt;&lt;br /&gt;This attack is only successful, if the valid oracle responses are correctly marked.&lt;/html&gt;"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="timeElapsedValue">
