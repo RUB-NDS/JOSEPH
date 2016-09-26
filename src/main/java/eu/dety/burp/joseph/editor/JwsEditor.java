@@ -29,22 +29,21 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * JSON Web Token (JWT) Editor.
+ * JSON Web Signature (JWS) Editor.
  * <p>
- * Display decoded JWT components.
+ * Display decoded JWS components.
  * @author Dennis Detering
  * @version 1.0
  */
-public class JwtEditor implements IMessageEditorTabFactory {
-    private static final Logger loggerInstance = Logger.getInstance();
+public class JwsEditor implements IMessageEditorTabFactory {
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
 
     /**
-     * Create JwtEditor instance.
+     * Create JwsEditor instance.
      * @param callbacks {@link IBurpExtenderCallbacks}.
      */
-    public JwtEditor(IBurpExtenderCallbacks callbacks) {
+    public JwsEditor(IBurpExtenderCallbacks callbacks) {
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
     }
@@ -53,15 +52,15 @@ public class JwtEditor implements IMessageEditorTabFactory {
      * Create a new instance of Burps own request/response viewer (IMessageEditorTab).
      * @param controller {@link burp.IMessageEditorController}
      * @param editable True if message is editable, false otherwise.
-     * @return {@link JwtEditor.JwtEditorTab} instance implementing {@link burp.IMessageEditorTab}
+     * @return {@link JwsEditorTab} instance implementing {@link burp.IMessageEditorTab}
      */
     @Override
     public IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable) {
-        return new JwtEditorTab(controller, editable);
+        return new JwsEditorTab(controller, editable);
     }
 
-    public class JwtEditorTab implements IMessageEditorTab {
-        private JTabbedPane JwtEditorTabPanel;
+    public class JwsEditorTab implements IMessageEditorTab {
+        private JTabbedPane JwsEditorTabPanel;
         private boolean editable;
         private byte[] currentMessage;
         private boolean isModified = false;
@@ -72,33 +71,33 @@ public class JwtEditor implements IMessageEditorTabFactory {
         private ITextEditor sourceViewerSignature;
         private EditorAttackerPanel editorAttackerPanel;
 
-        JwtEditorTab(IMessageEditorController controller, boolean editable) {
+        JwsEditorTab(IMessageEditorController controller, boolean editable) {
             this.editable = editable;
-            this.JwtEditorTabPanel = new JTabbedPane();
+            this.JwsEditorTabPanel = new JTabbedPane();
 
             // Add text editor tab for each JOSE part
             sourceViewerHeader = callbacks.createTextEditor();
             sourceViewerPayload = callbacks.createTextEditor();
             sourceViewerSignature = callbacks.createTextEditor();
 
-            JwtEditorTabPanel.addTab("Header", sourceViewerHeader.getComponent());
-            JwtEditorTabPanel.addTab("Payload", sourceViewerPayload.getComponent());
-            JwtEditorTabPanel.addTab("Base64(Signature)", sourceViewerSignature.getComponent());
+            JwsEditorTabPanel.addTab("Header", sourceViewerHeader.getComponent());
+            JwsEditorTabPanel.addTab("Payload", sourceViewerPayload.getComponent());
+            JwsEditorTabPanel.addTab("Base64(Signature)", sourceViewerSignature.getComponent());
 
             editorAttackerPanel = new EditorAttackerPanel(callbacks, this);
             if (editable) {
-                JwtEditorTabPanel.addTab("Attacker", editorAttackerPanel);
+                JwsEditorTabPanel.addTab("Attacker", editorAttackerPanel);
             }
         }
 
         @Override
         public String getTabCaption() {
-            return "JWT";
+            return "JWS";
         }
 
         @Override
         public Component getUiComponent() {
-            return JwtEditorTabPanel;
+            return JwsEditorTabPanel;
         }
 
         @Override
@@ -107,7 +106,7 @@ public class JwtEditor implements IMessageEditorTabFactory {
             if (isRequest) {
                 IRequestInfo requestInfo = helpers.analyzeRequest(content);
 
-                JoseParameter joseParameterCheck = Finder.checkHeaderAndParameterForJwtPattern(requestInfo);
+                JoseParameter joseParameterCheck = Finder.checkHeaderAndParameterForJwsPattern(requestInfo);
                 if (joseParameterCheck != null) {
                     joseParameter = joseParameterCheck;
                     return true;

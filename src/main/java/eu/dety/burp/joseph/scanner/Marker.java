@@ -52,15 +52,15 @@ public class Marker implements IHttpListener {
     }
 
     /**
-     * Checks whether given recognition pattern for JWT locations match
+     * Checks whether given recognition pattern for JWS locations match
      * @param httpRequestResponse {@link IHttpRequestResponse} Object containing the request/response.
      */
     private void checkForJoseLocations(IHttpRequestResponse httpRequestResponse) {
         IRequestInfo requestInfo = helpers.analyzeRequest(httpRequestResponse);
 
-        if (Finder.checkHeaderAndParameterForJwtPattern(requestInfo) != null) {
-            markRequestResponse(httpRequestResponse, bundle.getString("JWT"));
-            loggerInstance.log(getClass(), "JSON Web Token found!", Logger.LogLevel.DEBUG);
+        if (Finder.checkHeaderAndParameterForJwsPattern(requestInfo) != null) {
+            markRequestResponse(httpRequestResponse, bundle.getString("JWS"));
+            loggerInstance.log(getClass(), "JSON Web Signature found!", Logger.LogLevel.DEBUG);
         }
 
         if (Finder.checkHeaderAndParameterForJwePattern(requestInfo) != null) {

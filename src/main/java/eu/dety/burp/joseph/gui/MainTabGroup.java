@@ -181,7 +181,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
             // Additionally check whether JWS or JWE patterns exists
             IRequestInfo requestInfo = callbacks.getHelpers().analyzeRequest(message);
-            if (Finder.checkHeaderAndParameterForJwtPattern(requestInfo) == null && Finder.checkHeaderAndParameterForJwePattern(requestInfo) == null) {
+            if (Finder.checkHeaderAndParameterForJwsPattern(requestInfo) == null && Finder.checkHeaderAndParameterForJwePattern(requestInfo) == null) {
                 menuItem.setEnabled(false);
             }
 
