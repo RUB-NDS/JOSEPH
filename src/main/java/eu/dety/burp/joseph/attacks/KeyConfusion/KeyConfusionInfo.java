@@ -219,7 +219,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                     // Generate signature
                     String newSignature = Decoder.getEncoded(Crypto.generateMac(macAlg, helpers.stringToBytes(publicKey.getValue()), helpers.stringToBytes(Decoder.concatComponents(new String[]{encodedHeaderReplacedAlgorithm, components[1]}))));
 
-                    // Build new JWT String and update parameter
+                    // Build new JWS String and update parameter
                     String[] newComponents = {encodedHeaderReplacedAlgorithm, components[1], newSignature};
                     String newComponentsConcatenated = Decoder.concatComponents(newComponents);
 
@@ -342,10 +342,10 @@ public class KeyConfusionInfo implements IAttackInfo {
 
         }
 
-        Pattern jwtPattern = Pattern.compile("\"alg\":\"(.+?)\"", Pattern.CASE_INSENSITIVE);
-        Matcher jwtMatcher = jwtPattern.matcher(header);
+        Pattern jwsPattern = Pattern.compile("\"alg\":\"(.+?)\"", Pattern.CASE_INSENSITIVE);
+        Matcher jwsMatcher = jwsPattern.matcher(header);
 
-        String algorithm = (jwtMatcher.find()) ? jwtMatcher.group(1) : "HS256";
+        String algorithm = (jwsMatcher.find()) ? jwsMatcher.group(1) : "HS256";
 
         String macAlg = Crypto.getMacAlgorithmByJoseAlgorithm(algorithm, "HmacSHA256");
 

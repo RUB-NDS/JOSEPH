@@ -19,7 +19,7 @@
 package burp;
 
 import eu.dety.burp.joseph.editor.JweEditor;
-import eu.dety.burp.joseph.editor.JwtEditor;
+import eu.dety.burp.joseph.editor.JwsEditor;
 import eu.dety.burp.joseph.gui.MainTabGroup;
 import eu.dety.burp.joseph.scanner.Marker;
 import eu.dety.burp.joseph.utilities.Logger;
@@ -78,10 +78,10 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         callbacks.registerHttpListener(marker);
         loggerInstance.log(getClass(), bundle.getString("REGISTERED_HTTPLISTENER"), Logger.LogLevel.INFO);
 
-        // Register JWT Editor
-        final JwtEditor jwtEditor = new JwtEditor(callbacks);
-        callbacks.registerMessageEditorTabFactory(jwtEditor);
-        loggerInstance.log(getClass(), bundle.getString("REGISTERED_JWTEDITOR"), Logger.LogLevel.INFO);
+        // Register JWS Editor
+        final JwsEditor jwsEditor = new JwsEditor(callbacks);
+        callbacks.registerMessageEditorTabFactory(jwsEditor);
+        loggerInstance.log(getClass(), bundle.getString("REGISTERED_JWSEDITOR"), Logger.LogLevel.INFO);
 
         // Register JWE Editor
         final JweEditor jweEditor = new JweEditor(callbacks);

@@ -22,7 +22,7 @@ import burp.IBurpExtenderCallbacks;
 import eu.dety.burp.joseph.attacks.AttackLoader;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
-import eu.dety.burp.joseph.editor.JwtEditor;
+import eu.dety.burp.joseph.editor.JwsEditor;
 import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;
 import org.json.JSONObject;
@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
 public class EditorAttackerPanel extends JPanel {
     private static final Logger loggerInstance = Logger.getInstance();
     private static final ResourceBundle bundle = ResourceBundle.getBundle("JOSEPH");
-    private JwtEditor.JwtEditorTab jwtEditorReference;
+    private JwsEditor.JwsEditorTab jwsEditorReference;
 
     private HashMap<String, IAttackInfo> registeredAttacks = new HashMap<>();
     private DefaultComboBoxModel<String> attackListModel = new DefaultComboBoxModel<>();
@@ -58,8 +58,8 @@ public class EditorAttackerPanel extends JPanel {
      *
      * @param callbacks {@link IBurpExtenderCallbacks} extender callbacks
      */
-    public EditorAttackerPanel(IBurpExtenderCallbacks callbacks, JwtEditor.JwtEditorTab jwtEditorReference) {
-        this.jwtEditorReference = jwtEditorReference;
+    public EditorAttackerPanel(IBurpExtenderCallbacks callbacks, JwsEditor.JwsEditorTab jwsEditorReference) {
+        this.jwsEditorReference = jwsEditorReference;
 
         // Register all available attacks
         registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
@@ -74,7 +74,7 @@ public class EditorAttackerPanel extends JPanel {
     public void updateAttackList() {
         attackListModel.removeAllElements();
 
-        this.header = jwtEditorReference.getHeader();
+        this.header = jwsEditorReference.getHeader();
 
         // If the keys "alg" and "typ" exist, get their value and update informational fields
         JSONObject headerJson = new JSONObject(header);
@@ -226,12 +226,12 @@ public class EditorAttackerPanel extends JPanel {
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
         loggerInstance.log(getClass(), "Update button clicked, modify request!", Logger.LogLevel.DEBUG);
 
-        this.header = jwtEditorReference.getHeader();
-        this.payload = jwtEditorReference.getPayload();
+        this.header = jwsEditorReference.getHeader();
+        this.payload = jwsEditorReference.getPayload();
 
         try {
             HashMap<String, String> updatedValues = selectedAttack.updateValuesByPayload(payloads.get(payloadSelectionListModel.getSelectedItem()), this.header, this.payload);
-            this.jwtEditorReference.updateSourceViewer(updatedValues.get("header"), updatedValues.get("payload"), updatedValues.get("signature"));
+            this.jwsEditorReference.updateSourceViewer(updatedValues.get("header"), updatedValues.get("payload"), updatedValues.get("signature"));
 
             loggerInstance.log(selectedAttack.getClass(), "Selected payload: " + payloadSelectionListModel.getSelectedItem(), Logger.LogLevel.DEBUG);
         } catch (AttackPreparationFailedException e) {

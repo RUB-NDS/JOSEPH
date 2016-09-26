@@ -79,9 +79,9 @@ public class AttackerPanel extends JPanel {
         registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
 
         // Search for JOSE header
-        JoseParameter joseParameterJwtCheck = Finder.checkHeaderAndParameterForJwtPattern(this.requestInfo);
-        if (joseParameterJwtCheck != null) {
-            joseParameter = joseParameterJwtCheck;
+        JoseParameter joseParameterJwsCheck = Finder.checkHeaderAndParameterForJwsPattern(this.requestInfo);
+        if (joseParameterJwsCheck != null) {
+            joseParameter = joseParameterJwsCheck;
         }
 
         JoseParameter joseParameterJweCheck = Finder.checkHeaderAndParameterForJwePattern(this.requestInfo);
