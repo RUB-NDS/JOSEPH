@@ -21,10 +21,7 @@ package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1;
 import burp.*;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
-import eu.dety.burp.joseph.utilities.Converter;
-import eu.dety.burp.joseph.utilities.Decoder;
-import eu.dety.burp.joseph.utilities.JoseParameter;
-import eu.dety.burp.joseph.utilities.Logger;
+import eu.dety.burp.joseph.utilities.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.simple.parser.JSONParser;
 
@@ -69,7 +66,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     private static final String id = "bleichenbarcher_pkcs1";
 
     // Full name of the attack
-    private static final String name = "Bleichenbacher RSA PKCS#1 v1.5";
+    private static final String name = "Bleichenbacher Million Message Attack";
 
     // Attack description
     private static final String description = "<html>The <em>Bleichenbacher RSA PKCS#1 v1.5</em> attack (aka. Million Message Attack) " +
@@ -159,10 +156,11 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         }
 
         HashMap<PayloadType, byte[]> encryptedKeys;
+        String[] components = Decoder.getComponents(this.parameter.getJoseValue());
 
         try {
-            encryptedKeys = generatePkcs1Vectors(pubKey, 32);
-
+            String encAlg = Decoder.getValueByBase64String(components[0], "enc").toUpperCase();
+            encryptedKeys = generatePkcs1Vectors(pubKey, Crypto.getJoseKeyLengthByJoseAlgorithm(encAlg, 32));
         } catch (Exception e) {
             throw new AttackPreparationFailedException(e.getMessage());
         }
@@ -170,7 +168,6 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         // Prepare requests
         for (Map.Entry<PayloadType, byte[]> cek : encryptedKeys.entrySet()) {
             byte[] request = this.requestResponse.getRequest();
-            String[] components = Decoder.getComponents(this.parameter.getJoseValue());
             components[1] = Decoder.base64UrlEncode(cek.getValue());
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
