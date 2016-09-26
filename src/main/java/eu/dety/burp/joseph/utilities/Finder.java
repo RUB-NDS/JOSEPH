@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Help functions to find JWS and JWE patterns.
+ * Help functions to find and extract JWS and JWE patterns.
  * @author Dennis Detering
  * @version 1.0
  */
