@@ -28,35 +28,35 @@ public class FinderTest {
     public void checkJwtPatternWithValidHmacJwtInputReturnsTrue() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
-        assertTrue(Finder.checkJwtPattern(token));
+        assertTrue(Finder.checkJwsPattern(token));
     }
 
     @Test
     public void checkJwtPatternWithValidRsaJwtInputReturnsTrue() {
         String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.kICC_hdjv5FXzfiU-2F4QDMb9N71L_fiUlgwk_cwPUWG3Fn6FweKG4jSlbgVJGHTbp-sF34n79TiLbjK1IP31KS3rxWaHzO0enB6QZe9nktzSLx2H-rnyYtRZZ0o4KfaCh03TuhMdBtL2UpekkyjTwBsb1hULZPSt2xx_gsY5GwpK3XeaqpoMxFGNopgpg7IQ1C0QbQHDNPzld-PqsnPIIOt6VG0f4LWFyWJOlpz0ZXy06VXjFY3ALix9GVUbRJQ4sDHg5FK7gl2P1ovow1b7JysTgl_HeD8CpbIUUy5Gxa8nIdPmb4eKoG3dM-J_AaxewqFuvHMfqSey_cIdFsxtw";
 
-        assertTrue(Finder.checkJwtPattern(token));
+        assertTrue(Finder.checkJwsPattern(token));
     }
 
     @Test
     public void checkJwtPatternWithInvalidEncodedHeaderJwtInputReturnsFalse() {
         String token = "SW52YWxpZCBIZWFkZXI.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
-        assertFalse(Finder.checkJwtPattern(token));
+        assertFalse(Finder.checkJwsPattern(token));
     }
 
     @Test
     public void checkJwtPatternWithTwoComponentJwtWithEndingDotInputReturnsTrue() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.";
 
-        assertTrue(Finder.checkJwtPattern(token));
+        assertTrue(Finder.checkJwsPattern(token));
     }
 
     @Test
     public void checkJwtPatternWithTwoComponentJwtWithoutEndingDotInputReturnsFalse() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
 
-        assertFalse(Finder.checkJwtPattern(token));
+        assertFalse(Finder.checkJwsPattern(token));
     }
 
     @Test
@@ -111,14 +111,14 @@ public class FinderTest {
     @Test
     public void checkJwtPatternWithInvalidEncodedPayloadJwtInputReturnsFalse() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.SW52YWxpZCBQYXlsb2Fk.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        assertFalse(Finder.checkJwtPattern(token));
+        assertFalse(Finder.checkJwsPattern(token));
     }
 
     // TODO: Returns True => Wanted behaviour?
 //    @Test
 //    public void checkJwtPatternWithFourComponentJwtInputReturnsFalse() {
 //        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
-//        assertFalse(Finder.checkJwtPattern(token));
+//        assertFalse(Finder.checkJwsPattern(token));
 //    }
 
     @Test

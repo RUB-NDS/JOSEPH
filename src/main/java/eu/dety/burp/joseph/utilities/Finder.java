@@ -26,24 +26,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Help functions to find JWT and JWE patterns.
+ * Help functions to find and extract JWS and JWE patterns.
  * @author Dennis Detering
  * @version 1.0
  */
 public class Finder {
 
     /**
-     * Check whether given JWT candidate matches regex pattern
-     * @param candidate String containing the JWT candidate value.
+     * Check whether given JWS candidate matches regex pattern
+     * @param candidate String containing the JWS candidate value.
      * @return boolean whether regex pattern matched or not.
      */
-    public static boolean checkJwtPattern(String candidate) {
+    public static boolean checkJwsPattern(String candidate) {
         if (candidate == null || candidate.isEmpty()) return false;
 
-        Pattern jwtPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)", Pattern.CASE_INSENSITIVE);
-        Matcher jwtMatcher = jwtPattern.matcher(candidate);
+        Pattern jwsPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)", Pattern.CASE_INSENSITIVE);
+        Matcher jwsMatcher = jwsPattern.matcher(candidate);
 
-        return jwtMatcher.find();
+        return jwsMatcher.find();
     }
 
     /**
@@ -66,25 +66,30 @@ public class Finder {
      * @return String with matched JOSE value.
      */
     public static String getJoseValue(String candidate) {
-        Pattern jwtPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?([a-zA-Z0-9\\-_\\.]+)*)", Pattern.CASE_INSENSITIVE);
-        Matcher jwtMatcher = jwtPattern.matcher(candidate);
+        Pattern jwsPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?([a-zA-Z0-9\\-_\\.]+)*)", Pattern.CASE_INSENSITIVE);
+        Matcher jwsMatcher = jwsPattern.matcher(candidate);
 
-        return (jwtMatcher.find()) ? jwtMatcher.group(0) : null;
+        return (jwsMatcher.find()) ? jwsMatcher.group(0) : null;
     }
 
-    public static JoseParameter checkHeaderAndParameterForJwtPattern(IRequestInfo requestInfo) {
+    /**
+     * Return {@link JoseParameter} object if JWS value could be found in parameters or HTTP headers
+     * @param requestInfo {@link IRequestInfo} object
+     * @return {@link JoseParameter} with found JWS parameter/header
+     */
+    public static JoseParameter checkHeaderAndParameterForJwsPattern(IRequestInfo requestInfo) {
         JoseParameter joseParameter = null;
 
         // Search for JOSE header
         for (String header : requestInfo.getHeaders()) {
-            if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0]) && checkJwtPattern(header)) {
+            if (PreferencesPanel.getParameterNames().contains(header.split(":", 2)[0]) && checkJwsPattern(header)) {
                 joseParameter = new JoseParameter(header, JoseParameter.JoseType.JWS);
             }
         }
 
         // Search for JOSE parameter
         for (IParameter param : requestInfo.getParameters()) {
-            if (PreferencesPanel.getParameterNames().contains(param.getName()) && checkJwtPattern(param.getValue())) {
+            if (PreferencesPanel.getParameterNames().contains(param.getName()) && checkJwsPattern(param.getValue())) {
                 joseParameter = new JoseParameter(param, JoseParameter.JoseType.JWS);
             }
         }
@@ -92,6 +97,11 @@ public class Finder {
         return joseParameter;
     }
 
+    /**
+     * Return {@link JoseParameter} object if JWE value could be found in parameters or HTTP headers
+     * @param requestInfo {@link IRequestInfo} object
+     * @return {@link JoseParameter} with found JWE parameter/header
+     */
     public static JoseParameter checkHeaderAndParameterForJwePattern(IRequestInfo requestInfo) {
         JoseParameter joseParameter = null;
 

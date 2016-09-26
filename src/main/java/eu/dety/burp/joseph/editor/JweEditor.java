@@ -29,7 +29,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 /**
- * JSON Web Token (JWE) Editor.
+ * JSON Web Encryption (JWE) Editor.
  * <p>
  * Display decoded JWE components.
  * @author Dennis Detering

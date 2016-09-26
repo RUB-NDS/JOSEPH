@@ -147,7 +147,7 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
                     isHttps = true;
                 }
 
-                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest(), "JWT");
+                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest(), "JWS");
 
             }
         });
