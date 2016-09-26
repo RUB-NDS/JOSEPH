@@ -209,5 +209,20 @@ public class DecoderTest {
         assertArrayEquals(output, Decoder.hexToBytes(input));
     }
 
+    @Test
+    public void testGetValueByBase64String() {
+        String input = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTkyQ0JDLUhTMzg0In0";
+
+        assertEquals("RSA1_5", Decoder.getValueByBase64String(input, "alg"));
+        assertEquals("A192CBC-HS384", Decoder.getValueByBase64String(input, "enc"));
+        assertEquals("", Decoder.getValueByBase64String(input, "invalid"));
+
+        String input2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
+
+        assertEquals("HS256", Decoder.getValueByBase64String(input2, "alg"));
+        assertEquals("JWT", Decoder.getValueByBase64String(input2, "typ"));
+        assertEquals("", Decoder.getValueByBase64String(input2, "enc"));
+    }
+
 
 }

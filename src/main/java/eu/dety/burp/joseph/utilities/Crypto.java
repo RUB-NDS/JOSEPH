@@ -29,10 +29,20 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Help functions to perform cryptographic operations.
+ * @author Dennis Detering
+ * @version 1.0
+ */
 public class Crypto {
-
     public static final List<String> JWS_HMAC_ALGS = Arrays.asList("HS256", "HS384", "HS512");
 
+    /**
+     * Get MAC algorithm name for Java by JOSE algorithm name
+     * @param algorithm Algorithm name as string
+     * @param fallback Fallback return value if none of the defined match
+     * @return MAC algorithm name as used by Java
+     */
     public static String getMacAlgorithmByJoseAlgorithm(String algorithm, String fallback) {
         switch (algorithm) {
             case "HS256":
@@ -46,6 +56,59 @@ public class Crypto {
         }
     }
 
+    /**
+     * Get key length needed for JOSE operation by JOSE algorithm name
+     * @param algorithm Algorithm name as string
+     * @param fallback Fallback return value if none of the defined match
+     * @return Key length for JOSE operation
+     */
+    public static int getJoseKeyLengthByJoseAlgorithm(String algorithm, int fallback) {
+        switch (algorithm) {
+            case "A128GCM":
+                return 16;
+            case "A192GCM":
+                return 24;
+            case "A128CBC-HS256":
+            case "A256GCM":
+                return 32;
+            case "A192CBC-HS384":
+                return 48;
+            case "A256CBC-HS512":
+                return 64;
+            default:
+                return fallback;
+        }
+    }
+
+    /**
+     * Get key length needed for AES operation by JOSE algorithm name
+     * @param algorithm Algorithm name as string
+     * @param fallback Fallback return value if none of the defined match
+     * @return Key length for AES operation
+     */
+    public static int getAesKeyLengthByJoseAlgorithm(String algorithm, int fallback) {
+        switch (algorithm) {
+            case "A128GCM":
+            case "A128CBC-HS256":
+                return 16;
+            case "A192GCM":
+            case "A192CBC-HS384":
+                return 24;
+            case "A256GCM":
+            case "A256CBC-HS512":
+                return 32;
+            default:
+                return fallback;
+        }
+    }
+
+    /**
+     * Generate MAC
+     * @param algorithm Algorithm name as string
+     * @param key Symmetric key as byte array
+     * @param message Input message as byte array
+     * @return Key length for JOSE operation
+     */
     public static byte[] generateMac(String algorithm, byte[] key, byte[] message) {
         try {
             Mac mac = Mac.getInstance(algorithm);
@@ -58,42 +121,47 @@ public class Crypto {
         }
     }
 
+    /**
+     * Decrypt AES ciphertext
+     * @param header JOSE header
+     * @param key Symmetric key as byte array
+     * @param iv Initialization Vector as byte array
+     * @param cipherBytes Ciphertext as byte array
+     * @param authTag Authentication tag as byte array
+     * @throws DecryptionFailedException
+     * @return Decrypted message as byte array
+     */
     public static byte[] decryptAES(String header, byte[] key, byte[] iv, byte[] cipherBytes, byte[] authTag) throws DecryptionFailedException {
         byte[] decryptedContent;
 
         String encAlg = Decoder.getValueByBase64String(header, "enc").toUpperCase();
 
-        int keyLen;
+        int keyLen = getAesKeyLengthByJoseAlgorithm(encAlg, 32);
         String cipherInstance;
 
         switch (encAlg) {
             case "A128CBC-HS256":
-                keyLen = 16;
                 cipherInstance = "AES/CBC/PKCS5Padding";
                 break;
             case "A192CBC-HS384":
-                keyLen = 24;
                 cipherInstance = "AES/CBC/PKCS5Padding";
                 break;
             case "A256CBC-HS512":
-                keyLen = 32;
                 cipherInstance = "AES/CBC/PKCS5Padding";
                 break;
             case "A128GCM":
-                keyLen = 16;
                 cipherInstance = "AES/GCM/NoPadding";
                 break;
             case "A192GCM":
-                keyLen = 24;
                 cipherInstance = "AES/GCM/NoPadding";
                 break;
             case "A256GCM":
-                keyLen = 32;
                 cipherInstance = "AES/GCM/NoPadding";
                 break;
             default:
                 throw new DecryptionFailedException("Could not determine encryption algorithm or it is not supported");
         }
+
 
         byte[] keyBytes = Arrays.copyOfRange(key, key.length - keyLen, key.length);
 
