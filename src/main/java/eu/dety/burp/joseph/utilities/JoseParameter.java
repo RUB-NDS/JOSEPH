@@ -57,7 +57,7 @@ public class JoseParameter {
     public JoseParameter(String input) throws InvalidJoseValueException {
         this.originType = OriginType.DIRECT;
 
-        if (Finder.checkJwtPattern(input)) {
+        if (Finder.checkJwsPattern(input)) {
             this.joseType = JoseType.JWS;
         } else if (Finder.checkJwePattern(input)) {
             this.joseType = JoseType.JWE;
