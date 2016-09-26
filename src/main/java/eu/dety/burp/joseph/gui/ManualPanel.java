@@ -20,6 +20,7 @@ package eu.dety.burp.joseph.gui;
 
 import burp.IBurpExtenderCallbacks;
 import eu.dety.burp.joseph.attacks.AttackLoader;
+import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.utilities.*;
 import org.json.JSONObject;
@@ -49,6 +50,12 @@ public class ManualPanel extends javax.swing.JPanel {
         registeredAttacks = AttackLoader.getRegisteredAttackInstances(callbacks);
 
         initComponents();
+
+        jScrollPane2.setVisible(false);
+        outputValue.setVisible(false);
+        attackList.setVisible(false);
+        loadAttackButton.setVisible(false);
+        updateButton.setVisible(false);
     }
 
 
@@ -84,7 +91,10 @@ public class ManualPanel extends javax.swing.JPanel {
 
         payloadSelectionListModel.removeAllElements();
 
-        updateButton.setEnabled(false);
+        jScrollPane2.setVisible(false);
+        outputValue.setVisible(false);
+        outputValue.setText("");
+        updateButton.setVisible(false);
     }
 
     /**
@@ -104,6 +114,8 @@ public class ManualPanel extends javax.swing.JPanel {
         loadAttackButton = new javax.swing.JButton();
         extraPanel = new javax.swing.JPanel();
         updateButton = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        outputValue = new javax.swing.JTextArea();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("JOSEPH"); // NOI18N
         inputLabel.setText(bundle.getString("JOSE_INPUT_LABEL")); // NOI18N
@@ -137,12 +149,16 @@ public class ManualPanel extends javax.swing.JPanel {
         extraPanel.setLayout(new java.awt.GridBagLayout());
 
         updateButton.setText(bundle.getString("UPDATEBUTTON")); // NOI18N
-        updateButton.setEnabled(false);
         updateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updateButtonActionPerformed(evt);
             }
         });
+
+        outputValue.setEditable(false);
+        outputValue.setColumns(20);
+        outputValue.setRows(5);
+        jScrollPane2.setViewportView(outputValue);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -162,7 +178,8 @@ public class ManualPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(loadAttackButton))
                             .addComponent(updateButton))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -182,7 +199,9 @@ public class ManualPanel extends javax.swing.JPanel {
                 .addComponent(extraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(updateButton)
-                .addContainerGap(198, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(96, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -227,7 +246,8 @@ public class ManualPanel extends javax.swing.JPanel {
         extraPanel.repaint();
 
         // Enable attack button
-        updateButton.setEnabled(true);
+        updateButton.setVisible(true);
+
     }//GEN-LAST:event_loadAttackButtonActionPerformed
 
     private void loadJoseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadJoseButtonActionPerformed
@@ -245,11 +265,47 @@ public class ManualPanel extends javax.swing.JPanel {
             }
 
             updateAttackList();
+
+            attackList.setVisible(true);
+            loadAttackButton.setVisible(true);
         }
     }//GEN-LAST:event_loadJoseButtonActionPerformed
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
         loggerInstance.log(getClass(), "Update button clicked, modify request!", Logger.LogLevel.DEBUG);
+
+        if (joseValue.getJoseType().equals(JoseParameter.JoseType.JWS)) {
+            String[] components = joseValue.getComponents();
+
+            String header = Decoder.getDecoded(components[0]);
+            String payload = Decoder.getDecoded(components[1]);
+
+            try {
+                loggerInstance.log(selectedAttack.getClass(), "Selected payload: " + payloadSelectionListModel.getSelectedItem(), Logger.LogLevel.DEBUG);
+                HashMap<String, String> updatedValues = selectedAttack.updateValuesByPayload(payloads.get(payloadSelectionListModel.getSelectedItem()), header, payload);
+
+                loggerInstance.log(selectedAttack.getClass(), "Values: " + updatedValues.get("header") + "; " + updatedValues.get("payload") + "; " + updatedValues.get("signature"), Logger.LogLevel.DEBUG);
+
+                String output = Decoder.concatComponents(new String[] {
+                        Decoder.base64UrlEncode(updatedValues.get("header").getBytes()),
+                        Decoder.base64UrlEncode(updatedValues.get("payload").getBytes()),
+                        Decoder.base64UrlEncode(updatedValues.get("signature").getBytes())
+                });
+
+                outputValue.setText(output);
+                jScrollPane2.setVisible(true);
+                outputValue.setVisible(true);
+
+                revalidate();
+                repaint();
+
+            } catch (AttackPreparationFailedException e) {
+                // Show error popup with exception message
+                JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), bundle.getString("ATTACK_PREPARATION_FAILED"), JOptionPane.ERROR_MESSAGE);
+                loggerInstance.log(selectedAttack.getClass(), e.getMessage(), Logger.LogLevel.ERROR);
+            }
+
+        }
 
     }//GEN-LAST:event_updateButtonActionPerformed
 
@@ -260,8 +316,10 @@ public class ManualPanel extends javax.swing.JPanel {
     private javax.swing.JLabel inputLabel;
     private javax.swing.JTextArea inputValue;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton loadAttackButton;
     private javax.swing.JButton loadJoseButton;
+    private javax.swing.JTextArea outputValue;
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
 }

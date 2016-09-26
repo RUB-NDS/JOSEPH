@@ -154,6 +154,14 @@ public class JoseParameter {
     }
 
     /**
+     * Get the components of the jose value
+     * @return Jose value components as string array
+     */
+    public String[] getComponents() {
+        return Decoder.getComponents(this.getJoseValue());
+    }
+
+    /**
      * Get the {@link IParameter} type
      * @return The parameter type as Byte
      */
