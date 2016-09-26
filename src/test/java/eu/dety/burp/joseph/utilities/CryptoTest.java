@@ -22,6 +22,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class CryptoTest {
 
@@ -31,6 +32,28 @@ public class CryptoTest {
         byte[] expected = new byte[] {(byte) 38, (byte) 136, (byte) 117, (byte) 71, (byte) 103, (byte) 88, (byte) 206, (byte) 68, (byte) 111, (byte) 14, (byte) 74, (byte) 175, (byte) 222, (byte) 204, (byte) 160, (byte) 155, (byte) 150, (byte) 50, (byte) 43, (byte) 193, (byte) 162, (byte) 225, (byte) 40, (byte) 89, (byte) 169, (byte) 184, (byte) 74, (byte) 218, (byte) 12, (byte) 92, (byte) 179, (byte) 101};
 
         assertArrayEquals(expected, Crypto.generateMac("HmacSHA256", "secret".getBytes(), message));
+    }
+
+    @Test
+    public void testGetAesKeyLengthByJoseAlgorithmReturnsCorrectKeyLength() {
+        assertEquals(16, Crypto.getAesKeyLengthByJoseAlgorithm("A128GCM", 100));
+        assertEquals(16, Crypto.getAesKeyLengthByJoseAlgorithm("A128CBC-HS256", 100));
+        assertEquals(24, Crypto.getAesKeyLengthByJoseAlgorithm("A192GCM", 100));
+        assertEquals(24, Crypto.getAesKeyLengthByJoseAlgorithm("A192CBC-HS384", 100));
+        assertEquals(32, Crypto.getAesKeyLengthByJoseAlgorithm("A256GCM", 100));
+        assertEquals(32, Crypto.getAesKeyLengthByJoseAlgorithm("A256CBC-HS512", 100));
+        assertEquals(100, Crypto.getAesKeyLengthByJoseAlgorithm("InvalidAlg", 100));
+    }
+
+    @Test
+    public void testGetJoseKeyLengthByJoseAlgorithmReturnsCorrectKeyLength() {
+        assertEquals(16, Crypto.getJoseKeyLengthByJoseAlgorithm("A128GCM", 100));
+        assertEquals(32, Crypto.getJoseKeyLengthByJoseAlgorithm("A128CBC-HS256", 100));
+        assertEquals(24, Crypto.getJoseKeyLengthByJoseAlgorithm("A192GCM", 100));
+        assertEquals(48, Crypto.getJoseKeyLengthByJoseAlgorithm("A192CBC-HS384", 100));
+        assertEquals(32, Crypto.getJoseKeyLengthByJoseAlgorithm("A256GCM", 100));
+        assertEquals(64, Crypto.getJoseKeyLengthByJoseAlgorithm("A256CBC-HS512", 100));
+        assertEquals(100, Crypto.getJoseKeyLengthByJoseAlgorithm("InvalidAlg", 100));
     }
 
     @Test
