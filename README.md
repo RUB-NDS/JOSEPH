@@ -1,4 +1,4 @@
-# JOSEPH
+# ![JOSEPH](http://img.dety.eu/joseph.png)
 ![licence](https://img.shields.io/badge/License-GPLv2-brightgreen.svg)
 [![release](https://img.shields.io/badge/Release-v1.0.0-blue.svg)](https://github.com/RUB-NDS/JOSEPH/releases)
 ![status](https://img.shields.io/badge/Status-beta-yellow.svg)
