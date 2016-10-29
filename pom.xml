@@ -74,6 +74,21 @@
             </resource>
         </resources>
         <plugins>
+            <!-- Copy dependencies to lib folder -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Use a Licence HEADER -->
             <plugin>
                 <groupId>com.mycila</groupId>
