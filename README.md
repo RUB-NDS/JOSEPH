@@ -11,6 +11,14 @@ JOSEPH is a Burp Suite extension and has been developed as part of a master thes
 
 
 ## Build
+To compile the JOSEPH extension from source, it is necessary to have Apache Maven installed and to run the following command:
 ```bash
 $ mvn clean package
 ```
+
+To skip the (unit) tests, use the following command:
+```bash
+$ mvn clean package -DskipTests
+```
+
+### Troubleshooting
