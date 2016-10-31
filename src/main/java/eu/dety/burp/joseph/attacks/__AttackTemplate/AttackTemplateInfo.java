@@ -146,7 +146,7 @@ public class AttackTemplateInfo implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload) {
+    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload, String signature) {
         HashMap<String, String> result = new HashMap<>();
 
         /*

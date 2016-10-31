@@ -302,7 +302,7 @@ public class KeyConfusionInfo implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload) throws AttackPreparationFailedException {
+    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload, String signature) throws AttackPreparationFailedException {
         String publicKeyValue = publicKey.getText();
         int publicKeyFormat = publicKeySelection.getSelectedIndex();
 

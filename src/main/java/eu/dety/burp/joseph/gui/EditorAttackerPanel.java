@@ -49,6 +49,7 @@ public class EditorAttackerPanel extends JPanel {
 
     private String header = "";
     private String payload = "";
+    private String signature = "";
 
     /**
      * AttackerPanel constructor
@@ -228,9 +229,10 @@ public class EditorAttackerPanel extends JPanel {
 
         this.header = jwsEditorReference.getHeader();
         this.payload = jwsEditorReference.getPayload();
+        this.signature = jwsEditorReference.getSignature();
 
         try {
-            HashMap<String, String> updatedValues = selectedAttack.updateValuesByPayload(payloads.get(payloadSelectionListModel.getSelectedItem()), this.header, this.payload);
+            HashMap<String, String> updatedValues = selectedAttack.updateValuesByPayload(payloads.get(payloadSelectionListModel.getSelectedItem()), this.header, this.payload, this.signature);
             this.jwsEditorReference.updateSourceViewer(updatedValues.get("header"), updatedValues.get("payload"), updatedValues.get("signature"));
 
             loggerInstance.log(selectedAttack.getClass(), "Selected payload: " + payloadSelectionListModel.getSelectedItem(), Logger.LogLevel.DEBUG);
