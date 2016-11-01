@@ -279,10 +279,11 @@ public class ManualPanel extends javax.swing.JPanel {
 
             String header = Decoder.getDecoded(components[0]);
             String payload = Decoder.getDecoded(components[1]);
+            String signature = components[2];
 
             try {
                 loggerInstance.log(selectedAttack.getClass(), "Selected payload: " + payloadSelectionListModel.getSelectedItem(), Logger.LogLevel.DEBUG);
-                HashMap<String, String> updatedValues = selectedAttack.updateValuesByPayload(payloads.get(payloadSelectionListModel.getSelectedItem()), header, payload);
+                HashMap<String, String> updatedValues = selectedAttack.updateValuesByPayload(payloads.get(payloadSelectionListModel.getSelectedItem()), header, payload, signature);
 
                 loggerInstance.log(selectedAttack.getClass(), "Values: " + updatedValues.get("header") + "; " + updatedValues.get("payload") + "; " + updatedValues.get("signature"), Logger.LogLevel.DEBUG);
 
