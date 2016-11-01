@@ -25,7 +25,7 @@ JOSEPH has been tested with Java 1.7 and 1.8.
 
 ### Troubleshooting
 
-If the _Oracle's JDK_ is installed, the used Bouncy Castle JCE provider dependency is not allowed to be loaded from within a newly compiled fat-JAR, as it breaks the needed signature integrity check.
+If the _Oracle JDK_ is installed, the used Bouncy Castle JCE provider dependency is not allowed to be loaded from within a newly compiled fat-JAR, as it breaks the needed signature integrity check.
 
 When performing the Bleichenbacher attack without Bouncy Castle being correctly loaded, the following error will occur:
 ```
