@@ -48,7 +48,7 @@ public class ConverterTest {
         List<PublicKey> publicKeyList = Converter.getRsaPublicKeysByJwk(jwk);
 
         assertNotNull(publicKeyList);
-        assertEquals(publicKeyList.size(), 1);
+        assertEquals(1, publicKeyList.size());
         assertEquals(publicKey, publicKeyList.get(0));
     }
 

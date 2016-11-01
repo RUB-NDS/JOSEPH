@@ -74,6 +74,15 @@ public class PreferencesPanel extends javax.swing.JPanel {
                 loggerInstance.log(getClass(), "Config file not found! Creating it...", Logger.LogLevel.DEBUG);
                 configFile.createNewFile();
                 saveConfig();
+
+                // Update UI elements
+                logLevelCombo.setSelectedIndex(getLogLevel());
+                highlightCheckbox.setSelected(getHighlighting());
+                parameterNamesListModel.clear();
+                for (String param : defaultParameterNames) {
+                    parameterNamesListModel.addElement(param);
+                }
+
             } else {
                 loggerInstance.log(getClass(), "Loading config file.", Logger.LogLevel.DEBUG);
                 loadConfig();

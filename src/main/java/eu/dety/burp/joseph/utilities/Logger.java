@@ -83,7 +83,7 @@ public class Logger {
         outputStream = (Objects.equals(logType, LogLevel.ERROR)) ? stderr : stdout;
 
         // Check if message should be logged based on current log level preference
-        if (logType.ordinal() <= PreferencesPanel.getLogLevel()) {
+        if (outputStream != null && logType.ordinal() <= PreferencesPanel.getLogLevel()) {
             String logTypeName = logType.name();
 
             // Print log message
