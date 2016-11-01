@@ -305,10 +305,10 @@ public class ManualPanel extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), bundle.getString("ATTACK_PREPARATION_FAILED"), JOptionPane.ERROR_MESSAGE);
                 loggerInstance.log(selectedAttack.getClass(), e.getMessage(), Logger.LogLevel.ERROR);
             }
+        } else {
+            JOptionPane.showMessageDialog(new JFrame(), bundle.getString("NOT_YET_SUPPORTED_MSG"), bundle.getString("NOT_YET_SUPPORTED"), JOptionPane.ERROR_MESSAGE);
+            loggerInstance.log(selectedAttack.getClass(), bundle.getString("NOT_YET_SUPPORTED_MSG"), Logger.LogLevel.ERROR);
         }
-
-        JOptionPane.showMessageDialog(new JFrame(), bundle.getString("NOT_YET_SUPPORTED_MSG"), bundle.getString("NOT_YET_SUPPORTED"), JOptionPane.ERROR_MESSAGE);
-        loggerInstance.log(selectedAttack.getClass(), bundle.getString("NOT_YET_SUPPORTED_MSG"), Logger.LogLevel.ERROR);
 
     }//GEN-LAST:event_updateButtonActionPerformed
 
