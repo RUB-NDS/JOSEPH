@@ -206,6 +206,14 @@ public class JwsEditor implements IMessageEditorTabFactory {
         public String getPayload() {
             return helpers.bytesToString(sourceViewerPayload.getText());
         }
+
+        /**
+         * Get the signature value from sourceViewerSignature editor as string
+         * @return Signature base64url string
+         */
+        public String getSignature() {
+            return helpers.bytesToString(sourceViewerSignature.getText());
+        }
     }
 }
 

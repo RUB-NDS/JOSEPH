@@ -329,6 +329,7 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void registerMenuItem(String s, IMenuItemHandler iMenuItemHandler) {
 
     }

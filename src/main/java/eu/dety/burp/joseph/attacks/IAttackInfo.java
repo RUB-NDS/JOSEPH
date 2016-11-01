@@ -102,17 +102,17 @@ public interface IAttackInfo {
      * @return HashMap with PayloadType and explaining name
      */
     HashMap<String, ? extends Enum> getPayloadList();
-    // TODO: Other way round unfortunately not working: issues with ComboBox in EditorAttackPanel
 
     /**
      * Get HashMap with modified header, payload, signature values
      * @param payloadType The payload type identifier
      * @param header The header JSON string
      * @param payload The payload JSON string
+     * @param signature The signature base64url string
      * @throws AttackPreparationFailedException if error occurs during preparation step
      * @return HashMap with modified header, payload, signature values
      */
-    HashMap<String, String> updateValuesByPayload(Enum payloadType, String header, String payload) throws AttackPreparationFailedException;
+    HashMap<String, String> updateValuesByPayload(Enum payloadType, String header, String payload, String signature) throws AttackPreparationFailedException;
 
 }
 

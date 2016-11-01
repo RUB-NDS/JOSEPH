@@ -58,6 +58,11 @@ public class AttackLoader {
         registeredAttackInstances.put(bleichenbacherPkcs1Info.getName(), bleichenbacherPkcs1Info);
         loggerInstance.log(AttackLoader.class, "Attack registered: Bleichenbacher PKCS#1 v1.5", Logger.LogLevel.INFO);
 
+        /* Attack Template Attack */
+        // AttackTemplateInfo attackTemplateInfo = new AttackTemplateInfo(callbacks);
+        // registeredAttackInstances.put(attackTemplateInfo.getName(), attackTemplateInfo);
+        // loggerInstance.log(AttackLoader.class, "Attack registered: Attack Template", Logger.LogLevel.INFO);
+
         return registeredAttackInstances;
     }
 
