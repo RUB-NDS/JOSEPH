@@ -2,6 +2,7 @@
 ![licence](https://img.shields.io/badge/License-GPLv2-brightgreen.svg)
 [![release](https://img.shields.io/badge/Release-v1.0.0-blue.svg)](https://github.com/RUB-NDS/JOSEPH/releases)
 ![status](https://img.shields.io/badge/Status-beta-yellow.svg)
+[![travis](https://travis-ci.org/RUB-NDS/JOSEPH.svg?branch=master)](https://travis-ci.org/RUB-NDS/JOSEPH)
 
 ## JavaScript Object Signing and Encryption Pentesting Helper
 
