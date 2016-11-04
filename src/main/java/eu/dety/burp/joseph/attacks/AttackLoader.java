@@ -36,9 +36,11 @@ public class AttackLoader {
 
     /**
      * Get new list of new instances of all registered attacks
-     *
-     * @param callbacks {@link IBurpExtenderCallbacks} instance
-     * @return HashMap with the name of the attack as string and a new instance of the attack's info class
+     * 
+     * @param callbacks
+     *            {@link IBurpExtenderCallbacks} instance
+     * @return HashMap with the name of the attack as string and a new instance of the attack's info
+     *         class
      */
     public static HashMap<String, IAttackInfo> getRegisteredAttackInstances(IBurpExtenderCallbacks callbacks) {
         HashMap<String, IAttackInfo> registeredAttackInstances = new HashMap<>();
@@ -59,12 +61,14 @@ public class AttackLoader {
         loggerInstance.log(AttackLoader.class, "Attack registered: Bleichenbacher PKCS#1 v1.5", Logger.LogLevel.INFO);
 
         /* Attack Template Attack */
-        // AttackTemplateInfo attackTemplateInfo = new AttackTemplateInfo(callbacks);
-        // registeredAttackInstances.put(attackTemplateInfo.getName(), attackTemplateInfo);
-        // loggerInstance.log(AttackLoader.class, "Attack registered: Attack Template", Logger.LogLevel.INFO);
+        // AttackTemplateInfo attackTemplateInfo = new
+        // AttackTemplateInfo(callbacks);
+        // registeredAttackInstances.put(attackTemplateInfo.getName(),
+        // attackTemplateInfo);
+        // loggerInstance.log(AttackLoader.class,
+        // "Attack registered: Attack Template", Logger.LogLevel.INFO);
 
         return registeredAttackInstances;
     }
 
 }
-

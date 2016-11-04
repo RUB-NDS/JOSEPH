@@ -67,7 +67,9 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     private byte[] encryptedKey;
     private int amountRequests = 0;
 
-    BleichenbacherPkcs1DecryptionAttackExecutor(BleichenbacherPkcs1DecryptionAttackPanel panelReference, IBurpExtenderCallbacks callbacks, RSAPublicKey pubKey, IHttpRequestResponse requestResponse, JoseParameter parameter, BleichenbacherPkcs1Oracle oracle, boolean msgIsPkcs) {
+    BleichenbacherPkcs1DecryptionAttackExecutor(BleichenbacherPkcs1DecryptionAttackPanel panelReference,
+            IBurpExtenderCallbacks callbacks, RSAPublicKey pubKey, IHttpRequestResponse requestResponse,
+            JoseParameter parameter, BleichenbacherPkcs1Oracle oracle, boolean msgIsPkcs) {
         this.panelReference = panelReference;
         this.requestResponse = requestResponse;
         this.parameter = parameter;
@@ -109,10 +111,12 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         loggerInstance.log(getClass(), "Step 1: Blinding", Logger.LogLevel.INFO);
 
         if (this.msgIsPkcs) {
-            loggerInstance.log(getClass(), "Step skipped --> " + "Message is considered as PKCS compliant.", Logger.LogLevel.INFO);
+            loggerInstance.log(getClass(), "Step skipped --> " + "Message is considered as PKCS compliant.",
+                    Logger.LogLevel.INFO);
             this.s0 = BigInteger.ONE;
             this.c0 = new BigInteger(1, this.encryptedKey);
-            this.m = new Interval[]{new Interval(BigInteger.valueOf(2).multiply(this.bigB), (BigInteger.valueOf(3).multiply(this.bigB)).subtract(BigInteger.ONE))};
+            this.m = new Interval[] { new Interval(BigInteger.valueOf(2).multiply(this.bigB),
+                    (BigInteger.valueOf(3).multiply(this.bigB)).subtract(BigInteger.ONE)) };
         } else {
             stepOne();
         }
@@ -122,7 +126,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         while (!solutionFound) {
             // Check if user has cancelled the worker
             if (isCancelled()) {
-                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user", Logger.LogLevel.INFO);
+                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user",
+                        Logger.LogLevel.INFO);
                 return 0;
             }
 
@@ -173,7 +178,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         do {
             // Check if user has cancelled the worker
             if (isCancelled()) {
-                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user", Logger.LogLevel.INFO);
+                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user",
+                        Logger.LogLevel.INFO);
                 return;
             }
 
@@ -196,7 +202,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         this.c0 = new BigInteger(1, send);
         this.s0 = this.si;
         // mi = {[2B,3B-1]}
-        this.m = new Interval[]{new Interval(BigInteger.valueOf(2).multiply(bigB), (BigInteger.valueOf(3).multiply(bigB)).subtract(BigInteger.ONE))};
+        this.m = new Interval[] { new Interval(BigInteger.valueOf(2).multiply(bigB),
+                (BigInteger.valueOf(3).multiply(bigB)).subtract(BigInteger.ONE)) };
 
         loggerInstance.log(getClass(), "Found s0 : " + this.si, Logger.LogLevel.INFO);
     }
@@ -240,7 +247,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         do {
             // Check if user has cancelled the worker
             if (isCancelled()) {
-                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user", Logger.LogLevel.INFO);
+                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user",
+                        Logger.LogLevel.INFO);
                 return;
             }
 
@@ -259,21 +267,23 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             updateAmountRequest();
 
         } while (oracle.getResult(response.getResponse()) != BleichenbacherPkcs1Oracle.Result.VALID);
-        loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()), Logger.LogLevel.DEBUG);
+        loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()),
+                Logger.LogLevel.DEBUG);
     }
-
 
     private void stepTwoB() throws Exception {
         byte[] send;
         IHttpRequestResponse response;
         byte[] request;
 
-        loggerInstance.log(getClass(), "Step 2b: Searching with more than" + " one interval left", Logger.LogLevel.INFO);
+        loggerInstance
+                .log(getClass(), "Step 2b: Searching with more than" + " one interval left", Logger.LogLevel.INFO);
 
         do {
             // Check if user has cancelled the worker
             if (isCancelled()) {
-                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user", Logger.LogLevel.INFO);
+                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user",
+                        Logger.LogLevel.INFO);
                 return;
             }
 
@@ -292,7 +302,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             updateAmountRequest();
 
         } while (oracle.getResult(response.getResponse()) != BleichenbacherPkcs1Oracle.Result.VALID);
-        loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()), Logger.LogLevel.DEBUG);
+        loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()),
+                Logger.LogLevel.DEBUG);
     }
 
     private void stepTwoC() throws Exception {
@@ -320,7 +331,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         do {
             // Check if user has cancelled the worker
             if (isCancelled()) {
-                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user", Logger.LogLevel.INFO);
+                loggerInstance.log(getClass(), "Decryption Attack Executor Worker cancelled by user",
+                        Logger.LogLevel.INFO);
                 return;
             }
 
@@ -347,10 +359,12 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             updateAmountRequest();
 
         } while (oracle.getResult(response.getResponse()) != BleichenbacherPkcs1Oracle.Result.VALID);
-        loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()), Logger.LogLevel.DEBUG);
+        loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()),
+                Logger.LogLevel.DEBUG);
     }
 
-    private BigInteger step2cComputeLowerBound(final BigInteger r, final BigInteger modulus, final BigInteger upperIntervalBound) {
+    private BigInteger step2cComputeLowerBound(final BigInteger r, final BigInteger modulus,
+            final BigInteger upperIntervalBound) {
         BigInteger lowerBound = BigInteger.valueOf(2).multiply(this.bigB);
         lowerBound = lowerBound.add(r.multiply(modulus));
         lowerBound = lowerBound.divide(upperIntervalBound);
@@ -358,7 +372,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         return lowerBound;
     }
 
-    private BigInteger step2cComputeUpperBound(final BigInteger r, final BigInteger modulus, final BigInteger lowerIntervalBound) {
+    private BigInteger step2cComputeUpperBound(final BigInteger r, final BigInteger modulus,
+            final BigInteger lowerIntervalBound) {
         BigInteger upperBound = BigInteger.valueOf(3).multiply(this.bigB);
         upperBound = upperBound.add(r.multiply(modulus));
         upperBound = upperBound.divide(lowerIntervalBound);
@@ -422,7 +437,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         this.m = ms.toArray(new Interval[ms.size()]);
     }
 
-    private BigInteger step3ComputeUpperBound(final BigInteger s, final BigInteger modulus, final BigInteger upperIntervalBound) {
+    private BigInteger step3ComputeUpperBound(final BigInteger s, final BigInteger modulus,
+            final BigInteger upperIntervalBound) {
         BigInteger upperBound = upperIntervalBound.multiply(s);
         upperBound = upperBound.subtract(BigInteger.valueOf(2).multiply(bigB));
         // ceil
@@ -436,7 +452,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         return upperBound;
     }
 
-    private BigInteger step3ComputeLowerBound(final BigInteger s, final BigInteger modulus, final BigInteger lowerIntervalBound) {
+    private BigInteger step3ComputeLowerBound(final BigInteger s, final BigInteger modulus,
+            final BigInteger lowerIntervalBound) {
         BigInteger lowerBound = lowerIntervalBound.multiply(s);
         lowerBound = lowerBound.subtract(BigInteger.valueOf(3).multiply(this.bigB));
         lowerBound = lowerBound.add(BigInteger.ONE);
@@ -444,7 +461,6 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
         return lowerBound;
     }
-
 
     private boolean stepFour() {
         boolean resultFound = false;
@@ -465,8 +481,10 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     }
 
     /**
-     * @param originalMessage original message to be changed
-     * @param si factor
+     * @param originalMessage
+     *            original message to be changed
+     * @param si
+     *            factor
      * @return Prepared message as byte array
      */
     private byte[] prepareMsg(final BigInteger originalMessage, final BigInteger si) {
@@ -488,10 +506,13 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
     /**
      * Corrects the length of a byte array to a multiple of a passed blockSize.
-     *
-     * @param array Array which size should be corrected
-     * @param blockSize Blocksize - the resulting array length will be a multiple of it
-     * @param removeSignByte If set to TRUE leading sign bytes will be removed
+     * 
+     * @param array
+     *            Array which size should be corrected
+     * @param blockSize
+     *            Blocksize - the resulting array length will be a multiple of it
+     * @param removeSignByte
+     *            If set to TRUE leading sign bytes will be removed
      * @return Size corrected array (maybe padded or stripped the sign byte)
      */
     private static byte[] correctSize(final byte[] array, final int blockSize, final boolean removeSignByte) {
@@ -516,6 +537,5 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
         return result;
     }
-
 
 }

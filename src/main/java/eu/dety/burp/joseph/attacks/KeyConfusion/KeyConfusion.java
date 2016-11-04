@@ -34,9 +34,8 @@ import java.util.concurrent.ExecutionException;
 /**
  * Key Confusion Attack
  * <p>
- * Perform a key confusion attack by
- * using an RSA public key as MAC secret.
- *
+ * Perform a key confusion attack by using an RSA public key as MAC secret.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -88,14 +87,16 @@ public class KeyConfusion implements IAttack {
         }
 
         @Override
-        // Add response to response list, add new entry to attacker result window table and update process bar
+        // Add response to response list, add new entry to attacker result
+        // window table and update process bar
         protected void done() {
 
             IHttpRequestResponse requestResponse;
             try {
                 requestResponse = get();
             } catch (InterruptedException | ExecutionException e) {
-                loggerInstance.log(KeyConfusion.class, "Failed to get request result: " + e.getMessage(), Logger.LogLevel.ERROR);
+                loggerInstance.log(KeyConfusion.class, "Failed to get request result: " + e.getMessage(),
+                        Logger.LogLevel.ERROR);
                 return;
             }
 
@@ -104,12 +105,14 @@ public class KeyConfusion implements IAttack {
 
             // Add new entry to result table
             String payload = "Alg: " + attackRequest.getAlgorithm() + " KeyLen: " + attackRequest.getKeyLength();
-            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), payload, requestResponse, callbacks));
+            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), payload,
+                    requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setProgressBarValue(responses.size(), attackInfo.getAmountRequests());
 
-            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
+            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()),
+                    Logger.LogLevel.DEBUG);
         }
 
     }

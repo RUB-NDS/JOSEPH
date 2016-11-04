@@ -27,6 +27,7 @@ import java.util.Arrays;
 
 /**
  * Help functions to encode and decode JOSE values from different representations.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -35,7 +36,9 @@ public class Decoder {
 
     /**
      * Safe URL encode a byte array to a String
-     * @param input byte array input
+     * 
+     * @param input
+     *            byte array input
      * @return base64url encoded string
      */
     public static String base64UrlEncode(byte[] input) {
@@ -44,7 +47,9 @@ public class Decoder {
 
     /**
      * Split JOSE value into its separate parts
-     * @param input Compact serialization JOSE value
+     * 
+     * @param input
+     *            Compact serialization JOSE value
      * @return string array with the separate parts
      */
     public static String[] getComponents(String input) {
@@ -53,8 +58,11 @@ public class Decoder {
 
     /**
      * Split JOSE value into its separate parts with fixed length
-     * @param input Compact serialization JOSE value
-     * @param assureLength Assure a certain length of the returned string array
+     * 
+     * @param input
+     *            Compact serialization JOSE value
+     * @param assureLength
+     *            Assure a certain length of the returned string array
      * @return string array with the separate fixed amount of parts
      */
     public static String[] getComponents(String input, int assureLength) {
@@ -75,7 +83,9 @@ public class Decoder {
 
     /**
      * Join separate parts to JOSE value
-     * @param input string array of JOSE values in compact serialization
+     * 
+     * @param input
+     *            string array of JOSE values in compact serialization
      * @return single string with concatenated components
      */
     public static String concatComponents(String[] input) {
@@ -84,7 +94,9 @@ public class Decoder {
 
     /**
      * Decode from base64url representation to string
-     * @param input base64url encoded value
+     * 
+     * @param input
+     *            base64url encoded value
      * @return string representation of the base64 decoded value
      */
     public static String getDecoded(String input) {
@@ -101,14 +113,17 @@ public class Decoder {
 
     /**
      * Decode from base64url representation to JSONObject
-     * @param input base64url encoded value
+     * 
+     * @param input
+     *            base64url encoded value
      * @return JSONObject of the parsed value
      */
     public static JSONObject getDecodedJson(String input) {
         String decoded = getDecoded(input);
         JSONObject output = new JSONObject();
 
-        if (decoded.equals("[ERROR]")) return output;
+        if (decoded.equals("[ERROR]"))
+            return output;
 
         try {
             output = new JSONObject(decoded);
@@ -122,8 +137,11 @@ public class Decoder {
 
     /**
      * Get value by base64url string input and key name
-     * @param input base64url string
-     * @param key Name of the key
+     * 
+     * @param input
+     *            base64url string
+     * @param key
+     *            Name of the key
      * @return String value according to given key or empty string
      */
     public static String getValueByBase64String(String input, String key) {
@@ -139,7 +157,9 @@ public class Decoder {
 
     /**
      * Decode from jose value to JSONObject array
-     * @param input base64url encoded jose value string
+     * 
+     * @param input
+     *            base64url encoded jose value string
      * @return JSONObject array of the parsed value
      */
     public static JSONObject[] getJsonComponents(String input) {
@@ -155,7 +175,9 @@ public class Decoder {
 
     /**
      * Encode from JSON string to base64url representation
-     * @param input JSON byte array
+     * 
+     * @param input
+     *            JSON byte array
      * @return base64url representation of the JSON string
      */
     public static String getEncoded(byte[] input) {
@@ -172,7 +194,9 @@ public class Decoder {
 
     /**
      * Encode from JSON string to base64url representation
-     * @param input JSON string
+     * 
+     * @param input
+     *            JSON string
      * @return base64url representation of the JSON string
      */
     public static String getEncoded(String input) {
@@ -187,11 +211,14 @@ public class Decoder {
         return output;
     }
 
-    private final static char[] HEXCHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private final static char[] HEXCHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
+            'f' };
 
     /**
      * Convert byte array to hex string
-     * @param bytes Byte array input
+     * 
+     * @param bytes
+     *            Byte array input
      * @return Hex string
      */
     public static String bytesToHex(final byte[] bytes) {
@@ -210,7 +237,9 @@ public class Decoder {
 
     /**
      * Convert hex string to byte array
-     * @param str Hex formatted string
+     * 
+     * @param str
+     *            Hex formatted string
      * @return Byte array
      */
     public static byte[] hexToBytes(String str) {
@@ -220,7 +249,8 @@ public class Decoder {
 
         try {
             for (int i = 0; i < len; i += 2) {
-                data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4) + Character.digit(str.charAt(i + 1), 16));
+                data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4) + Character
+                        .digit(str.charAt(i + 1), 16));
             }
         } catch (Exception e) {
             data = new byte[0];

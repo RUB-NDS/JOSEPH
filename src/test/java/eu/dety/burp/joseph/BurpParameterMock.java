@@ -21,9 +21,8 @@ package eu.dety.burp.joseph;
 import burp.IParameter;
 
 /**
- * Simple class implementing {@link IParameter}
- * to mock Burp's behavior for parameters
- * to be able to write according unit tests.
+ * Simple class implementing {@link IParameter} to mock Burp's behavior for parameters to be able to
+ * write according unit tests.
  */
 public class BurpParameterMock implements IParameter {
     private String name;

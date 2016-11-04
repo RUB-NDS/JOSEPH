@@ -1,4 +1,5 @@
 package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
+
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 
 /**
  * Base class for tables.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -36,7 +38,9 @@ public class BleichenbacherPkcs1Table extends JTable {
 
     /**
      * Create a new Table.
-     * @param tableModel The helper to organise the table entries.
+     * 
+     * @param tableModel
+     *            The helper to organise the table entries.
      */
     public BleichenbacherPkcs1Table(BleichenbacherPkcs1TableModel tableModel) {
         super(tableModel);
@@ -63,6 +67,7 @@ public class BleichenbacherPkcs1Table extends JTable {
 
     /**
      * Get the {@link BleichenbacherPkcs1TableModel}.
+     * 
      * @return The {@link BleichenbacherPkcs1TableModel} related to the table.
      */
     public BleichenbacherPkcs1TableModel getTableModel() {
@@ -71,6 +76,7 @@ public class BleichenbacherPkcs1Table extends JTable {
 
     /**
      * Get all {@link BleichenbacherPkcs1TableEntry}s
+     * 
      * @return Get a list of table entries
      */
     public ArrayList<BleichenbacherPkcs1TableEntry> getTableList() {
@@ -79,7 +85,9 @@ public class BleichenbacherPkcs1Table extends JTable {
 
     /**
      * Update the table the full history.
-     * @param entry {@link BleichenbacherPkcs1TableEntry}
+     * 
+     * @param entry
+     *            {@link BleichenbacherPkcs1TableEntry}
      */
     public void addEntry(BleichenbacherPkcs1TableEntry entry) {
         tableModel.addRow(entry);
@@ -87,7 +95,9 @@ public class BleichenbacherPkcs1Table extends JTable {
 
     /**
      * Get the {@link BleichenbacherPkcs1TableEntry} at specific index.
-     * @param index The index.
+     * 
+     * @param index
+     *            The index.
      * @return {@link BleichenbacherPkcs1TableEntry}
      */
     public BleichenbacherPkcs1TableEntry getEntry(int index) {
@@ -96,7 +106,9 @@ public class BleichenbacherPkcs1Table extends JTable {
 
     /**
      * Get the {@link BleichenbacherPkcs1TableEntry} by row index.
-     * @param index The row index.
+     * 
+     * @param index
+     *            The row index.
      * @return {@link BleichenbacherPkcs1TableEntry}
      */
     public BleichenbacherPkcs1TableEntry getEntryByRow(int index) {

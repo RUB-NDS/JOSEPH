@@ -36,10 +36,11 @@ import static org.junit.Assert.assertTrue;
 
 public class KeyConfusionTest {
 
-    private Object publickKeyValueJson = new JSONParser().parse("{ \"kty\": \"RSA\",\n"+
-            "\"use\": \"sig\",\n"+
-            "\"n\": \"AJHguTrOdP5WHE0LRn1xNh3wBX6yYC4JfsPPXYhUkcSJhrVkbUlimx35GWhAj7lFLqQOJipLiQqRTds2Gtgz3ZYjk_5PLveY3Y_-89PPFUj1oBkZ6toCdvlN8PWBbrxfhl2NxI8jYUU2nrJAx_PoyGHtnye9GseYbhH8On4kGsmt\",\n"+
-            "\"e\": \"AQAB\" }");
+    private Object publickKeyValueJson = new JSONParser()
+            .parse("{ \"kty\": \"RSA\",\n"
+                    + "\"use\": \"sig\",\n"
+                    + "\"n\": \"AJHguTrOdP5WHE0LRn1xNh3wBX6yYC4JfsPPXYhUkcSJhrVkbUlimx35GWhAj7lFLqQOJipLiQqRTds2Gtgz3ZYjk_5PLveY3Y_-89PPFUj1oBkZ6toCdvlN8PWBbrxfhl2NxI8jYUU2nrJAx_PoyGHtnye9GseYbhH8On4kGsmt\",\n"
+                    + "\"e\": \"AQAB\" }");
 
     public KeyConfusionTest() throws ParseException {
     }
@@ -96,19 +97,17 @@ public class KeyConfusionTest {
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
-        String expected = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
-                "-----END PUBLIC KEY-----\n";
+        String expected = "-----BEGIN PUBLIC KEY-----\n"
+                + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" + "vRrHmG4R/Dp+JBrJrQIDAQAB\n"
+                + "-----END PUBLIC KEY-----\n";
 
-        String input = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
-                "-----END PUBLIC KEY-----\n";
+        String input = "-----BEGIN PUBLIC KEY-----\n"
+                + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" + "vRrHmG4R/Dp+JBrJrQIDAQAB\n"
+                + "-----END PUBLIC KEY-----\n";
 
         assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.ORIGINAL, input));
     }
@@ -119,19 +118,18 @@ public class KeyConfusionTest {
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
-        String expected = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB\n";
+        String expected = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" + "vRrHmG4R/Dp+JBrJrQIDAQAB\n";
 
-        String input = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
-                "-----END PUBLIC KEY-----\n";
+        String input = "-----BEGIN PUBLIC KEY-----\n"
+                + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" + "vRrHmG4R/Dp+JBrJrQIDAQAB\n"
+                + "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.ORIGINAL_NO_HEADER_FOOTER, input));
+        assertEquals(expected,
+                keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.ORIGINAL_NO_HEADER_FOOTER, input));
     }
 
     @Test
@@ -140,21 +138,20 @@ public class KeyConfusionTest {
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
-        String expected = "-----BEGIN PUBLIC KEY-----" +
-                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB" +
-                "-----END PUBLIC KEY-----";
+        String expected = "-----BEGIN PUBLIC KEY-----"
+                + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n" + "vRrHmG4R/Dp+JBrJrQIDAQAB"
+                + "-----END PUBLIC KEY-----";
 
-        String input = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
-                "-----END PUBLIC KEY-----\n";
+        String input = "-----BEGIN PUBLIC KEY-----\n"
+                + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" + "vRrHmG4R/Dp+JBrJrQIDAQAB\n"
+                + "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.ORIGINAL_NO_LF, input));
+        assertEquals(expected,
+                keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.ORIGINAL_NO_LF, input));
     }
 
     @Test
@@ -163,19 +160,18 @@ public class KeyConfusionTest {
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
-        String expected = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB";
+        String expected = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n" + "vRrHmG4R/Dp+JBrJrQIDAQAB";
 
-        String input = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
-                "-----END PUBLIC KEY-----\n";
+        String input = "-----BEGIN PUBLIC KEY-----\n"
+                + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" + "vRrHmG4R/Dp+JBrJrQIDAQAB\n"
+                + "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.ORIGINAL_NO_HEADER_FOOTER_LF, input));
+        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(
+                KeyConfusionInfo.PayloadType.ORIGINAL_NO_HEADER_FOOTER_LF, input));
     }
 
     @Test
@@ -184,21 +180,19 @@ public class KeyConfusionTest {
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
-        String expected = "MIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n" +
-                "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n" +
-                "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n" +
-                "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n" +
-                "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n" +
-                "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" +
-                "swIDAQAB";
+        String expected = "MIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n"
+                + "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n"
+                + "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n"
+                + "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n"
+                + "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n"
+                + "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" + "swIDAQAB";
 
-        String input = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n" +
-                "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n" +
-                "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n" +
-                "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n" +
-                "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n" +
-                "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" +
-                "swIDAQAB";
+        String input = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n"
+                + "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n"
+                + "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n"
+                + "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n"
+                + "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n"
+                + "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" + "swIDAQAB";
 
         assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS1, input));
     }
@@ -209,25 +203,24 @@ public class KeyConfusionTest {
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
-        String expected = "MIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n" +
-                "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n" +
-                "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n" +
-                "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n" +
-                "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n" +
-                "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" +
-                "swIDAQAB";
+        String expected = "MIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n"
+                + "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n"
+                + "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n"
+                + "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n"
+                + "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n"
+                + "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" + "swIDAQAB";
 
-        String input = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n" +
-                "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n" +
-                "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n" +
-                "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n" +
-                "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n" +
-                "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" +
-                "swIDAQAB" +
-                "-----END PUBLIC KEY-----\n";
+        String input = "-----BEGIN PUBLIC KEY-----\n"
+                + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n"
+                + "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n"
+                + "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n"
+                + "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n"
+                + "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n"
+                + "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" + "swIDAQAB"
+                + "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS1_NO_HEADER_FOOTER, input));
+        assertEquals(expected,
+                keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS1_NO_HEADER_FOOTER, input));
     }
 
     @Test
@@ -236,25 +229,24 @@ public class KeyConfusionTest {
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
-        String expected = "MIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D" +
-                "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ" +
-                "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ" +
-                "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9" +
-                "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa" +
-                "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs" +
-                "swIDAQAB";
+        String expected = "MIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D"
+                + "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ"
+                + "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ"
+                + "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9"
+                + "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa"
+                + "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs" + "swIDAQAB";
 
-        String input = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n" +
-                "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n" +
-                "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n" +
-                "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n" +
-                "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n" +
-                "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" +
-                "swIDAQAB" +
-                "-----END PUBLIC KEY-----\n";
+        String input = "-----BEGIN PUBLIC KEY-----\n"
+                + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n"
+                + "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n"
+                + "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n"
+                + "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n"
+                + "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n"
+                + "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" + "swIDAQAB"
+                + "-----END PUBLIC KEY-----\n";
 
-        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS1_NO_HEADER_FOOTER_LF, input));
+        assertEquals(expected,
+                keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS1_NO_HEADER_FOOTER_LF, input));
     }
 
     @Test
@@ -263,44 +255,43 @@ public class KeyConfusionTest {
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
-        String expected = "MIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D" +
-                "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ" +
-                "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ" +
-                "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9" +
-                "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa" +
-                "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs" +
-                "swIDAQAB" +
-                "-----END PUBLIC KEY-----";
+        String expected = "MIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D"
+                + "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ"
+                + "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ"
+                + "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9"
+                + "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa"
+                + "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs" + "swIDAQAB"
+                + "-----END PUBLIC KEY-----";
 
-        String input = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n" +
-                "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n" +
-                "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n" +
-                "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n" +
-                "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n" +
-                "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" +
-                "swIDAQAB" +
-                "-----END PUBLIC KEY-----\n";
+        String input = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n"
+                + "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n"
+                + "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n"
+                + "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n"
+                + "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n"
+                + "TBAY6Rl4S6Am6SCymZYCYVh3zbVFdD0zx6CoJixUzsWwSb+toq9IbZ6HEWjtlJVs\n" + "swIDAQAB"
+                + "-----END PUBLIC KEY-----\n";
 
         assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS1_NO_LF, input));
     }
 
     @Test
-    public void checktransformKeyByPayloadReturnsCorrectValueForPkcs8WithHeadFootPayload() throws UnsupportedEncodingException {
+    public void checktransformKeyByPayloadReturnsCorrectValueForPkcs8WithHeadFootPayload()
+            throws UnsupportedEncodingException {
         IBurpExtenderCallbacks callbacks = new BurpExtenderCallbacksMock();
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
         List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
 
-        String expected = "-----BEGIN PUBLIC KEY-----" +
-                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB" +
-                "-----END PUBLIC KEY-----";
+        String expected = "-----BEGIN PUBLIC KEY-----"
+                + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n" + "vRrHmG4R/Dp+JBrJrQIDAQAB"
+                + "-----END PUBLIC KEY-----";
 
         for (PublicKey publicKey : publicKeys) {
-            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS8_WITH_HEADER_FOOTER, publicKey));
+            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(
+                    KeyConfusionInfo.PayloadType.PKCS8_WITH_HEADER_FOOTER, publicKey));
         }
     }
 
@@ -312,71 +303,74 @@ public class KeyConfusionTest {
 
         List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
 
-        String expected = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB";
+        String expected = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n" + "vRrHmG4R/Dp+JBrJrQIDAQAB";
 
         for (PublicKey publicKey : publicKeys) {
-            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS8, publicKey));
+            assertEquals(expected,
+                    keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS8, publicKey));
         }
     }
 
     @Test
-    public void checktransformKeyByPayloadReturnsCorrectValueForPkcs8WithLfPayload() throws UnsupportedEncodingException {
+    public void checktransformKeyByPayloadReturnsCorrectValueForPkcs8WithLfPayload()
+            throws UnsupportedEncodingException {
         IBurpExtenderCallbacks callbacks = new BurpExtenderCallbacksMock();
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
         List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
 
-        String expected = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB\n";
+        String expected = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" + "vRrHmG4R/Dp+JBrJrQIDAQAB\n";
 
         for (PublicKey publicKey : publicKeys) {
-            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS8_WITH_LF, publicKey));
+            assertEquals(expected,
+                    keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS8_WITH_LF, publicKey));
         }
     }
 
     @Test
-    public void checktransformKeyByPayloadReturnsCorrectValueForPkcs8WithLfHeadFootPayload() throws UnsupportedEncodingException {
+    public void checktransformKeyByPayloadReturnsCorrectValueForPkcs8WithLfHeadFootPayload()
+            throws UnsupportedEncodingException {
         IBurpExtenderCallbacks callbacks = new BurpExtenderCallbacksMock();
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
         List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
 
-        String expected = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
-                "-----END PUBLIC KEY-----";
+        String expected = "-----BEGIN PUBLIC KEY-----\n"
+                + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" + "vRrHmG4R/Dp+JBrJrQIDAQAB\n"
+                + "-----END PUBLIC KEY-----";
 
         for (PublicKey publicKey : publicKeys) {
-            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS8_WITH_HEADER_FOOTER_LF, publicKey));
+            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(
+                    KeyConfusionInfo.PayloadType.PKCS8_WITH_HEADER_FOOTER_LF, publicKey));
         }
     }
 
     @Test
-    public void checktransformKeyByPayloadReturnsCorrectValueForPkcs8WithLfHeadFootEndLfPayload() throws UnsupportedEncodingException {
+    public void checktransformKeyByPayloadReturnsCorrectValueForPkcs8WithLfHeadFootEndLfPayload()
+            throws UnsupportedEncodingException {
         IBurpExtenderCallbacks callbacks = new BurpExtenderCallbacksMock();
 
         KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
 
         List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
 
-        String expected = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n" +
-                "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" +
-                "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" +
-                "vRrHmG4R/Dp+JBrJrQIDAQAB\n" +
-                "-----END PUBLIC KEY-----\n";
+        String expected = "-----BEGIN PUBLIC KEY-----\n"
+                + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n"
+                + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n" + "vRrHmG4R/Dp+JBrJrQIDAQAB\n"
+                + "-----END PUBLIC KEY-----\n";
 
         for (PublicKey publicKey : publicKeys) {
-            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF, publicKey));
+            assertEquals(expected, keyConfusionInfo.transformKeyByPayload(
+                    KeyConfusionInfo.PayloadType.PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF, publicKey));
         }
     }
 

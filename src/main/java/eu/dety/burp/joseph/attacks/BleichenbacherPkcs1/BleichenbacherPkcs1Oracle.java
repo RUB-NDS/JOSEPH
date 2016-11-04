@@ -31,15 +31,14 @@ import java.util.List;
 /**
  * Bleichenbacher PKCS1 Oracle
  * <p>
- * Stores all responses and their validity according to PKCS#1 v1.5
- * to compare new responses based on dice distance.
+ * Stores all responses and their validity according to PKCS#1 v1.5 to compare new responses based
+ * on dice distance.
  */
 public class BleichenbacherPkcs1Oracle {
     private static final Logger loggerInstance = Logger.getInstance();
     private IExtensionHelpers helpers;
     private static final double COMPARE_THRESHOLD = 0.9;
     private StringMetric metric = StringMetrics.dice();
-
 
     private List<String> validResponses = new ArrayList<>();
 
@@ -48,20 +47,21 @@ public class BleichenbacherPkcs1Oracle {
         INVALID
     }
 
-    public BleichenbacherPkcs1Oracle(final IBurpExtenderCallbacks callbacks, List<BleichenbacherPkcs1TableEntry> responseCandidates) {
+    public BleichenbacherPkcs1Oracle(final IBurpExtenderCallbacks callbacks,
+            List<BleichenbacherPkcs1TableEntry> responseCandidates) {
         this.helpers = callbacks.getHelpers();
 
         buildResponseList(responseCandidates);
     }
 
-
     /**
      * Build a list of responses indicating PKCS1 correctness
-     * @param responseCandidates List of {@link BleichenbacherPkcs1TableEntry} selected by the user as candidates
+     * 
+     * @param responseCandidates
+     *            List of {@link BleichenbacherPkcs1TableEntry} selected by the user as candidates
      */
     private void buildResponseList(List<BleichenbacherPkcs1TableEntry> responseCandidates) {
-        outerloop:
-        for (BleichenbacherPkcs1TableEntry entry : responseCandidates) {
+        outerloop: for (BleichenbacherPkcs1TableEntry entry : responseCandidates) {
 
             double tempScore;
             for (String validResponse : validResponses) {
@@ -79,13 +79,18 @@ public class BleichenbacherPkcs1Oracle {
 
     /**
      * Check wheter the given response is valid or not according to the current oracle
-     * @param response Byte array with the response
+     * 
+     * @param response
+     *            Byte array with the response
      * @return {@link Result} status
      */
     public Result getResult(byte[] response) {
         for (String validResponse : validResponses) {
             if (metric.compare(helpers.bytesToString(response), validResponse) >= COMPARE_THRESHOLD) {
-                loggerInstance.log(getClass(), "Considered PKCS conform - Score: " + metric.compare(helpers.bytesToString(response), validResponse), Logger.LogLevel.INFO);
+                loggerInstance.log(
+                        getClass(),
+                        "Considered PKCS conform - Score: "
+                                + metric.compare(helpers.bytesToString(response), validResponse), Logger.LogLevel.INFO);
                 return Result.VALID;
             }
         }

@@ -28,6 +28,7 @@ import java.util.Objects;
 
 /**
  * Internal logger for the extension
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -37,13 +38,13 @@ public class Logger {
     private static PrintWriter stderr = null;
 
     /**
-     * LogLevel enum defining the log types, might be one of:
-     * <li>{@link #ERROR}</li>
-     * <li>{@link #INFO}</li>
-     * <li>{@link #DEBUG}</li>
+     * LogLevel enum defining the log types, might be one of: <li>{@link #ERROR}</li> <li>
+     * {@link #INFO}</li> <li>{@link #DEBUG}</li>
      */
     public enum LogLevel {
-        ERROR, INFO, DEBUG
+        ERROR,
+        INFO,
+        DEBUG
     }
 
     private Logger() {
@@ -60,6 +61,7 @@ public class Logger {
 
     /**
      * Get the Instance of the Logger.
+     * 
      * @return Logger instance.
      */
     public static Logger getInstance() {
@@ -68,9 +70,13 @@ public class Logger {
 
     /**
      * Log a specific message on a logging level.
-     * @param callingClass The calling class.
-     * @param message The message to log.
-     * @param logType The logging type.
+     * 
+     * @param callingClass
+     *            The calling class.
+     * @param message
+     *            The message to log.
+     * @param logType
+     *            The logging type.
      */
     public void log(Class callingClass, String message, LogLevel logType) {
         // Get current time
@@ -82,12 +88,14 @@ public class Logger {
         PrintWriter outputStream;
         outputStream = (Objects.equals(logType, LogLevel.ERROR)) ? stderr : stdout;
 
-        // Check if message should be logged based on current log level preference
+        // Check if message should be logged based on current log level
+        // preference
         if (outputStream != null && logType.ordinal() <= PreferencesPanel.getLogLevel()) {
             String logTypeName = logType.name();
 
             // Print log message
-            String logOutput = String.format("[%s] %s - [%s]: %s ", logTypeName, time, callingClass.getSimpleName(), message);
+            String logOutput = String.format("[%s] %s - [%s]: %s ", logTypeName, time, callingClass.getSimpleName(),
+                    message);
             outputStream.println(logOutput);
         }
     }

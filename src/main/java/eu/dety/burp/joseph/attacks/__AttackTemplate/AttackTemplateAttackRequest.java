@@ -22,7 +22,7 @@ import eu.dety.burp.joseph.attacks.AttackRequest;
 
 /**
  * Attack Template Attack Request
- *
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -36,6 +36,7 @@ public class AttackTemplateAttackRequest extends AttackRequest {
 
     /**
      * Get the payload
+     * 
      * @return The payload as string
      */
     public String getPayload() {
@@ -44,7 +45,9 @@ public class AttackTemplateAttackRequest extends AttackRequest {
 
     /**
      * Set the payload
-     * @param payload The payload as string
+     * 
+     * @param payload
+     *            The payload as string
      */
     public void setPayload(String payload) {
         this.payload = payload;

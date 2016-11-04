@@ -1,4 +1,5 @@
 package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
+
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
  * Copyright (C) 2016 Dennis Detering
@@ -40,7 +41,7 @@ import java.util.Objects;
  * Attacker Result Window
  * <p>
  * Window holding a table with every {@link burp.IHttpRequestResponse} entry of the attack.
- *
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -51,7 +52,6 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
     private JTabbedPane topTabs;
 
     private java.util.List<BleichenbacherPkcs1TableEntry> validEntries = new ArrayList<>();
-
 
     public BleichenbacherPkcs1AttackerResultWindow(String caption, final IBurpExtenderCallbacks callbacks) {
         super(caption);
@@ -67,9 +67,11 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
         responseViewer = callbacks.createMessageEditor(null, false);
 
         // Create result table
-        table = new BleichenbacherPkcs1Table(new BleichenbacherPkcs1TableModel(new ArrayList<BleichenbacherPkcs1TableEntry>()));
+        table = new BleichenbacherPkcs1Table(new BleichenbacherPkcs1TableModel(
+                new ArrayList<BleichenbacherPkcs1TableEntry>()));
 
-        // Add selection changed listener to update request and response viewer editors
+        // Add selection changed listener to update request and response viewer
+        // editors
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent evt) {
                 loggerInstance.log(table.getClass(), "Selection changed", Logger.LogLevel.DEBUG);
@@ -126,7 +128,8 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
                     isHttps = true;
                 }
 
-                callbacks.sendToIntruder(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest());
+                callbacks.sendToIntruder(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry
+                        .getMessage().getRequest());
 
             }
         });
@@ -147,7 +150,8 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
                     isHttps = true;
                 }
 
-                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest(), "JWS");
+                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry
+                        .getMessage().getRequest(), "JWS");
 
             }
         });
@@ -156,7 +160,8 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
 
         // main split pane for the view section
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        JScrollPane viewScrollPane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane viewScrollPane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
@@ -179,14 +184,15 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
         topTabs = new JTabbedPane();
         topTabs.addTab("Results", null, splitPane, null);
 
-
         this.add(topTabs);
         this.setVisible(true);
     }
 
     /**
      * Add new {@link BleichenbacherPkcs1TableEntry} to table
-     * @param BleichenbacherPkcs1TableEntry {@link BleichenbacherPkcs1TableEntry} table entry
+     * 
+     * @param BleichenbacherPkcs1TableEntry
+     *            {@link BleichenbacherPkcs1TableEntry} table entry
      */
     public void addEntry(BleichenbacherPkcs1TableEntry BleichenbacherPkcs1TableEntry) {
         this.table.addEntry(BleichenbacherPkcs1TableEntry);
@@ -194,11 +200,15 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
 
     /**
      * Add new {@link BleichenbacherPkcs1TableEntry} to table
-     * @param request number of already performed requests
-     * @param all amount of requests to be performed
+     * 
+     * @param request
+     *            number of already performed requests
+     * @param all
+     *            amount of requests to be performed
      */
     public void setProgressBarValue(int request, int all) {
-        // If all requests have been performed, set to 100% and change text to "finished"
+        // If all requests have been performed, set to 100% and change text to
+        // "finished"
         if (request == all) {
             this.progressBar.setValue(100);
             this.progressBar.setString("Finished (" + all + " Requests)");
@@ -220,7 +230,9 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
 
     /**
      * Add new tab to this window
-     * @param tab {@link JPanel} new tab to add
+     * 
+     * @param tab
+     *            {@link JPanel} new tab to add
      */
     public void addTab(String caption, JPanel tab) {
         topTabs.addTab(caption, null, tab, null);
@@ -228,8 +240,11 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
 
     /**
      * Set enabled status of a specific tab
-     * @param index Index of the tab
-     * @param status Boolean value of the enabled status
+     * 
+     * @param index
+     *            Index of the tab
+     * @param status
+     *            Boolean value of the enabled status
      */
     public void setTabEnabled(int index, boolean status) {
         topTabs.setEnabledAt(index, status);
@@ -237,6 +252,7 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
 
     /**
      * Get list of {@link BleichenbacherPkcs1TableEntry} defined as valid by user
+     * 
      * @return List of {@link BleichenbacherPkcs1TableEntry}
      */
     public List<BleichenbacherPkcs1TableEntry> getValidEntries() {
@@ -245,6 +261,7 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
 
     /**
      * Get boolean value whether original message is PKCS1 conformant (based on user definition)
+     * 
      * @return Boolean PKCS1 validity
      */
     public boolean getOriginalMsgIsPkcs() {

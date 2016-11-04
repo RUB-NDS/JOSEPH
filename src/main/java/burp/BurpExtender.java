@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
 
 /**
  * The Burp Extender to register the JOSEPH extension
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -100,6 +101,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
     /**
      * Get a {@link java.io.PrintWriter} to the standard output of Burp.
+     * 
      * @return The standard output
      */
     public static PrintWriter getStdOut() {
@@ -108,6 +110,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
     /**
      * Get a {@link java.io.PrintWriter} to the standard error output of Burp.
+     * 
      * @return The standard error output
      */
     public static PrintWriter getStdErr() {

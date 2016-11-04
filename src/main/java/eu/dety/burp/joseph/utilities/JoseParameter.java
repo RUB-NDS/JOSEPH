@@ -52,6 +52,7 @@ public class JoseParameter {
 
     /**
      * Construct with string input and determine JoseType
+     * 
      * @throws InvalidJoseValueException
      */
     public JoseParameter(String input) throws InvalidJoseValueException {
@@ -69,26 +70,28 @@ public class JoseParameter {
     }
 
     /**
-     *  Origin of the parameter, might be one of:
-     *  <li>{@link #PARAMETER}</li>
-     *  <li>{@link #HEADER}</li>
-     *  <li>{@link #DIRECT}</li>
+     * Origin of the parameter, might be one of: <li>{@link #PARAMETER}</li> <li>
+     * {@link #HEADER}</li> <li>{@link #DIRECT}</li>
      */
     public enum OriginType {
-        PARAMETER, HEADER, DIRECT
+        PARAMETER,
+        HEADER,
+        DIRECT
     }
 
     /**
-     *  Jose type of the parameter, might be one of:
-     *  <li>{@link #JWS}</li>
-     *  <li>{@link #JWE}</li>
+     * Jose type of the parameter, might be one of: <li>{@link #JWS}</li> <li>
+     * {@link #JWE}</li>
      */
     public enum JoseType {
-        UNKNOWN, JWS, JWE
+        UNKNOWN,
+        JWS,
+        JWE
     }
 
     /**
      * Get according origin type
+     * 
      * @return {@link OriginType}
      */
     public OriginType getOriginType() {
@@ -97,6 +100,7 @@ public class JoseParameter {
 
     /**
      * Get according jose type
+     * 
      * @return {@link JoseType}
      */
     public JoseType getJoseType() {
@@ -105,6 +109,7 @@ public class JoseParameter {
 
     /**
      * Get the name of the parameter/header
+     * 
      * @return The name as string
      */
     public String getName() {
@@ -121,6 +126,7 @@ public class JoseParameter {
 
     /**
      * Get the full value of the parameter/header
+     * 
      * @return The value as string
      */
     public String getValue() {
@@ -138,6 +144,7 @@ public class JoseParameter {
 
     /**
      * Get the extracted jose value of the parameter/header
+     * 
      * @return The jose value as string
      */
     public String getJoseValue() {
@@ -155,6 +162,7 @@ public class JoseParameter {
 
     /**
      * Get the components of the jose value
+     * 
      * @return Jose value components as string array
      */
     public String[] getComponents() {
@@ -163,6 +171,7 @@ public class JoseParameter {
 
     /**
      * Get the {@link IParameter} type
+     * 
      * @return The parameter type as Byte
      */
     public Byte getParameterType() {
@@ -171,16 +180,22 @@ public class JoseParameter {
 
     /**
      * Update a given request
-     * @param request The original request as byte array
-     * @param parameter {@link JoseParameter} parameter with JOSE value
-     * @param helpers {@link IExtensionHelpers} Burp extension helpers
-     * @param newValue Value as string to update request with
+     * 
+     * @param request
+     *            The original request as byte array
+     * @param parameter
+     *            {@link JoseParameter} parameter with JOSE value
+     * @param helpers
+     *            {@link IExtensionHelpers} Burp extension helpers
+     * @param newValue
+     *            Value as string to update request with
      * @return The updated request as byte array
      */
-    public static byte[] updateRequest(byte[] request, JoseParameter parameter, IExtensionHelpers helpers, String newValue) {
+    public static byte[] updateRequest(byte[] request, JoseParameter parameter, IExtensionHelpers helpers,
+            String newValue) {
 
         switch (parameter.getOriginType()) {
-            // Update the request with the new header value
+        // Update the request with the new header value
             case HEADER:
                 IRequestInfo requestInfo = helpers.analyzeRequest(request);
                 List<String> headers = requestInfo.getHeaders();
@@ -192,12 +207,14 @@ public class JoseParameter {
                     }
                 }
 
-                request = helpers.buildHttpMessage(headers, Arrays.copyOfRange(request, requestInfo.getBodyOffset(), request.length));
+                request = helpers.buildHttpMessage(headers,
+                        Arrays.copyOfRange(request, requestInfo.getBodyOffset(), request.length));
                 break;
 
             // Update the request with the new parameter value
             case PARAMETER:
-                IParameter tmpParameter = helpers.buildParameter(parameter.getName(), newValue, parameter.getParameterType());
+                IParameter tmpParameter = helpers.buildParameter(parameter.getName(), newValue,
+                        parameter.getParameterType());
                 request = helpers.updateParameter(request, tmpParameter);
                 break;
         }
@@ -205,6 +222,5 @@ public class JoseParameter {
         return request;
 
     }
-
 
 }

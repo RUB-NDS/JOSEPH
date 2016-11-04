@@ -39,7 +39,7 @@ import java.util.Objects;
  * Attacker Result Window
  * <p>
  * Window holding a table with every {@link burp.IHttpRequestResponse} entry of the attack.
- *
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -48,7 +48,6 @@ public class AttackerResultWindow extends JFrame {
     private Table table;
     private JProgressBar progressBar = new JProgressBar();
     private JTabbedPane topTabs;
-
 
     public AttackerResultWindow(String caption, final IBurpExtenderCallbacks callbacks) {
         super(caption);
@@ -66,7 +65,8 @@ public class AttackerResultWindow extends JFrame {
         // Create result table
         table = new Table(new TableModel(new ArrayList<TableEntry>()));
 
-        // Add selection changed listener to update request and response viewer editors
+        // Add selection changed listener to update request and response viewer
+        // editors
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent evt) {
                 loggerInstance.log(table.getClass(), "Selection changed", Logger.LogLevel.DEBUG);
@@ -96,7 +96,8 @@ public class AttackerResultWindow extends JFrame {
                     isHttps = true;
                 }
 
-                callbacks.sendToIntruder(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest());
+                callbacks.sendToIntruder(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry
+                        .getMessage().getRequest());
 
             }
         });
@@ -117,7 +118,8 @@ public class AttackerResultWindow extends JFrame {
                     isHttps = true;
                 }
 
-                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest(), "JWS");
+                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry
+                        .getMessage().getRequest(), "JWS");
 
             }
         });
@@ -126,7 +128,8 @@ public class AttackerResultWindow extends JFrame {
 
         // main split pane for the view section
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        JScrollPane viewScrollPane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane viewScrollPane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
@@ -149,14 +152,15 @@ public class AttackerResultWindow extends JFrame {
         topTabs = new JTabbedPane();
         topTabs.addTab("Results", null, splitPane, null);
 
-
         this.add(topTabs);
         this.setVisible(true);
     }
 
     /**
      * Add new {@link TableEntry} to table
-     * @param tableEntry {@link TableEntry} table entry
+     * 
+     * @param tableEntry
+     *            {@link TableEntry} table entry
      */
     public void addEntry(TableEntry tableEntry) {
         this.table.addEntry(tableEntry);
@@ -164,11 +168,15 @@ public class AttackerResultWindow extends JFrame {
 
     /**
      * Add new {@link TableEntry} to table
-     * @param request number of already performed requests
-     * @param all amount of requests to be performed
+     * 
+     * @param request
+     *            number of already performed requests
+     * @param all
+     *            amount of requests to be performed
      */
     public void setProgressBarValue(int request, int all) {
-        // If all requests have been performed, set to 100% and change text to "finished"
+        // If all requests have been performed, set to 100% and change text to
+        // "finished"
         if (request == all) {
             this.progressBar.setValue(100);
             this.progressBar.setString("Finished (" + all + " Requests)");
@@ -190,7 +198,9 @@ public class AttackerResultWindow extends JFrame {
 
     /**
      * Add new tab to this window
-     * @param tab {@link JPanel} new tab to add
+     * 
+     * @param tab
+     *            {@link JPanel} new tab to add
      */
     public void addTab(String caption, JPanel tab) {
         topTabs.addTab(caption, null, tab, null);
@@ -198,8 +208,11 @@ public class AttackerResultWindow extends JFrame {
 
     /**
      * Set enabled status of a specific tab
-     * @param index Index of the tab
-     * @param status Boolean value of the enabled status
+     * 
+     * @param index
+     *            Index of the tab
+     * @param status
+     *            Boolean value of the enabled status
      */
     public void setTabEnabled(int index, boolean status) {
         topTabs.setEnabledAt(index, status);

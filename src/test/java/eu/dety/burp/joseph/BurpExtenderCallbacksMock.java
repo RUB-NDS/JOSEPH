@@ -27,9 +27,8 @@ import java.net.URL;
 import java.util.Map;
 
 /**
- * Simple class implementing {@link IBurpExtenderCallbacks}
- * to mock Burp's behavior for extender callbacks
- * to be able to write according unit tests.
+ * Simple class implementing {@link IBurpExtenderCallbacks} to mock Burp's behavior for extender
+ * callbacks to be able to write according unit tests.
  */
 public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
 
@@ -99,7 +98,8 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
-    public void registerIntruderPayloadGeneratorFactory(IIntruderPayloadGeneratorFactory iIntruderPayloadGeneratorFactory) {
+    public void registerIntruderPayloadGeneratorFactory(
+            IIntruderPayloadGeneratorFactory iIntruderPayloadGeneratorFactory) {
 
     }
 
@@ -304,7 +304,8 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
-    public IHttpRequestResponseWithMarkers applyMarkers(IHttpRequestResponse iHttpRequestResponse, java.util.List<int[]> list, java.util.List<int[]> list1) {
+    public IHttpRequestResponseWithMarkers applyMarkers(IHttpRequestResponse iHttpRequestResponse,
+            java.util.List<int[]> list, java.util.List<int[]> list1) {
         return null;
     }
 
