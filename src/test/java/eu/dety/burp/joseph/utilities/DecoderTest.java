@@ -57,8 +57,7 @@ public class DecoderTest {
     @Test
     public void getComponentsWithThreeComponentJwtInputReturnsStringArrayWithThreeComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9",
-                "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
+        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
 
         assertArrayEquals(expected, Decoder.getComponents(token));
     }
@@ -66,8 +65,8 @@ public class DecoderTest {
     @Test
     public void getComponentsWithFourComponentJwtInputReturnsStringArrayWithFourComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
-        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9",
-                "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" };
+        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" };
 
         assertArrayEquals(expected, Decoder.getComponents(token));
     }
@@ -75,8 +74,7 @@ public class DecoderTest {
     @Test
     public void getComponentsWithThreeComponentJwtAndAssureLengthInputReturnsStringArrayWithThreeComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9",
-                "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
+        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
 
         assertArrayEquals(expected, Decoder.getComponents(token, 3));
     }
@@ -92,16 +90,14 @@ public class DecoderTest {
     @Test
     public void getComponentsWithFiveComponentJwtAndAssureLengthInputReturnsStringArrayWithThreeComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
-        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9",
-                "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
+        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
 
         assertArrayEquals(expected, Decoder.getComponents(token, 3));
     }
 
     @Test
     public void concatComponentsWithThreeStringsArrayInputReturnsCorrectlyConcatenatedString() {
-        String[] input = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9",
-                "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
+        String[] input = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
         String expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
         assertEquals(expected, Decoder.concatComponents(input));
@@ -117,9 +113,8 @@ public class DecoderTest {
 
     @Test
     public void concatComponentsWithFiveStringsArrayStringInputReturnsCorrectlyConcatenatedString() {
-        String[] input = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9",
-                "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                "eyJzb21lIjoicGF5bG9hZCJ9" };
+        String[] input = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9" };
         String expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
 
         assertEquals(expected, Decoder.concatComponents(input));
@@ -127,8 +122,7 @@ public class DecoderTest {
 
     @Test
     public void getDecodedJsonWithBase64EncodedJsonStringInputReturnsCorrectJsonObject() {
-        JSONAssert.assertEquals(new JSONObject().put("some", "payload"),
-                Decoder.getDecodedJson("eyJzb21lIjoicGF5bG9hZCJ9"), true);
+        JSONAssert.assertEquals(new JSONObject().put("some", "payload"), Decoder.getDecodedJson("eyJzb21lIjoicGF5bG9hZCJ9"), true);
     }
 
     @Test
@@ -147,8 +141,7 @@ public class DecoderTest {
         expected[0] = new JSONObject().put("alg", "HS256").put("typ", "JWT");
         expected[1] = new JSONObject().put("some", "payload");
 
-        JSONObject[] result = Decoder
-                .getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9");
+        JSONObject[] result = Decoder.getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9");
         assertEquals(expected.length, result.length);
 
         for (int i = 0; i < result.length; i++) {

@@ -86,8 +86,7 @@ public class Marker implements IHttpListener {
         // Check for existing comment and append new comment, preventing
         // override
         final String oldComment = httpRequestResponse.getComment();
-        String comment = (oldComment != null && !oldComment.isEmpty() && !Objects.equals(oldComment, message)) ? String
-                .format("%s, %s", oldComment, message) : message;
+        String comment = (oldComment != null && !oldComment.isEmpty() && !Objects.equals(oldComment, message)) ? String.format("%s, %s", oldComment, message) : message;
 
         httpRequestResponse.setComment(comment);
     }

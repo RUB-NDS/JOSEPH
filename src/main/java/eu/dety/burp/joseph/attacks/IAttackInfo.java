@@ -50,8 +50,8 @@ public interface IAttackInfo {
      *             if error occurs during preparation step
      * @return IAttack instance of attack
      */
-    IAttack prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse,
-            IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException;
+    IAttack prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter)
+            throws AttackPreparationFailedException;
 
     /**
      * Get unique attack ID
@@ -135,7 +135,6 @@ public interface IAttackInfo {
      *             if error occurs during preparation step
      * @return HashMap with modified header, payload, signature values
      */
-    HashMap<String, String> updateValuesByPayload(Enum payloadType, String header, String payload, String signature)
-            throws AttackPreparationFailedException;
+    HashMap<String, String> updateValuesByPayload(Enum payloadType, String header, String payload, String signature) throws AttackPreparationFailedException;
 
 }

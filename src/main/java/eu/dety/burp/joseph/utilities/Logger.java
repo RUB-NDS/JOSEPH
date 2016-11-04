@@ -94,8 +94,7 @@ public class Logger {
             String logTypeName = logType.name();
 
             // Print log message
-            String logOutput = String.format("[%s] %s - [%s]: %s ", logTypeName, time, callingClass.getSimpleName(),
-                    message);
+            String logOutput = String.format("[%s] %s - [%s]: %s ", logTypeName, time, callingClass.getSimpleName(), message);
             outputStream.println(logOutput);
         }
     }

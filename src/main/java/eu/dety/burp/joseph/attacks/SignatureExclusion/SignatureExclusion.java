@@ -34,8 +34,8 @@ import java.util.concurrent.ExecutionException;
 /**
  * Signature Exclusion Attack
  * <p>
- * Perform a signature exclusion attack by changing the algorithm value of the header to the "none"
- * algorithm and cutting away the signature value.
+ * Perform a signature exclusion attack by changing the algorithm value of the header to the "none" algorithm and cutting away the signature
+ * value.
  * 
  * @author Dennis Detering
  * @version 1.0
@@ -95,8 +95,7 @@ public class SignatureExclusion implements IAttack {
             try {
                 requestResponse = get();
             } catch (InterruptedException | ExecutionException e) {
-                loggerInstance.log(SignatureExclusion.class, "Failed to get request result: " + e.getMessage(),
-                        Logger.LogLevel.ERROR);
+                loggerInstance.log(SignatureExclusion.class, "Failed to get request result: " + e.getMessage(), Logger.LogLevel.ERROR);
                 return;
             }
 
@@ -104,14 +103,13 @@ public class SignatureExclusion implements IAttack {
             responses.add(requestResponse);
 
             // Add new entry to result table
-            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), "Alg: "
-                    + attackRequest.getPayload(), requestResponse, callbacks));
+            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), "Alg: " + attackRequest.getPayload(),
+                    requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setProgressBarValue(responses.size(), attackInfo.getAmountRequests());
 
-            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()),
-                    Logger.LogLevel.DEBUG);
+            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
         }
     }
 

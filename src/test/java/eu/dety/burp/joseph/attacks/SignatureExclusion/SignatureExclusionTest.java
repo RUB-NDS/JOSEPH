@@ -44,8 +44,7 @@ public class SignatureExclusionTest {
 
         SignatureExclusionInfo signatureExclusion = new SignatureExclusionInfo(callbacks);
 
-        assertEquals(expected, signatureExclusion.updateValuesByPayload(SignatureExclusionInfo.PayloadType.LOWERCASE,
-                header, payload, "SomeSignature"));
+        assertEquals(expected, signatureExclusion.updateValuesByPayload(SignatureExclusionInfo.PayloadType.LOWERCASE, header, payload, "SomeSignature"));
     }
 
     @Test
@@ -63,8 +62,7 @@ public class SignatureExclusionTest {
 
         SignatureExclusionInfo signatureExclusion = new SignatureExclusionInfo(callbacks);
 
-        assertEquals(expected, signatureExclusion.updateValuesByPayload(SignatureExclusionInfo.PayloadType.UPPERCASE,
-                header, payload, "SomeSignature"));
+        assertEquals(expected, signatureExclusion.updateValuesByPayload(SignatureExclusionInfo.PayloadType.UPPERCASE, header, payload, "SomeSignature"));
     }
 
     @Test
@@ -82,8 +80,7 @@ public class SignatureExclusionTest {
 
         SignatureExclusionInfo signatureExclusion = new SignatureExclusionInfo(callbacks);
 
-        assertEquals(expected, signatureExclusion.updateValuesByPayload(SignatureExclusionInfo.PayloadType.CAPITALIZED,
-                header, payload, "SomeSignature"));
+        assertEquals(expected, signatureExclusion.updateValuesByPayload(SignatureExclusionInfo.PayloadType.CAPITALIZED, header, payload, "SomeSignature"));
     }
 
     @Test
@@ -101,8 +98,7 @@ public class SignatureExclusionTest {
 
         SignatureExclusionInfo signatureExclusion = new SignatureExclusionInfo(callbacks);
 
-        assertEquals(expected, signatureExclusion.updateValuesByPayload(SignatureExclusionInfo.PayloadType.MIXED,
-                header, payload, "SomeSignature"));
+        assertEquals(expected, signatureExclusion.updateValuesByPayload(SignatureExclusionInfo.PayloadType.MIXED, header, payload, "SomeSignature"));
     }
 
     @Test

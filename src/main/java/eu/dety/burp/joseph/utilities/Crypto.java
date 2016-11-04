@@ -151,8 +151,7 @@ public class Crypto {
      * @throws DecryptionFailedException
      * @return Decrypted message as byte array
      */
-    public static byte[] decryptAES(String header, byte[] key, byte[] iv, byte[] cipherBytes, byte[] authTag)
-            throws DecryptionFailedException {
+    public static byte[] decryptAES(String header, byte[] key, byte[] iv, byte[] cipherBytes, byte[] authTag) throws DecryptionFailedException {
         byte[] decryptedContent;
 
         String encAlg = Decoder.getValueByBase64String(header, "enc").toUpperCase();

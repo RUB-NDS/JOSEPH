@@ -53,8 +53,7 @@ public class TableEntry {
      * @param callbacks
      *            Helper provided by the Burp Suite api.
      */
-    public TableEntry(int entryIndex, int payloadType, String payload, IHttpRequestResponse requestResponse,
-            IBurpExtenderCallbacks callbacks) {
+    public TableEntry(int entryIndex, int payloadType, String payload, IHttpRequestResponse requestResponse, IBurpExtenderCallbacks callbacks) {
         this.helpers = callbacks.getHelpers();
 
         IResponseInfo responseInfo = helpers.analyzeResponse(requestResponse.getResponse());

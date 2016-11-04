@@ -44,8 +44,7 @@ public class Finder {
         if (candidate == null || candidate.isEmpty())
             return false;
 
-        Pattern jwsPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)",
-                Pattern.CASE_INSENSITIVE);
+        Pattern jwsPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)", Pattern.CASE_INSENSITIVE);
         Matcher jwsMatcher = jwsPattern.matcher(candidate);
 
         return jwsMatcher.find();
@@ -62,8 +61,7 @@ public class Finder {
         if (candidate == null || candidate.isEmpty())
             return false;
 
-        Pattern jwePattern = Pattern.compile(
-                "(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)",
+        Pattern jwePattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)",
                 Pattern.CASE_INSENSITIVE);
         Matcher jweMatcher = jwePattern.matcher(candidate);
 
@@ -78,9 +76,7 @@ public class Finder {
      * @return String with matched JOSE value.
      */
     public static String getJoseValue(String candidate) {
-        Pattern jwsPattern = Pattern.compile(
-                "(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?([a-zA-Z0-9\\-_\\.]+)*)",
-                Pattern.CASE_INSENSITIVE);
+        Pattern jwsPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?([a-zA-Z0-9\\-_\\.]+)*)", Pattern.CASE_INSENSITIVE);
         Matcher jwsMatcher = jwsPattern.matcher(candidate);
 
         return (jwsMatcher.find()) ? jwsMatcher.group(0) : null;

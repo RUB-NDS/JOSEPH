@@ -23,8 +23,7 @@ import eu.dety.burp.joseph.attacks.AttackRequest;
 /**
  * Bleichenbacher PKCS1 Attack Request
  * <p>
- * Class extending abstract {@link AttackRequest} specifying properties of a single prepared
- * bleichenbacher pkcs1 attack request.
+ * Class extending abstract {@link AttackRequest} specifying properties of a single prepared bleichenbacher pkcs1 attack request.
  * 
  * @author Dennis Detering
  * @version 1.0

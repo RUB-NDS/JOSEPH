@@ -31,8 +31,7 @@ import java.util.List;
 /**
  * Bleichenbacher PKCS1 Oracle
  * <p>
- * Stores all responses and their validity according to PKCS#1 v1.5 to compare new responses based
- * on dice distance.
+ * Stores all responses and their validity according to PKCS#1 v1.5 to compare new responses based on dice distance.
  */
 public class BleichenbacherPkcs1Oracle {
     private static final Logger loggerInstance = Logger.getInstance();
@@ -47,8 +46,7 @@ public class BleichenbacherPkcs1Oracle {
         INVALID
     }
 
-    public BleichenbacherPkcs1Oracle(final IBurpExtenderCallbacks callbacks,
-            List<BleichenbacherPkcs1TableEntry> responseCandidates) {
+    public BleichenbacherPkcs1Oracle(final IBurpExtenderCallbacks callbacks, List<BleichenbacherPkcs1TableEntry> responseCandidates) {
         this.helpers = callbacks.getHelpers();
 
         buildResponseList(responseCandidates);
@@ -87,10 +85,8 @@ public class BleichenbacherPkcs1Oracle {
     public Result getResult(byte[] response) {
         for (String validResponse : validResponses) {
             if (metric.compare(helpers.bytesToString(response), validResponse) >= COMPARE_THRESHOLD) {
-                loggerInstance.log(
-                        getClass(),
-                        "Considered PKCS conform - Score: "
-                                + metric.compare(helpers.bytesToString(response), validResponse), Logger.LogLevel.INFO);
+                loggerInstance.log(getClass(), "Considered PKCS conform - Score: " + metric.compare(helpers.bytesToString(response), validResponse),
+                        Logger.LogLevel.INFO);
                 return Result.VALID;
             }
         }

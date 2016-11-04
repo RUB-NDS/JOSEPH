@@ -23,8 +23,7 @@ import eu.dety.burp.joseph.attacks.AttackRequest;
 /**
  * Signature Exclusion Attack Request
  * <p>
- * Class extending abstract {@link AttackRequest} specifying properties of a single prepared
- * signature exclusion attack request.
+ * Class extending abstract {@link AttackRequest} specifying properties of a single prepared signature exclusion attack request.
  * 
  * @author Dennis Detering
  * @version 1.0

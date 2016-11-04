@@ -96,8 +96,7 @@ public class AttackerResultWindow extends JFrame {
                     isHttps = true;
                 }
 
-                callbacks.sendToIntruder(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry
-                        .getMessage().getRequest());
+                callbacks.sendToIntruder(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest());
 
             }
         });
@@ -118,8 +117,7 @@ public class AttackerResultWindow extends JFrame {
                     isHttps = true;
                 }
 
-                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry
-                        .getMessage().getRequest(), "JWS");
+                callbacks.sendToRepeater(messageHttpService.getHost(), messageHttpService.getPort(), isHttps, entry.getMessage().getRequest(), "JWS");
 
             }
         });
@@ -128,8 +126,7 @@ public class AttackerResultWindow extends JFrame {
 
         // main split pane for the view section
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        JScrollPane viewScrollPane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane viewScrollPane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());

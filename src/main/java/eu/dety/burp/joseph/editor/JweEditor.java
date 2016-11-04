@@ -172,10 +172,8 @@ public class JweEditor implements IMessageEditorTabFactory {
         @Override
         public byte[] getMessage() {
             if (this.isModified()) {
-                String[] components = { Decoder.getEncoded(sourceViewerHeader.getText()),
-                        helpers.bytesToString(sourceViewerCek.getText()),
-                        helpers.bytesToString(sourceViewerIv.getText()),
-                        helpers.bytesToString(sourceViewerCiphertext.getText()),
+                String[] components = { Decoder.getEncoded(sourceViewerHeader.getText()), helpers.bytesToString(sourceViewerCek.getText()),
+                        helpers.bytesToString(sourceViewerIv.getText()), helpers.bytesToString(sourceViewerCiphertext.getText()),
                         helpers.bytesToString(sourceViewerTag.getText()) };
 
                 switch (joseParameter.getOriginType()) {
@@ -186,20 +184,16 @@ public class JweEditor implements IMessageEditorTabFactory {
 
                         for (int i = 0; i < headers.size(); i++) {
                             if (headers.get(i).startsWith(joseParameter.getName())) {
-                                headers.set(
-                                        i,
-                                        headers.get(i).replace(joseParameter.getJoseValue(),
-                                                Decoder.concatComponents(components)));
+                                headers.set(i, headers.get(i).replace(joseParameter.getJoseValue(), Decoder.concatComponents(components)));
                             }
                         }
 
-                        return helpers.buildHttpMessage(headers,
-                                Arrays.copyOfRange(currentMessage, requestInfo.getBodyOffset(), currentMessage.length));
+                        return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage, requestInfo.getBodyOffset(), currentMessage.length));
 
                         // Update the request with the new parameter value
                     case PARAMETER:
-                        return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameter.getName(),
-                                Decoder.concatComponents(components), joseParameter.getParameterType()));
+                        return helpers.updateParameter(currentMessage,
+                                helpers.buildParameter(joseParameter.getName(), Decoder.concatComponents(components), joseParameter.getParameterType()));
                 }
 
             }
@@ -208,9 +202,8 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         @Override
         public boolean isModified() {
-            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerCek.isTextModified()
-                    || sourceViewerIv.isTextModified() || sourceViewerCiphertext.isTextModified()
-                    || sourceViewerTag.isTextModified() || this.isModified);
+            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerCek.isTextModified() || sourceViewerIv.isTextModified()
+                    || sourceViewerCiphertext.isTextModified() || sourceViewerTag.isTextModified() || this.isModified);
             this.isModified = false;
             return isModified;
         }

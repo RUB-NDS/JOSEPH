@@ -63,8 +63,7 @@ public class BleichenbacherPkcs1 implements IAttack {
         attackerResultWindow = new BleichenbacherPkcs1AttackerResultWindow(attackInfo.getName(), callbacks);
 
         // Add original message to result table
-        attackerResultWindow.addEntry(new BleichenbacherPkcs1TableEntry(0, -1, "", attackInfo.getRequestResponse(),
-                callbacks));
+        attackerResultWindow.addEntry(new BleichenbacherPkcs1TableEntry(0, -1, "", attackInfo.getRequestResponse(), callbacks));
 
         decryptionAttackPanel = new BleichenbacherPkcs1DecryptionAttackPanel(this);
 
@@ -105,8 +104,7 @@ public class BleichenbacherPkcs1 implements IAttack {
             try {
                 requestResponse = get();
             } catch (InterruptedException | ExecutionException e) {
-                loggerInstance.log(BleichenbacherPkcs1.class, "Failed to get request result: " + e.getMessage(),
-                        Logger.LogLevel.ERROR);
+                loggerInstance.log(BleichenbacherPkcs1.class, "Failed to get request result: " + e.getMessage(), Logger.LogLevel.ERROR);
                 return;
             }
 
@@ -114,31 +112,27 @@ public class BleichenbacherPkcs1 implements IAttack {
             responses.add(requestResponse);
 
             // Add new entry to result table
-            attackerResultWindow.addEntry(new BleichenbacherPkcs1TableEntry(responses.size(), attackRequest
-                    .getPayloadType(), attackRequest.getVectorName(), requestResponse, callbacks));
+            attackerResultWindow.addEntry(new BleichenbacherPkcs1TableEntry(responses.size(), attackRequest.getPayloadType(), attackRequest.getVectorName(),
+                    requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setProgressBarValue(responses.size(), attackInfo.getAmountRequests());
 
-            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()),
-                    Logger.LogLevel.DEBUG);
+            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
         }
 
     }
 
     /**
-     * Start the decryption attack by creating an oracle instance and starting the executor swing
-     * worker
+     * Start the decryption attack by creating an oracle instance and starting the executor swing worker
      */
     public void performDecryptionAttack() {
         // Create a new PKCS1 Oracle instance
-        BleichenbacherPkcs1Oracle oracle = new BleichenbacherPkcs1Oracle(callbacks,
-                attackerResultWindow.getValidEntries());
+        BleichenbacherPkcs1Oracle oracle = new BleichenbacherPkcs1Oracle(callbacks, attackerResultWindow.getValidEntries());
 
         // Create new Decryption Attack Executor worker instance
-        decryptionAttackWorker = new BleichenbacherPkcs1DecryptionAttackExecutor(this.decryptionAttackPanel, callbacks,
-                attackInfo.getPublicKey(), attackInfo.getRequestResponse(), attackInfo.getParameter(), oracle,
-                attackerResultWindow.getOriginalMsgIsPkcs());
+        decryptionAttackWorker = new BleichenbacherPkcs1DecryptionAttackExecutor(this.decryptionAttackPanel, callbacks, attackInfo.getPublicKey(),
+                attackInfo.getRequestResponse(), attackInfo.getParameter(), oracle, attackerResultWindow.getOriginalMsgIsPkcs());
         decryptionAttackWorker.execute();
     }
 

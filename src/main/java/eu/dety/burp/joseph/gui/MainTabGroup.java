@@ -104,8 +104,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                 @Override
                 public void actionPerformed(ActionEvent evt) {
                     try {
-                        loggerInstance.log(MainTabGroup.class, "Send to JOSEPH context menu item clicked",
-                                Logger.LogLevel.DEBUG);
+                        loggerInstance.log(MainTabGroup.class, "Send to JOSEPH context menu item clicked", Logger.LogLevel.DEBUG);
 
                         // Create new attacker panel for this message
                         AttackerPanel attackerPanel = new AttackerPanel(callbacks, message);
@@ -173,8 +172,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                         gridBagConstraints.weightx = 0;
                         tabCaptionPanel.add(closeButton, gridBagConstraints);
 
-                        attackerTabGroup.setTabComponentAt(attackerTabGroup.indexOfTab(captionTitleValue),
-                                tabCaptionPanel);
+                        attackerTabGroup.setTabComponentAt(attackerTabGroup.indexOfTab(captionTitleValue), tabCaptionPanel);
 
                     } catch (Exception e) {
                         loggerInstance.log(MainTabGroup.class, e.getMessage(), Logger.LogLevel.ERROR);
@@ -192,8 +190,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
             // Additionally check whether JWS or JWE patterns exists
             IRequestInfo requestInfo = callbacks.getHelpers().analyzeRequest(message);
-            if (Finder.checkHeaderAndParameterForJwsPattern(requestInfo) == null
-                    && Finder.checkHeaderAndParameterForJwePattern(requestInfo) == null) {
+            if (Finder.checkHeaderAndParameterForJwsPattern(requestInfo) == null && Finder.checkHeaderAndParameterForJwePattern(requestInfo) == null) {
                 menuItem.setEnabled(false);
             }
 

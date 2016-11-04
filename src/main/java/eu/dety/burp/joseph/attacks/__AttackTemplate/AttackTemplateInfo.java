@@ -81,8 +81,8 @@ public class AttackTemplateInfo implements IAttackInfo {
     }
 
     @Override
-    public AttackTemplate prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse,
-            IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
+    public AttackTemplate prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo,
+            JoseParameter parameter) throws AttackPreparationFailedException {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
@@ -151,8 +151,7 @@ public class AttackTemplateInfo implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload,
-            String signature) {
+    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload, String signature) {
         HashMap<String, String> result = new HashMap<>();
 
         /*

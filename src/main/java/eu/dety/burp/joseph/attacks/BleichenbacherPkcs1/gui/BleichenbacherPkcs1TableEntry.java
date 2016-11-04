@@ -48,8 +48,7 @@ public class BleichenbacherPkcs1TableEntry {
      * @param callbacks
      *            Helper provided by the Burp Suite api.
      */
-    public BleichenbacherPkcs1TableEntry(int entryIndex, int payloadType, String payload,
-            IHttpRequestResponse requestResponse, IBurpExtenderCallbacks callbacks) {
+    public BleichenbacherPkcs1TableEntry(int entryIndex, int payloadType, String payload, IHttpRequestResponse requestResponse, IBurpExtenderCallbacks callbacks) {
         this.helpers = callbacks.getHelpers();
 
         IResponseInfo responseInfo = helpers.analyzeResponse(requestResponse.getResponse());

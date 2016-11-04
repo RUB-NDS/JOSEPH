@@ -161,20 +161,17 @@ public class JwsEditor implements IMessageEditorTabFactory {
         @Override
         public byte[] getMessage() {
             if (this.isModified()) {
-                String[] components = { Decoder.getEncoded(sourceViewerHeader.getText()),
-                        Decoder.getEncoded(sourceViewerPayload.getText()),
+                String[] components = { Decoder.getEncoded(sourceViewerHeader.getText()), Decoder.getEncoded(sourceViewerPayload.getText()),
                         helpers.bytesToString(sourceViewerSignature.getText()) };
 
-                return JoseParameter.updateRequest(currentMessage, joseParameter, helpers,
-                        Decoder.concatComponents(components));
+                return JoseParameter.updateRequest(currentMessage, joseParameter, helpers, Decoder.concatComponents(components));
             }
             return currentMessage;
         }
 
         @Override
         public boolean isModified() {
-            boolean isModifiedResult = (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified()
-                    || sourceViewerSignature.isTextModified() || this.isModified);
+            boolean isModifiedResult = (sourceViewerHeader.isTextModified() || sourceViewerPayload.isTextModified() || sourceViewerSignature.isTextModified() || this.isModified);
             this.isModified = false;
             return isModifiedResult;
         }

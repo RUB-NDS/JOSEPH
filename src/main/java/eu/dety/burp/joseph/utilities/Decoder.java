@@ -211,8 +211,7 @@ public class Decoder {
         return output;
     }
 
-    private final static char[] HEXCHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
-            'f' };
+    private final static char[] HEXCHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
     /**
      * Convert byte array to hex string
@@ -249,8 +248,7 @@ public class Decoder {
 
         try {
             for (int i = 0; i < len; i += 2) {
-                data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4) + Character
-                        .digit(str.charAt(i + 1), 16));
+                data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4) + Character.digit(str.charAt(i + 1), 16));
             }
         } catch (Exception e) {
             data = new byte[0];

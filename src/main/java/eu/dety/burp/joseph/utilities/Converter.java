@@ -108,8 +108,7 @@ public class Converter {
             BigInteger modulus = new BigInteger(Base64.decodeBase64(input.get("n").toString()));
             BigInteger publicExponent = new BigInteger(Base64.decodeBase64(input.get("e").toString()));
 
-            loggerInstance.log(Converter.class, "RSA PublicKey values: N: " + modulus + " E: " + publicExponent,
-                    Logger.LogLevel.DEBUG);
+            loggerInstance.log(Converter.class, "RSA PublicKey values: N: " + modulus + " E: " + publicExponent, Logger.LogLevel.DEBUG);
             return KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
         } catch (Exception e) {
             return null;

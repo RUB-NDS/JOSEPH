@@ -92,8 +92,7 @@ public class AttackTemplate implements IAttack {
             try {
                 requestResponse = get();
             } catch (InterruptedException | ExecutionException e) {
-                loggerInstance.log(AttackTemplate.class, "Failed to get request result: " + e.getMessage(),
-                        Logger.LogLevel.ERROR);
+                loggerInstance.log(AttackTemplate.class, "Failed to get request result: " + e.getMessage(), Logger.LogLevel.ERROR);
                 return;
             }
 
@@ -101,14 +100,13 @@ public class AttackTemplate implements IAttack {
             responses.add(requestResponse);
 
             // Add new entry to result table
-            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(),
-                    attackRequest.getPayload(), requestResponse, callbacks));
+            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), attackRequest.getPayload(), requestResponse,
+                    callbacks));
 
             // Update the progress bar
             attackerResultWindow.setProgressBarValue(responses.size(), attackInfo.getAmountRequests());
 
-            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()),
-                    Logger.LogLevel.DEBUG);
+            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
         }
     }
 

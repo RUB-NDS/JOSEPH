@@ -191,8 +191,7 @@ public class JoseParameter {
      *            Value as string to update request with
      * @return The updated request as byte array
      */
-    public static byte[] updateRequest(byte[] request, JoseParameter parameter, IExtensionHelpers helpers,
-            String newValue) {
+    public static byte[] updateRequest(byte[] request, JoseParameter parameter, IExtensionHelpers helpers, String newValue) {
 
         switch (parameter.getOriginType()) {
         // Update the request with the new header value
@@ -207,14 +206,12 @@ public class JoseParameter {
                     }
                 }
 
-                request = helpers.buildHttpMessage(headers,
-                        Arrays.copyOfRange(request, requestInfo.getBodyOffset(), request.length));
+                request = helpers.buildHttpMessage(headers, Arrays.copyOfRange(request, requestInfo.getBodyOffset(), request.length));
                 break;
 
             // Update the request with the new parameter value
             case PARAMETER:
-                IParameter tmpParameter = helpers.buildParameter(parameter.getName(), newValue,
-                        parameter.getParameterType());
+                IParameter tmpParameter = helpers.buildParameter(parameter.getName(), newValue, parameter.getParameterType());
                 request = helpers.updateParameter(request, tmpParameter);
                 break;
         }

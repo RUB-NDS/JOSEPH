@@ -95,8 +95,7 @@ public class KeyConfusion implements IAttack {
             try {
                 requestResponse = get();
             } catch (InterruptedException | ExecutionException e) {
-                loggerInstance.log(KeyConfusion.class, "Failed to get request result: " + e.getMessage(),
-                        Logger.LogLevel.ERROR);
+                loggerInstance.log(KeyConfusion.class, "Failed to get request result: " + e.getMessage(), Logger.LogLevel.ERROR);
                 return;
             }
 
@@ -105,14 +104,12 @@ public class KeyConfusion implements IAttack {
 
             // Add new entry to result table
             String payload = "Alg: " + attackRequest.getAlgorithm() + " KeyLen: " + attackRequest.getKeyLength();
-            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), payload,
-                    requestResponse, callbacks));
+            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), payload, requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setProgressBarValue(responses.size(), attackInfo.getAmountRequests());
 
-            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()),
-                    Logger.LogLevel.DEBUG);
+            loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
         }
 
     }

@@ -23,8 +23,7 @@ import eu.dety.burp.joseph.attacks.AttackRequest;
 /**
  * Key Confusion Attack Request
  * <p>
- * Class extending abstract {@link AttackRequest} specifying properties of a single prepared key
- * confusion attack request.
+ * Class extending abstract {@link AttackRequest} specifying properties of a single prepared key confusion attack request.
  * 
  * @author Dennis Detering
  * @version 1.0
