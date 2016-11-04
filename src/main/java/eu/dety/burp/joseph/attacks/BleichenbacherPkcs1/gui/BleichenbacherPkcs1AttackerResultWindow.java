@@ -75,6 +75,10 @@ public class BleichenbacherPkcs1AttackerResultWindow extends JFrame {
             public void valueChanged(ListSelectionEvent evt) {
                 loggerInstance.log(table.getClass(), "Selection changed", Logger.LogLevel.DEBUG);
 
+                // Check boundary of array index
+                if (table.getSelectedRow() < 0)
+                    return;
+
                 BleichenbacherPkcs1TableEntry entry = table.getEntryByRow(table.getSelectedRow());
 
                 requestViewer.setMessage(entry.getMessage().getRequest(), true);
