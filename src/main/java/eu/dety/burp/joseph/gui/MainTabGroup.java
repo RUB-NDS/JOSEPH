@@ -186,8 +186,6 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                 menuItem.setEnabled(false);
             }
 
-            // TODO: Check if suitable attack exists
-
             return list;
         }
 

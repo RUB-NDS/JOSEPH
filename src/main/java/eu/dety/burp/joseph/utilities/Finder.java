@@ -40,7 +40,7 @@ public class Finder {
     public static boolean checkJwsPattern(String candidate) {
         if (candidate == null || candidate.isEmpty()) return false;
 
-        Pattern jwsPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)", Pattern.CASE_INSENSITIVE);
+        Pattern jwsPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)$", Pattern.CASE_INSENSITIVE);
         Matcher jwsMatcher = jwsPattern.matcher(candidate);
 
         return jwsMatcher.find();
@@ -54,7 +54,7 @@ public class Finder {
     public static boolean checkJwePattern(String candidate) {
         if (candidate == null || candidate.isEmpty()) return false;
 
-        Pattern jwePattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)", Pattern.CASE_INSENSITIVE);
+        Pattern jwePattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)$", Pattern.CASE_INSENSITIVE);
         Matcher jweMatcher = jwePattern.matcher(candidate);
 
         return jweMatcher.find();
