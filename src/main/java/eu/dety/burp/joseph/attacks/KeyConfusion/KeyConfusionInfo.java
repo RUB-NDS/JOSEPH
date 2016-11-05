@@ -276,7 +276,9 @@ public class KeyConfusionInfo implements IAttackInfo {
         extraPanel.add(publicKeySelection, constraints);
 
         constraints.gridy = 2;
-        extraPanel.add(publicKey, constraints);
+        JScrollPane jScrollPane = new javax.swing.JScrollPane();
+        jScrollPane.setViewportView(publicKey);
+        extraPanel.add(jScrollPane, constraints);
 
         return true;
     }
@@ -313,13 +315,39 @@ public class KeyConfusionInfo implements IAttackInfo {
             case 1:
                 loggerInstance.log(getClass(), "Key format is JWK:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
+                HashMap<String, PublicKey> publicKeys;
+                PublicKey selectedPublicKey;
+
                 try {
                     Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
-                    modifiedKey = transformKeyByPayload(payloadTypeId, Converter.getRsaPublicKeysByJwk(publickKeyValueJson).get(0));
 
+                    publicKeys = Converter.getRsaPublicKeysByJwkWithId(publickKeyValueJson);
                 } catch (Exception e) {
                     loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
+                }
+
+                switch (publicKeys.size()) {
+                    // No suitable JWK in JWK Set found
+                    case 0:
+                        loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK): No suitable JWK", Logger.LogLevel.ERROR);
+                        throw new AttackPreparationFailedException(bundle.getString("NO_SUITABLE_JWK"));
+
+                    // Exactly one suitable JWK found
+                    case 1:
+                        selectedPublicKey = publicKeys.entrySet().iterator().next().getValue();
+                        break;
+
+                    // More than one suitable JWK found. Provide dialog to select one.
+                    default:
+                        selectedPublicKey = Converter.getRsaPublicKeyByJwkSelectionPanel(publicKeys);
+                }
+
+                try {
+                    modifiedKey = transformKeyByPayload(payloadTypeId, selectedPublicKey);
+                } catch (Exception e) {
+                    loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);
+                    throw new AttackPreparationFailedException(bundle.getString("ATTACK_PREPARATION_FAILED"));
                 }
 
                 break;

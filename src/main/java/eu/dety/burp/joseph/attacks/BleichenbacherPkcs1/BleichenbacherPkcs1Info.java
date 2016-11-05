@@ -223,7 +223,9 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         extraPanel.add(publicKeySelection, constraints);
 
         constraints.gridy = 2;
-        extraPanel.add(publicKey, constraints);
+        JScrollPane jScrollPane = new javax.swing.JScrollPane();
+        jScrollPane.setViewportView(publicKey);
+        extraPanel.add(jScrollPane, constraints);
 
         return true;
     }
