@@ -67,7 +67,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     private byte[] encryptedKey;
     private int amountRequests = 0;
 
-    BleichenbacherPkcs1DecryptionAttackExecutor(BleichenbacherPkcs1DecryptionAttackPanel panelReference, IBurpExtenderCallbacks callbacks, RSAPublicKey pubKey, IHttpRequestResponse requestResponse, JoseParameter parameter, BleichenbacherPkcs1Oracle oracle, boolean msgIsPkcs) {
+    BleichenbacherPkcs1DecryptionAttackExecutor(BleichenbacherPkcs1DecryptionAttackPanel panelReference, IBurpExtenderCallbacks callbacks, RSAPublicKey pubKey,
+            IHttpRequestResponse requestResponse, JoseParameter parameter, BleichenbacherPkcs1Oracle oracle, boolean msgIsPkcs) {
         this.panelReference = panelReference;
         this.requestResponse = requestResponse;
         this.parameter = parameter;
@@ -112,7 +113,8 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
             loggerInstance.log(getClass(), "Step skipped --> " + "Message is considered as PKCS compliant.", Logger.LogLevel.INFO);
             this.s0 = BigInteger.ONE;
             this.c0 = new BigInteger(1, this.encryptedKey);
-            this.m = new Interval[]{new Interval(BigInteger.valueOf(2).multiply(this.bigB), (BigInteger.valueOf(3).multiply(this.bigB)).subtract(BigInteger.ONE))};
+            this.m = new Interval[] { new Interval(BigInteger.valueOf(2).multiply(this.bigB),
+                    (BigInteger.valueOf(3).multiply(this.bigB)).subtract(BigInteger.ONE)) };
         } else {
             stepOne();
         }
@@ -196,7 +198,7 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         this.c0 = new BigInteger(1, send);
         this.s0 = this.si;
         // mi = {[2B,3B-1]}
-        this.m = new Interval[]{new Interval(BigInteger.valueOf(2).multiply(bigB), (BigInteger.valueOf(3).multiply(bigB)).subtract(BigInteger.ONE))};
+        this.m = new Interval[] { new Interval(BigInteger.valueOf(2).multiply(bigB), (BigInteger.valueOf(3).multiply(bigB)).subtract(BigInteger.ONE)) };
 
         loggerInstance.log(getClass(), "Found s0 : " + this.si, Logger.LogLevel.INFO);
     }
@@ -261,7 +263,6 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         } while (oracle.getResult(response.getResponse()) != BleichenbacherPkcs1Oracle.Result.VALID);
         loggerInstance.log(getClass(), "Matching response: " + helpers.bytesToString(response.getResponse()), Logger.LogLevel.DEBUG);
     }
-
 
     private void stepTwoB() throws Exception {
         byte[] send;
@@ -445,7 +446,6 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
         return lowerBound;
     }
 
-
     private boolean stepFour() {
         boolean resultFound = false;
 
@@ -465,8 +465,10 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
     }
 
     /**
-     * @param originalMessage original message to be changed
-     * @param si factor
+     * @param originalMessage
+     *            original message to be changed
+     * @param si
+     *            factor
      * @return Prepared message as byte array
      */
     private byte[] prepareMsg(final BigInteger originalMessage, final BigInteger si) {
@@ -488,10 +490,13 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
     /**
      * Corrects the length of a byte array to a multiple of a passed blockSize.
-     *
-     * @param array Array which size should be corrected
-     * @param blockSize Blocksize - the resulting array length will be a multiple of it
-     * @param removeSignByte If set to TRUE leading sign bytes will be removed
+     * 
+     * @param array
+     *            Array which size should be corrected
+     * @param blockSize
+     *            Blocksize - the resulting array length will be a multiple of it
+     * @param removeSignByte
+     *            If set to TRUE leading sign bytes will be removed
      * @return Size corrected array (maybe padded or stripped the sign byte)
      */
     private static byte[] correctSize(final byte[] array, final int blockSize, final boolean removeSignByte) {
@@ -516,6 +521,5 @@ class BleichenbacherPkcs1DecryptionAttackExecutor extends SwingWorker<Integer, B
 
         return result;
     }
-
 
 }

@@ -36,8 +36,9 @@ public class AttackLoader {
 
     /**
      * Get new list of new instances of all registered attacks
-     *
-     * @param callbacks {@link IBurpExtenderCallbacks} instance
+     * 
+     * @param callbacks
+     *            {@link IBurpExtenderCallbacks} instance
      * @return HashMap with the name of the attack as string and a new instance of the attack's info class
      */
     public static HashMap<String, IAttackInfo> getRegisteredAttackInstances(IBurpExtenderCallbacks callbacks) {
@@ -67,4 +68,3 @@ public class AttackLoader {
     }
 
 }
-

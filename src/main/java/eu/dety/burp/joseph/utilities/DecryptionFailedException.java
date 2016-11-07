@@ -18,7 +18,6 @@
  */
 package eu.dety.burp.joseph.utilities;
 
-
 /**
  * DecryptionFailedException
  **/

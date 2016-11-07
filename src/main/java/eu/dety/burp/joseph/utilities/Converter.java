@@ -32,9 +32,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * Help functions to convert JSON Web Key to RSA PublicKey
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -43,13 +43,16 @@ public class Converter {
 
     /**
      * Get RSA PublicKey list by JWK JSON input
-     * @param input JSON Web Key {@link JSONObject}
+     * 
+     * @param input
+     *            JSON Web Key {@link JSONObject}
      * @return List of {@link PublicKey}
      */
     public static List<PublicKey> getRsaPublicKeysByJwk(final Object input) {
         List<PublicKey> keys = new ArrayList<>();
 
-        if (!(input instanceof JSONObject)) return keys;
+        if (!(input instanceof JSONObject))
+            return keys;
 
         JSONObject inputJsonObject = (JSONObject) input;
 
@@ -62,12 +65,14 @@ public class Converter {
 
                 PublicKey key = getRsaPublicKeyByJwk(keyJson);
 
-                if (key != null) keys.add(key);
+                if (key != null)
+                    keys.add(key);
             }
         } else {
             PublicKey key = getRsaPublicKeyByJwk(inputJsonObject);
 
-            if (key != null) keys.add(key);
+            if (key != null)
+                keys.add(key);
         }
 
         return keys;
@@ -75,21 +80,27 @@ public class Converter {
 
     /**
      * Get RSA PublicKey by JWK JSON input
-     * @param input JSON Web Key {@link JSONObject}
+     * 
+     * @param input
+     *            JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
      */
     private static PublicKey getRsaPublicKeyByJwk(JSONObject input) {
-        if (!input.containsKey("kty")) return null;
+        if (!input.containsKey("kty"))
+            return null;
         String kty = (String) input.get("kty");
 
-        if (kty.equals("RSA")) return buildRsaPublicKeyByJwk(input);
+        if (kty.equals("RSA"))
+            return buildRsaPublicKeyByJwk(input);
 
         return null;
     }
 
     /**
      * Build RSA {@link PublicKey} from RSA JWK JSON object
-     * @param input RSA JSON Web Key {@link JSONObject}
+     * 
+     * @param input
+     *            RSA JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
      */
     private static PublicKey buildRsaPublicKeyByJwk(JSONObject input) {
@@ -106,7 +117,9 @@ public class Converter {
 
     /**
      * Build {@link RSAPublicKey} from PublicKey PEM string
-     * @param pemInput PublicKey PEM string
+     * 
+     * @param pemInput
+     *            PublicKey PEM string
      * @return {@link RSAPublicKey} or null
      */
     public static RSAPublicKey getRsaPublicKeyByPemString(String pemInput) {
@@ -121,7 +134,8 @@ public class Converter {
             X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             publicKey = (RSAPublicKey) keyFactory.generatePublic(spec);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         // PKCS1
         try {
@@ -131,10 +145,10 @@ public class Converter {
             X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             publicKey = (RSAPublicKey) keyFactory.generatePublic(spec);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         return publicKey;
     }
-
 
 }

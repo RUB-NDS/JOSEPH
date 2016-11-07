@@ -23,9 +23,8 @@ import eu.dety.burp.joseph.attacks.AttackRequest;
 /**
  * Signature Exclusion Attack Request
  * <p>
- * Class extending abstract {@link AttackRequest} specifying properties
- * of a single prepared signature exclusion attack request.
- *
+ * Class extending abstract {@link AttackRequest} specifying properties of a single prepared signature exclusion attack request.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -39,6 +38,7 @@ public class SignatureExclusionAttackRequest extends AttackRequest {
 
     /**
      * Get the payload
+     * 
      * @return The payload as string
      */
     public String getPayload() {
@@ -47,7 +47,9 @@ public class SignatureExclusionAttackRequest extends AttackRequest {
 
     /**
      * Set the payload
-     * @param payload The payload as string
+     * 
+     * @param payload
+     *            The payload as string
      */
     public void setPayload(String payload) {
         this.payload = payload;

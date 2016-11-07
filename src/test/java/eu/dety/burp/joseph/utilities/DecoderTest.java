@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 public class DecoderTest {
     @Test
     public void getEncodedWithBytesInputReturnsCorrectBase64UrlEncodedString() {
-        byte[] input = new byte[]{84, 101, 115, 116, 32, 73, 110, 112, 117, 116};
+        byte[] input = new byte[] { 84, 101, 115, 116, 32, 73, 110, 112, 117, 116 };
 
         assertEquals("VGVzdCBJbnB1dA", Decoder.getEncoded(input));
     }
@@ -57,7 +57,7 @@ public class DecoderTest {
     @Test
     public void getComponentsWithThreeComponentJwtInputReturnsStringArrayWithThreeComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        String[] expected = new String[]{"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
+        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
 
         assertArrayEquals(expected, Decoder.getComponents(token));
     }
@@ -65,7 +65,8 @@ public class DecoderTest {
     @Test
     public void getComponentsWithFourComponentJwtInputReturnsStringArrayWithFourComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
-        String[] expected = new String[]{"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"};
+        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" };
 
         assertArrayEquals(expected, Decoder.getComponents(token));
     }
@@ -73,7 +74,7 @@ public class DecoderTest {
     @Test
     public void getComponentsWithThreeComponentJwtAndAssureLengthInputReturnsStringArrayWithThreeComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
-        String[] expected = new String[]{"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
+        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
 
         assertArrayEquals(expected, Decoder.getComponents(token, 3));
     }
@@ -81,7 +82,7 @@ public class DecoderTest {
     @Test
     public void getComponentsWithTwoComponentJwtAndAssureLengthInputReturnsStringArrayWithThreeComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
-        String[] expected = new String[]{"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", ""};
+        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "" };
 
         assertArrayEquals(expected, Decoder.getComponents(token, 3));
     }
@@ -89,14 +90,14 @@ public class DecoderTest {
     @Test
     public void getComponentsWithFiveComponentJwtAndAssureLengthInputReturnsStringArrayWithThreeComponents() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
-        String[] expected = new String[]{"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
+        String[] expected = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
 
         assertArrayEquals(expected, Decoder.getComponents(token, 3));
     }
 
     @Test
     public void concatComponentsWithThreeStringsArrayInputReturnsCorrectlyConcatenatedString() {
-        String[] input = new String[]{"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg"};
+        String[] input = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg" };
         String expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
         assertEquals(expected, Decoder.concatComponents(input));
@@ -104,7 +105,7 @@ public class DecoderTest {
 
     @Test
     public void concatComponentsWithThreeStringsArrayIncludingEmptyStringInputReturnsCorrectlyConcatenatedString() {
-        String[] input = new String[]{"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", ""};
+        String[] input = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "" };
         String expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.";
 
         assertEquals(expected, Decoder.concatComponents(input));
@@ -112,7 +113,8 @@ public class DecoderTest {
 
     @Test
     public void concatComponentsWithFiveStringsArrayStringInputReturnsCorrectlyConcatenatedString() {
-        String[] input = new String[]{"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9"};
+        String[] input = new String[] { "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9", "4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzb21lIjoicGF5bG9hZCJ9" };
         String expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9";
 
         assertEquals(expected, Decoder.concatComponents(input));
@@ -169,7 +171,8 @@ public class DecoderTest {
         expected[2] = new JSONObject().put("another", "payload");
         expected[3] = new JSONObject().put("and even", "more");
 
-        JSONObject[] result = Decoder.getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.eyJhbm90aGVyIjoicGF5bG9hZCJ9.eyJhbmQgZXZlbiI6Im1vcmUifQ");
+        JSONObject[] result = Decoder
+                .getJsonComponents("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.eyJhbm90aGVyIjoicGF5bG9hZCJ9.eyJhbmQgZXZlbiI6Im1vcmUifQ");
         assertEquals(expected.length, result.length);
 
         for (int i = 0; i < result.length; i++) {
@@ -179,7 +182,7 @@ public class DecoderTest {
 
     @Test
     public void convertBytesToHex() {
-        byte[] input = new byte[]{0, 84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116};
+        byte[] input = new byte[] { 0, 84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116 };
         String output = "00 54 68 69 73 20 69 73 20 61 20 74 65 73 74";
 
         assertEquals(output, Decoder.bytesToHex(input));
@@ -188,7 +191,7 @@ public class DecoderTest {
     @Test
     public void convertHexToBytes() {
         String input = "54 68 69 73 20 69 73 20 61 20 74 65 73 74";
-        byte[] output = new byte[]{84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116};
+        byte[] output = new byte[] { 84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116 };
 
         assertArrayEquals(output, Decoder.hexToBytes(input));
     }
@@ -196,7 +199,7 @@ public class DecoderTest {
     @Test
     public void convertHexToBytesWithWrongByteReturnsEmptyByteArray() {
         String input = "54 68 69 73 20 69 73 20 61 20 74 65 73 7";
-        byte[] output = new byte[]{};
+        byte[] output = new byte[] {};
 
         assertArrayEquals(output, Decoder.hexToBytes(input));
     }
@@ -204,7 +207,7 @@ public class DecoderTest {
     @Test
     public void convertHexToBytesWithWrongSpacesReturnsCorrectByteArray() {
         String input = " 54 68 69 73 20 69 73 20 61 20 74   65 73 74 ";
-        byte[] output = new byte[]{84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116};
+        byte[] output = new byte[] { 84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116 };
 
         assertArrayEquals(output, Decoder.hexToBytes(input));
     }
@@ -223,6 +226,5 @@ public class DecoderTest {
         assertEquals("JWT", Decoder.getValueByBase64String(input2, "typ"));
         assertEquals("", Decoder.getValueByBase64String(input2, "enc"));
     }
-
 
 }

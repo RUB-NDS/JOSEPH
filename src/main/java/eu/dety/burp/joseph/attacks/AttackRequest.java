@@ -22,7 +22,7 @@ package eu.dety.burp.joseph.attacks;
  * Attack Request
  * <p>
  * Abstract class specifying properties of a single prepared attack request
- *
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -37,6 +37,7 @@ abstract public class AttackRequest {
 
     /**
      * Get the request content
+     * 
      * @return byte array request content
      */
     public byte[] getRequest() {
@@ -45,7 +46,9 @@ abstract public class AttackRequest {
 
     /**
      * Set the request content
-     * @param request byte array request content
+     * 
+     * @param request
+     *            byte array request content
      */
     public void setRequest(byte[] request) {
         this.request = request;
@@ -55,6 +58,7 @@ abstract public class AttackRequest {
      * Get the payload type
      * <p>
      * Each {@link IAttackInfo} class should implement an enum PayloadType
+     * 
      * @return ordinal value of payload type
      */
     public int getPayloadType() {
@@ -63,7 +67,9 @@ abstract public class AttackRequest {
 
     /**
      * Set the payload type
-     * @param payloadType ordinal value of payload type
+     * 
+     * @param payloadType
+     *            ordinal value of payload type
      */
     public void setPayloadType(int payloadType) {
         this.payloadType = payloadType;

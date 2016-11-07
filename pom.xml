@@ -6,6 +6,10 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <inceptionYear>2016</inceptionYear>
+    <name>JOSEPH</name>
+    <url>https://github.com/RUB-NDS/JOSEPH</url>
+    <description>JOSEPH is a Burp Suite extension and has been developed as part of a master thesis by Dennis Detering at the Ruhr University Bochum (http://rub.de/) in cooperation with the CSPi GmbH (http://www.cspi.com/).</description>
+
     <dependencies>
         <!-- Burp Suite Extension API -->
         <dependency>
@@ -60,19 +64,20 @@
             <version>4.1.0</version>
         </dependency>
     </dependencies>
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
-    
+
     <build>
         <resources>
             <resource>
                 <directory>src/main/java/eu/dety/burp/joseph/resources/</directory>
             </resource>
         </resources>
+
         <plugins>
             <!-- Copy dependencies to lib folder -->
             <plugin>
@@ -129,7 +134,7 @@
                 <version>2.2</version>
                 <configuration>
                     <descriptorRefs>
-                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                 </configuration>
                 <executions>
@@ -137,7 +142,24 @@
                         <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                                <goal>single</goal>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Format the Code -->
+            <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>0.5.2</version>
+                <configuration>
+                    <configFile>${basedir}/maven-eclipse-codestyle.xml</configFile>
+                    <lineEnding>LF</lineEnding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
                         </goals>
                     </execution>
                 </executions>

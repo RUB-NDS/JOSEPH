@@ -34,7 +34,7 @@ import java.util.List;
 
 /**
  * Attack Template Attack Info
- *
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -52,24 +52,28 @@ public class AttackTemplateInfo implements IAttackInfo {
     // Attack description
     private static final String description = "<html>The <em>Attack Template</em> attack description...</html>";
 
-    // Hashmap of available payloads with a verbose name (including the PayloadType)
-    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {{
-       /*
-       ADD YOUR ATTACK PAYLOADS HERE
-        */
-    }};
+    // Hashmap of available payloads with a verbose name (including the
+    // PayloadType)
+    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {
+        {
+            /*
+             * ADD YOUR ATTACK PAYLOADS HERE
+             */
+        }
+    };
 
     // Amount of requests needed
     private static final int amountRequests = 0;
 
     // Types of payload variation
     enum PayloadType {
-       /*
-       ADD YOUR PAYLOAD TYPES HERE
-        */
+        /*
+         * ADD YOUR PAYLOAD TYPES HERE
+         */
     }
 
-    // List of AttackTemplateAttackRequest objects holding prepared attack requests
+    // List of AttackTemplateAttackRequest objects holding prepared attack
+    // requests
     private List<AttackTemplateAttackRequest> requests = new ArrayList<>();
 
     public AttackTemplateInfo(IBurpExtenderCallbacks callbacks) {
@@ -77,7 +81,8 @@ public class AttackTemplateInfo implements IAttackInfo {
     }
 
     @Override
-    public AttackTemplate prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
+    public AttackTemplate prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo,
+            JoseParameter parameter) throws AttackPreparationFailedException {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
@@ -85,7 +90,7 @@ public class AttackTemplateInfo implements IAttackInfo {
 
         try {
             /*
-            ADD YOUR ATTACK PREPARATION LOGIC HERE
+             * ADD YOUR ATTACK PREPARATION LOGIC HERE
              */
         } catch (Exception e) {
             throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
@@ -117,7 +122,7 @@ public class AttackTemplateInfo implements IAttackInfo {
     @Override
     public boolean getExtraUI(JPanel extraPanel, GridBagConstraints constraints) {
         /*
-        CHANGE IF EXTRA UI IS NEEDED
+         * CHANGE IF EXTRA UI IS NEEDED
          */
         return false;
     }
@@ -125,7 +130,7 @@ public class AttackTemplateInfo implements IAttackInfo {
     @Override
     public boolean isSuitable(JoseParameter.JoseType type, String algorithm) {
         /*
-        CHANGE TO CHECK SUITABILITY
+         * CHANGE TO CHECK SUITABILITY
          */
         return true;
     }
@@ -150,11 +155,10 @@ public class AttackTemplateInfo implements IAttackInfo {
         HashMap<String, String> result = new HashMap<>();
 
         /*
-        ADD YOUR ATTACK PAYLOAD LOGIC HERE
+         * ADD YOUR ATTACK PAYLOAD LOGIC HERE
          */
 
         return result;
     }
-
 
 }

@@ -40,9 +40,13 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Construct a new table entry.
-     * @param payload Payload used for the attack request
-     * @param requestResponse The content of the request/response.
-     * @param callbacks Helper provided by the Burp Suite api.
+     * 
+     * @param payload
+     *            Payload used for the attack request
+     * @param requestResponse
+     *            The content of the request/response.
+     * @param callbacks
+     *            Helper provided by the Burp Suite api.
      */
     public BleichenbacherPkcs1TableEntry(int entryIndex, int payloadType, String payload, IHttpRequestResponse requestResponse, IBurpExtenderCallbacks callbacks) {
         this.helpers = callbacks.getHelpers();
@@ -65,6 +69,7 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Get the index of the message.
+     * 
      * @return Message index.
      */
     public int getEntryIndex() {
@@ -73,6 +78,7 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Get the protocol name.
+     * 
      * @return The protocol name.
      */
     public String getPayload() {
@@ -81,6 +87,7 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Get the status code of the response.
+     * 
      * @return The status code.
      */
     public short getStatus() {
@@ -89,6 +96,7 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Get the length of the request.
+     * 
      * @return The length.
      */
     public String getLength() {
@@ -97,6 +105,7 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Get the time at which the entry was created.
+     * 
      * @return The time (XX:XX:XX).
      */
     public String getTime() {
@@ -105,6 +114,7 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Get the http message.
+     * 
      * @return The http message.
      */
     public IHttpRequestResponse getMessage() {
@@ -113,6 +123,7 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Get the payload type ordinal value.
+     * 
      * @return The payload type ordinal value.
      */
     public String getPayloadType() {
@@ -121,7 +132,9 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Set the payload type hex string representation.
-     * @param payloadType The hex string representation value of the payload type.
+     * 
+     * @param payloadType
+     *            The hex string representation value of the payload type.
      */
     public void setPayloadType(int payloadType) {
         this.payloadType = (payloadType > -1) ? String.format("0x%02X", payloadType) : "";
@@ -129,6 +142,7 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Get the isValid value
+     * 
      * @return The isValid boolean value
      */
     public boolean getIsValid() {
@@ -137,7 +151,9 @@ public class BleichenbacherPkcs1TableEntry {
 
     /**
      * Set isValid value
-     * @param isValid The boolean value wheter this request indicates a PKCS1 conform request
+     * 
+     * @param isValid
+     *            The boolean value wheter this request indicates a PKCS1 conform request
      */
     public void setIsValid(boolean isValid) {
         this.isValid = isValid;

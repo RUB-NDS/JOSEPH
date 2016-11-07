@@ -20,6 +20,7 @@ package eu.dety.burp.joseph.attacks;
 
 /**
  * Interface defining necessary methods for attack classes
+ * 
  * @author Dennis Detering
  * @version 1.0
  */

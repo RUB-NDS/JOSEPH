@@ -32,6 +32,7 @@ import java.awt.*;
  * JSON Web Signature (JWS) Editor.
  * <p>
  * Display decoded JWS components.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -41,7 +42,9 @@ public class JwsEditor implements IMessageEditorTabFactory {
 
     /**
      * Create JwsEditor instance.
-     * @param callbacks {@link IBurpExtenderCallbacks}.
+     * 
+     * @param callbacks
+     *            {@link IBurpExtenderCallbacks}.
      */
     public JwsEditor(IBurpExtenderCallbacks callbacks) {
         this.callbacks = callbacks;
@@ -50,8 +53,11 @@ public class JwsEditor implements IMessageEditorTabFactory {
 
     /**
      * Create a new instance of Burps own request/response viewer (IMessageEditorTab).
-     * @param controller {@link burp.IMessageEditorController}
-     * @param editable True if message is editable, false otherwise.
+     * 
+     * @param controller
+     *            {@link burp.IMessageEditorController}
+     * @param editable
+     *            True if message is editable, false otherwise.
      * @return {@link JwsEditorTab} instance implementing {@link burp.IMessageEditorTab}
      */
     @Override
@@ -155,11 +161,8 @@ public class JwsEditor implements IMessageEditorTabFactory {
         @Override
         public byte[] getMessage() {
             if (this.isModified()) {
-                String[] components = {
-                        Decoder.getEncoded(sourceViewerHeader.getText()),
-                        Decoder.getEncoded(sourceViewerPayload.getText()),
-                        helpers.bytesToString(sourceViewerSignature.getText())
-                };
+                String[] components = { Decoder.getEncoded(sourceViewerHeader.getText()), Decoder.getEncoded(sourceViewerPayload.getText()),
+                        helpers.bytesToString(sourceViewerSignature.getText()) };
 
                 return JoseParameter.updateRequest(currentMessage, joseParameter, helpers, Decoder.concatComponents(components));
             }
@@ -180,9 +183,13 @@ public class JwsEditor implements IMessageEditorTabFactory {
 
         /**
          * Update all related source viewer editors
-         * @param header The header JSON string
-         * @param payload The payload JSON string
-         * @param signature The signature base64 string
+         * 
+         * @param header
+         *            The header JSON string
+         * @param payload
+         *            The payload JSON string
+         * @param signature
+         *            The signature base64 string
          */
         public void updateSourceViewer(String header, String payload, String signature) {
             sourceViewerHeader.setText(helpers.stringToBytes(header));
@@ -193,6 +200,7 @@ public class JwsEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the header value from sourceViewerHeader editor as string
+         * 
          * @return Header JSON string
          */
         public String getHeader() {
@@ -201,6 +209,7 @@ public class JwsEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the payload value from sourceViewerPayload editor as string
+         * 
          * @return Payload JSON string
          */
         public String getPayload() {
@@ -209,6 +218,7 @@ public class JwsEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the signature value from sourceViewerSignature editor as string
+         * 
          * @return Signature base64url string
          */
         public String getSignature() {
@@ -216,4 +226,3 @@ public class JwsEditor implements IMessageEditorTabFactory {
         }
     }
 }
-

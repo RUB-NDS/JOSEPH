@@ -18,11 +18,11 @@
  */
 package eu.dety.burp.joseph.attacks;
 
-
 /**
  * AttackPreparationFailedException
  * <p>
  * Throw new exception if the preparation of an {@link eu.dety.burp.joseph.attacks.IAttackInfo} fails.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */

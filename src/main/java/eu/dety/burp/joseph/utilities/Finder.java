@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 /**
  * Help functions to find and extract JWS and JWE patterns.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -34,11 +35,14 @@ public class Finder {
 
     /**
      * Check whether given JWS candidate matches regex pattern
-     * @param candidate String containing the JWS candidate value.
+     * 
+     * @param candidate
+     *            String containing the JWS candidate value.
      * @return boolean whether regex pattern matched or not.
      */
     public static boolean checkJwsPattern(String candidate) {
-        if (candidate == null || candidate.isEmpty()) return false;
+        if (candidate == null || candidate.isEmpty())
+            return false;
 
         Pattern jwsPattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.ey[a-zA-Z0-9\\-_]+\\.([a-zA-Z0-9\\-_]+)?)$", Pattern.CASE_INSENSITIVE);
         Matcher jwsMatcher = jwsPattern.matcher(candidate);
@@ -48,13 +52,17 @@ public class Finder {
 
     /**
      * Check whether given JWE candidate matches regex pattern
-     * @param candidate String containing the JWE candidate value.
+     * 
+     * @param candidate
+     *            String containing the JWE candidate value.
      * @return boolean whether regex pattern matched or not.
      */
     public static boolean checkJwePattern(String candidate) {
-        if (candidate == null || candidate.isEmpty()) return false;
+        if (candidate == null || candidate.isEmpty())
+            return false;
 
-        Pattern jwePattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)$", Pattern.CASE_INSENSITIVE);
+        Pattern jwePattern = Pattern.compile("(ey[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+)$",
+                Pattern.CASE_INSENSITIVE);
         Matcher jweMatcher = jwePattern.matcher(candidate);
 
         return jweMatcher.find();
@@ -62,7 +70,9 @@ public class Finder {
 
     /**
      * Return JOSE value if given candidate matches regex pattern
-     * @param candidate String containing the JOSE candidate value.
+     * 
+     * @param candidate
+     *            String containing the JOSE candidate value.
      * @return String with matched JOSE value.
      */
     public static String getJoseValue(String candidate) {
@@ -74,7 +84,9 @@ public class Finder {
 
     /**
      * Return {@link JoseParameter} object if JWS value could be found in parameters or HTTP headers
-     * @param requestInfo {@link IRequestInfo} object
+     * 
+     * @param requestInfo
+     *            {@link IRequestInfo} object
      * @return {@link JoseParameter} with found JWS parameter/header
      */
     public static JoseParameter checkHeaderAndParameterForJwsPattern(IRequestInfo requestInfo) {
@@ -99,7 +111,9 @@ public class Finder {
 
     /**
      * Return {@link JoseParameter} object if JWE value could be found in parameters or HTTP headers
-     * @param requestInfo {@link IRequestInfo} object
+     * 
+     * @param requestInfo
+     *            {@link IRequestInfo} object
      * @return {@link JoseParameter} with found JWE parameter/header
      */
     public static JoseParameter checkHeaderAndParameterForJwePattern(IRequestInfo requestInfo) {

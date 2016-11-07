@@ -23,9 +23,8 @@ import eu.dety.burp.joseph.attacks.AttackRequest;
 /**
  * Key Confusion Attack Request
  * <p>
- * Class extending abstract {@link AttackRequest} specifying properties
- * of a single prepared key confusion attack request.
- *
+ * Class extending abstract {@link AttackRequest} specifying properties of a single prepared key confusion attack request.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -44,6 +43,7 @@ public class KeyConfusionAttackRequest extends AttackRequest {
 
     /**
      * Get the algorithm abbreviation
+     * 
      * @return The algorithm value
      */
     public String getAlgorithm() {
@@ -52,7 +52,9 @@ public class KeyConfusionAttackRequest extends AttackRequest {
 
     /**
      * Set the algorithm
-     * @param algorithm The algorithm abbreviation (as defined in JWA)
+     * 
+     * @param algorithm
+     *            The algorithm abbreviation (as defined in JWA)
      */
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
@@ -60,6 +62,7 @@ public class KeyConfusionAttackRequest extends AttackRequest {
 
     /**
      * Get the key value
+     * 
      * @return String representation of the public key
      */
     public String getKeyValue() {
@@ -68,7 +71,9 @@ public class KeyConfusionAttackRequest extends AttackRequest {
 
     /**
      * Set the public key value
-     * @param keyValue String representation of the public key
+     * 
+     * @param keyValue
+     *            String representation of the public key
      */
     public void setKeyValue(String keyValue) {
         this.keyValue = keyValue;
@@ -76,6 +81,7 @@ public class KeyConfusionAttackRequest extends AttackRequest {
 
     /**
      * Get the key length
+     * 
      * @return The key length in bytes
      */
     public int getKeyLength() {
@@ -84,7 +90,9 @@ public class KeyConfusionAttackRequest extends AttackRequest {
 
     /**
      * Set the key length
-     * @param keyLength The key length in bytes
+     * 
+     * @param keyLength
+     *            The key length in bytes
      */
     public void setKeyLength(int keyLength) {
         this.keyLength = keyLength;

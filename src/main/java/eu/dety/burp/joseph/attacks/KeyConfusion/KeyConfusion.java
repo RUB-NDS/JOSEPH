@@ -34,9 +34,8 @@ import java.util.concurrent.ExecutionException;
 /**
  * Key Confusion Attack
  * <p>
- * Perform a key confusion attack by
- * using an RSA public key as MAC secret.
- *
+ * Perform a key confusion attack by using an RSA public key as MAC secret.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -88,7 +87,8 @@ public class KeyConfusion implements IAttack {
         }
 
         @Override
-        // Add response to response list, add new entry to attacker result window table and update process bar
+        // Add response to response list, add new entry to attacker result
+        // window table and update process bar
         protected void done() {
 
             IHttpRequestResponse requestResponse;
