@@ -147,14 +147,14 @@ public class KeyConfusionInfo implements IAttackInfo {
 
                     publicKeys = Converter.getRsaPublicKeysByJwkWithId(publickKeyValueJson);
                 } catch (Exception e) {
-                    loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);
+                    loggerInstance.log(getClass(), "Error in prepareAttack (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
                 }
 
                 switch (publicKeys.size()) {
                 // No suitable JWK in JWK Set found
                     case 0:
-                        loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK): No suitable JWK", Logger.LogLevel.ERROR);
+                        loggerInstance.log(getClass(), "Error in prepareAttack (JWK): No suitable JWK", Logger.LogLevel.ERROR);
                         throw new AttackPreparationFailedException(bundle.getString("NO_SUITABLE_JWK"));
 
                         // Exactly one suitable JWK found
