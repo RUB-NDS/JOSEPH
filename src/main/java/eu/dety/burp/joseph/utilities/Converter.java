@@ -82,6 +82,7 @@ public class Converter {
      * @return Selected {@link PublicKey}
      */
     public static PublicKey getRsaPublicKeyByJwkSelectionPanel(HashMap<String, PublicKey> publicKeys) throws AttackPreparationFailedException {
+        // TODO: Move to other class?
         JPanel selectionPanel = new JPanel();
         selectionPanel.setLayout(new java.awt.GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
