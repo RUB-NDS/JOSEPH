@@ -27,9 +27,8 @@ import java.net.URL;
 import java.util.Map;
 
 /**
- * Simple class implementing {@link IBurpExtenderCallbacks}
- * to mock Burp's behavior for extender callbacks
- * to be able to write according unit tests.
+ * Simple class implementing {@link IBurpExtenderCallbacks} to mock Burp's behavior for extender callbacks to be able to write according
+ * unit tests.
  */
 public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
 

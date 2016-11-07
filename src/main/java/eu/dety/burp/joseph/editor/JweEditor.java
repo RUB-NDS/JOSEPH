@@ -32,6 +32,7 @@ import java.util.Arrays;
  * JSON Web Encryption (JWE) Editor.
  * <p>
  * Display decoded JWE components.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -42,7 +43,9 @@ public class JweEditor implements IMessageEditorTabFactory {
 
     /**
      * Create JweEditor instance.
-     * @param callbacks {@link IBurpExtenderCallbacks}.
+     * 
+     * @param callbacks
+     *            {@link IBurpExtenderCallbacks}.
      */
     public JweEditor(IBurpExtenderCallbacks callbacks) {
         this.callbacks = callbacks;
@@ -51,8 +54,11 @@ public class JweEditor implements IMessageEditorTabFactory {
 
     /**
      * Create a new instance of Burps own request/response viewer (IMessageEditorTab).
-     * @param controller {@link IMessageEditorController}
-     * @param editable True if message is editable, false otherwise.
+     * 
+     * @param controller
+     *            {@link IMessageEditorController}
+     * @param editable
+     *            True if message is editable, false otherwise.
      * @return {@link JweEditorTab} instance implementing {@link IMessageEditorTab}
      */
     @Override
@@ -166,16 +172,12 @@ public class JweEditor implements IMessageEditorTabFactory {
         @Override
         public byte[] getMessage() {
             if (this.isModified()) {
-                String[] components = {
-                        Decoder.getEncoded(sourceViewerHeader.getText()),
-                        helpers.bytesToString(sourceViewerCek.getText()),
-                        helpers.bytesToString(sourceViewerIv.getText()),
-                        helpers.bytesToString(sourceViewerCiphertext.getText()),
-                        helpers.bytesToString(sourceViewerTag.getText())
-                };
+                String[] components = { Decoder.getEncoded(sourceViewerHeader.getText()), helpers.bytesToString(sourceViewerCek.getText()),
+                        helpers.bytesToString(sourceViewerIv.getText()), helpers.bytesToString(sourceViewerCiphertext.getText()),
+                        helpers.bytesToString(sourceViewerTag.getText()) };
 
                 switch (joseParameter.getOriginType()) {
-                    // Update the request with the new header value
+                // Update the request with the new header value
                     case HEADER:
                         IRequestInfo requestInfo = helpers.analyzeRequest(currentMessage);
                         java.util.List<String> headers = requestInfo.getHeaders();
@@ -188,9 +190,10 @@ public class JweEditor implements IMessageEditorTabFactory {
 
                         return helpers.buildHttpMessage(headers, Arrays.copyOfRange(currentMessage, requestInfo.getBodyOffset(), currentMessage.length));
 
-                    // Update the request with the new parameter value
+                        // Update the request with the new parameter value
                     case PARAMETER:
-                        return helpers.updateParameter(currentMessage, helpers.buildParameter(joseParameter.getName(), Decoder.concatComponents(components), joseParameter.getParameterType()));
+                        return helpers.updateParameter(currentMessage,
+                                helpers.buildParameter(joseParameter.getName(), Decoder.concatComponents(components), joseParameter.getParameterType()));
                 }
 
             }
@@ -199,7 +202,8 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         @Override
         public boolean isModified() {
-            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerCek.isTextModified() || sourceViewerIv.isTextModified() || sourceViewerCiphertext.isTextModified() || sourceViewerTag.isTextModified() || this.isModified);
+            boolean isModified = (sourceViewerHeader.isTextModified() || sourceViewerCek.isTextModified() || sourceViewerIv.isTextModified()
+                    || sourceViewerCiphertext.isTextModified() || sourceViewerTag.isTextModified() || this.isModified);
             this.isModified = false;
             return isModified;
         }
@@ -211,11 +215,17 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         /**
          * Update all related source viewer editors
-         * @param header The header JSON string
-         * @param cek The CEK base64string
-         * @param iv The IV base64string
-         * @param ciphertext The ciphertext base64string
-         * @param tag The AuthTag base64string
+         * 
+         * @param header
+         *            The header JSON string
+         * @param cek
+         *            The CEK base64string
+         * @param iv
+         *            The IV base64string
+         * @param ciphertext
+         *            The ciphertext base64string
+         * @param tag
+         *            The AuthTag base64string
          */
         public void updateSourceViewer(String header, String cek, String iv, String ciphertext, String tag) {
             sourceViewerHeader.setText(helpers.stringToBytes(header));
@@ -228,6 +238,7 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the header value from sourceViewerHeader editor as string
+         * 
          * @return Header JSON string
          */
         public String getHeader() {
@@ -236,6 +247,7 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the CEK value from sourceViewerCek editor as string
+         * 
          * @return CEK JSON string
          */
         public String getCek() {
@@ -244,6 +256,7 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the IV value from sourceViewerIv editor as string
+         * 
          * @return IV JSON string
          */
         public String getIv() {
@@ -252,6 +265,7 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the ciphertext value from sourceViewerCiphertext editor as string
+         * 
          * @return Ciphertext JSON string
          */
         public String getCiphertext() {
@@ -260,6 +274,7 @@ public class JweEditor implements IMessageEditorTabFactory {
 
         /**
          * Get the authentication tag value from sourceViewerTag editor as string
+         * 
          * @return AuthTag JSON string
          */
         public String getTag() {
@@ -267,4 +282,3 @@ public class JweEditor implements IMessageEditorTabFactory {
         }
     }
 }
-

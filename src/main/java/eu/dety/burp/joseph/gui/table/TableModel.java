@@ -25,17 +25,20 @@ import java.util.ArrayList;
 
 /**
  * Helper class for the attack table.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
 public class TableModel extends AbstractTableModel {
     private static final Logger loggerInstance = Logger.getInstance();
     private ArrayList<TableEntry> tableEntries;
-    private String[] columnName = {"#", "Payload type", "Payload", "Status", "Length", "Time", "Comment"};
+    private String[] columnName = { "#", "Payload type", "Payload", "Status", "Length", "Time", "Comment" };
 
     /**
      * Construct a new table helper
-     * @param tableEntries A list of table entries.
+     * 
+     * @param tableEntries
+     *            A list of table entries.
      */
     public TableModel(ArrayList<TableEntry> tableEntries) {
         this.tableEntries = tableEntries;
@@ -43,6 +46,7 @@ public class TableModel extends AbstractTableModel {
 
     /**
      * Get the tableEntries list.
+     * 
      * @return The list of {@link TableEntry}.
      */
     public ArrayList<TableEntry> getTableEntries() {
@@ -51,7 +55,9 @@ public class TableModel extends AbstractTableModel {
 
     /**
      * Add a row to the tableEntries list.
-     * @param entry The new table row.
+     * 
+     * @param entry
+     *            The new table row.
      * @return True if successful, false otherwise.
      */
     public boolean addRow(TableEntry entry) {
@@ -67,6 +73,7 @@ public class TableModel extends AbstractTableModel {
 
     /**
      * Remove all entries from the tableEntries list.
+     * 
      * @return True if all entries cleared, false otherwise.
      */
     public boolean clear() {
@@ -81,6 +88,7 @@ public class TableModel extends AbstractTableModel {
 
     /**
      * Get the number of rows.
+     * 
      * @return Number of rows.
      */
     @Override
@@ -90,6 +98,7 @@ public class TableModel extends AbstractTableModel {
 
     /**
      * Get the number of columns
+     * 
      * @return Number of columns.
      */
     @Override
@@ -99,7 +108,9 @@ public class TableModel extends AbstractTableModel {
 
     /**
      * Get the name of the column at a specific index.
-     * @param columnIndex Index of the column.
+     * 
+     * @param columnIndex
+     *            Index of the column.
      * @return The name of the column.
      */
     @Override
@@ -114,8 +125,11 @@ public class TableModel extends AbstractTableModel {
 
     /**
      * Get the value at a position.
-     * @param rowIndex The row.
-     * @param columnIndex The column.
+     * 
+     * @param rowIndex
+     *            The row.
+     * @param columnIndex
+     *            The column.
      * @return Value for the specified entry. Null if not found.
      */
     @Override

@@ -39,16 +39,15 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 import java.util.List;
 
-
 /**
  * Bleichenbacher PKCS1 Attack Info
  * <p>
- * Class holding meta data for the Bleichenbacher RSA PKCS#1 v1.5 attack
- * and for preparing all necessary parameter for the actual attack.
+ * Class holding meta data for the Bleichenbacher RSA PKCS#1 v1.5 attack and for preparing all necessary parameter for the actual attack.
  * <p>
  * Attack vector generation based on and code (partly) taken from WS-Attacker
+ * 
  * @see <a href="https://github.com/RUB-NDS/WS-Attacker">WS-Attacker</a>
- *
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -61,7 +60,6 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     private JoseParameter parameter;
     private RSAPublicKey pubKey;
 
-
     // Unique identifier for the attack class
     private static final String id = "bleichenbarcher_pkcs1";
 
@@ -69,8 +67,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     private static final String name = "Bleichenbacher Million Message Attack";
 
     // Attack description
-    private static final String description = "<html>The <em>Bleichenbacher RSA PKCS#1 v1.5</em> attack (aka. Million Message Attack) " +
-            "exploits a vulnerability where the receiving party may be abused as validity oracle of the PKCS#1 v1.5 conformity.</html>";
+    private static final String description = "<html>The <em>Bleichenbacher RSA PKCS#1 v1.5</em> attack (aka. Million Message Attack) "
+            + "exploits a vulnerability where the receiving party may be abused as validity oracle of the PKCS#1 v1.5 conformity.</html>";
 
     // Amount of requests needed
     private int amountRequests = 0;
@@ -90,19 +88,22 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         WRONG_SECOND_BYTE
     }
 
-    // Hashmap of available payloads with a verbose name (including the PayloadType)
-    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {{
-        put(String.format("No Null Byte (0x%02X)", PayloadType.NO_NULL_BYTE.ordinal()), PayloadType.NO_NULL_BYTE);
-        put(String.format("Null Byte in Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PADDING);
-        put(String.format("Null Byte in PKCS Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PKCS_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PKCS_PADDING);
-        put(String.format("Symmetric Key of Size 8 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_8.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_8);
-        put(String.format("Symmetric Key of Size 16 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_16.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_16);
-        put(String.format("Symmetric Key of Size 24 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_24.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_24);
-        put(String.format("Symmetric Key of Size 32 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_32.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_32);
-        put(String.format("Symmetric Key of Size 40 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_40.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_40);
-        put(String.format("Wrong First Byte (0x%02X)", PayloadType.WRONG_FIRST_BYTE.ordinal()), PayloadType.WRONG_FIRST_BYTE);
-        put(String.format("Wrong Second Byte (0x%02X)", PayloadType.WRONG_SECOND_BYTE.ordinal()), PayloadType.WRONG_SECOND_BYTE);
-    }};
+    // Hashmap of available payloads with a verbose name (including the
+    // PayloadType)
+    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {
+        {
+            put(String.format("No Null Byte (0x%02X)", PayloadType.NO_NULL_BYTE.ordinal()), PayloadType.NO_NULL_BYTE);
+            put(String.format("Null Byte in Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PADDING);
+            put(String.format("Null Byte in PKCS Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PKCS_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PKCS_PADDING);
+            put(String.format("Symmetric Key of Size 8 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_8.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_8);
+            put(String.format("Symmetric Key of Size 16 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_16.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_16);
+            put(String.format("Symmetric Key of Size 24 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_24.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_24);
+            put(String.format("Symmetric Key of Size 32 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_32.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_32);
+            put(String.format("Symmetric Key of Size 40 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_40.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_40);
+            put(String.format("Wrong First Byte (0x%02X)", PayloadType.WRONG_FIRST_BYTE.ordinal()), PayloadType.WRONG_FIRST_BYTE);
+            put(String.format("Wrong Second Byte (0x%02X)", PayloadType.WRONG_SECOND_BYTE.ordinal()), PayloadType.WRONG_SECOND_BYTE);
+        }
+    };
 
     // List of prepared requests with payload info
     private List<BleichenbacherPkcs1AttackRequest> requests = new ArrayList<>();
@@ -115,7 +116,8 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     @Override
-    public BleichenbacherPkcs1 prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo, JoseParameter parameter) throws AttackPreparationFailedException {
+    public BleichenbacherPkcs1 prepareAttack(IBurpExtenderCallbacks callbacks, IHttpRequestResponse requestResponse, IRequestInfo requestInfo,
+            JoseParameter parameter) throws AttackPreparationFailedException {
         this.requestResponse = requestResponse;
         this.parameter = parameter;
 
@@ -132,7 +134,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         int publicKeyFormat = publicKeySelection.getSelectedIndex();
 
         switch (publicKeyFormat) {
-            // JWK (JSON)
+        // JWK (JSON)
             case 1:
                 loggerInstance.log(getClass(), "Key format is JWK:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
@@ -148,7 +150,7 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
                 }
 
                 switch (publicKeys.size()) {
-                    // No suitable JWK in JWK Set found
+                // No suitable JWK in JWK Set found
                     case 0:
                         loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK): No suitable JWK", Logger.LogLevel.ERROR);
                         throw new AttackPreparationFailedException(bundle.getString("NO_SUITABLE_JWK"));
@@ -268,12 +270,14 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
     }
 
     @Override
-    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload, String signature) throws AttackPreparationFailedException {
+    public HashMap<String, String> updateValuesByPayload(Enum payloadTypeId, String header, String payload, String signature)
+            throws AttackPreparationFailedException {
         return new HashMap<>();
     }
 
     /**
      * Get the public key
+     * 
      * @return {@link RSAPublicKey} public key
      */
     public RSAPublicKey getPublicKey() {
@@ -282,18 +286,20 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
     /**
      * Get the parameter with the JOSE value
+     * 
      * @return {@link IParameter} parameter
      */
     public JoseParameter getParameter() {
         return this.parameter;
     }
 
-
     /**
      * Generate different encrypted PKCS1 vectors
-     *
-     * @param publicKey Public key
-     * @param keySize Key size
+     * 
+     * @param publicKey
+     *            Public key
+     * @param keySize
+     *            Key size
      * @return Hashmap of encrypted padded keys and according payload type
      */
     private HashMap<PayloadType, byte[]> generatePkcs1Vectors(RSAPublicKey publicKey, int keySize) {
@@ -333,9 +339,11 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
     /**
      * Generate a validly padded message
-     *
-     * @param rsaKeyLength rsa key length in bytes
-     * @param symmetricKey symmetric key in bytes
+     * 
+     * @param rsaKeyLength
+     *            rsa key length in bytes
+     * @param symmetricKey
+     *            symmetric key in bytes
      * @return The padded key
      */
     private static byte[] getPaddedKey(int rsaKeyLength, byte[] symmetricKey) {

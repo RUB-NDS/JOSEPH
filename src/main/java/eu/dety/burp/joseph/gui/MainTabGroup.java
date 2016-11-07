@@ -36,6 +36,7 @@ import java.util.ResourceBundle;
 
 /**
  * The main window, the parent window for all tabs.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -56,7 +57,9 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
      * Construct the main UI.
      * <p>
      * Calls {@link #initComponents()} to initialize UI components
-     * @param callbacks {@link burp.IBurpExtenderCallbacks}.
+     * 
+     * @param callbacks
+     *            {@link burp.IBurpExtenderCallbacks}.
      */
     public MainTabGroup(IBurpExtenderCallbacks callbacks) {
         this.callbacks = callbacks;
@@ -65,6 +68,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
     /**
      * Get the UI component
+     * 
      * @return Get the UI component that should be registered at the Burp GUI.
      */
     @Override
@@ -74,6 +78,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
     /**
      * Get tab caption
+     * 
      * @return Get the title for the tab.
      */
     @Override
@@ -125,7 +130,8 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                         closeButton.setMargin(new Insets(0, 0, 0, 0));
                         closeButton.setForeground(Color.gray);
 
-                        // Close button mouse listener performing the tab removal on mouse click and defining hover effects
+                        // Close button mouse listener performing the tab
+                        // removal on mouse click and defining hover effects
                         closeButton.addMouseListener(new MouseListener() {
 
                             @Override
@@ -175,8 +181,10 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
             });
             list.add(menuItem);
 
-            // Check if message has been marked by JOSEPH extension (or if tool is repeater)
-            if (!Objects.equals(message.getHighlight(), Marker.getHighlightColor()) && iContextMenuInvocation.getToolFlag() != IBurpExtenderCallbacks.TOOL_REPEATER) {
+            // Check if message has been marked by JOSEPH extension (or if tool
+            // is repeater)
+            if (!Objects.equals(message.getHighlight(), Marker.getHighlightColor())
+                    && iContextMenuInvocation.getToolFlag() != IBurpExtenderCallbacks.TOOL_REPEATER) {
                 menuItem.setEnabled(false);
             }
 
@@ -186,8 +194,6 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
                 menuItem.setEnabled(false);
             }
 
-            // TODO: Check if suitable attack exists
-
             return list;
         }
 
@@ -196,6 +202,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
     /**
      * Getter for the decoder panel
+     * 
      * @return {@link DecoderPanel} object.
      */
     public DecoderPanel getDecoderPanel() {
@@ -204,6 +211,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
     /**
      * Getter for the help panel
+     * 
      * @return {@link HelpPanel} object.
      */
     public HelpPanel getHelpPanel() {
@@ -212,6 +220,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
     /**
      * Getter for the preferences panel
+     * 
      * @return {@link PreferencesPanel} object.
      */
     public PreferencesPanel getPreferencesPanel() {
@@ -220,6 +229,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
     /**
      * Get the current tab index
+     * 
      * @return the tab index.
      */
     public int getGlobalTabCounter() {
@@ -228,6 +238,7 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
 
     /**
      * Increase the tab index and get new value
+     * 
      * @return the increased tab index.
      */
     public int getNewGlobalTabCounter() {
@@ -253,7 +264,6 @@ public class MainTabGroup extends JTabbedPane implements ITab, IContextMenuFacto
         this.addTab(bundle.getString("HELP"), helpPanel);
 
         attackerTabGroup.addTab(bundle.getString("INFO"), new AttackerInfoPanel());
-
 
         // Use Burp UI settings and add as extension tab
         callbacks.customizeUiComponent(this);

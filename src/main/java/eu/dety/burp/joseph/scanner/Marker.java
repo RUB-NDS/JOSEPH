@@ -26,9 +26,9 @@ import eu.dety.burp.joseph.utilities.Logger;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-
 /**
  * HTTP listener to recognize and mark JOSE parameter
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -45,7 +45,8 @@ public class Marker implements IHttpListener {
 
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse httpRequestResponse) {
-        // Only flag messages if highlighting option is set to true and if sent/received by the proxy
+        // Only flag messages if highlighting option is set to true and if
+        // sent/received by the proxy
         if (PreferencesPanel.getHighlighting() && toolFlag == IBurpExtenderCallbacks.TOOL_PROXY) {
             checkForJoseLocations(httpRequestResponse);
         }
@@ -53,7 +54,9 @@ public class Marker implements IHttpListener {
 
     /**
      * Checks whether given recognition pattern for JWS locations match
-     * @param httpRequestResponse {@link IHttpRequestResponse} Object containing the request/response.
+     * 
+     * @param httpRequestResponse
+     *            {@link IHttpRequestResponse} Object containing the request/response.
      */
     private void checkForJoseLocations(IHttpRequestResponse httpRequestResponse) {
         IRequestInfo requestInfo = helpers.analyzeRequest(httpRequestResponse);
@@ -71,13 +74,17 @@ public class Marker implements IHttpListener {
 
     /**
      * Highlight recognized request/response and add an informational comment
-     * @param httpRequestResponse {@link IHttpRequestResponse} Object containing the request/response.
-     * @param message The string used as comment.
+     * 
+     * @param httpRequestResponse
+     *            {@link IHttpRequestResponse} Object containing the request/response.
+     * @param message
+     *            The string used as comment.
      */
     private void markRequestResponse(IHttpRequestResponse httpRequestResponse, String message) {
         httpRequestResponse.setHighlight(HIGHLIGHT_COLOR);
 
-        // Check for existing comment and append new comment, preventing override
+        // Check for existing comment and append new comment, preventing
+        // override
         final String oldComment = httpRequestResponse.getComment();
         String comment = (oldComment != null && !oldComment.isEmpty() && !Objects.equals(oldComment, message)) ? String.format("%s, %s", oldComment, message) : message;
 
@@ -86,6 +93,7 @@ public class Marker implements IHttpListener {
 
     /**
      * Get highlight color
+     * 
      * @return Get the highlight color constant.
      */
     public static String getHighlightColor() {

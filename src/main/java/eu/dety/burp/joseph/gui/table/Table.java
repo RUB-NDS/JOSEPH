@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 /**
  * Base class for tables.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -36,7 +37,9 @@ public class Table extends JTable {
 
     /**
      * Create a new Table.
-     * @param tableModel The helper to organise the table entries.
+     * 
+     * @param tableModel
+     *            The helper to organise the table entries.
      */
     public Table(TableModel tableModel) {
         super(tableModel);
@@ -63,6 +66,7 @@ public class Table extends JTable {
 
     /**
      * Get the {@link TableModel}.
+     * 
      * @return The {@link TableModel} related to the table.
      */
     public TableModel getTableModel() {
@@ -71,6 +75,7 @@ public class Table extends JTable {
 
     /**
      * Get all {@link TableEntry}s
+     * 
      * @return Get a list of table entries
      */
     public ArrayList<TableEntry> getTableList() {
@@ -79,7 +84,9 @@ public class Table extends JTable {
 
     /**
      * Update the table the full history.
-     * @param entry {@link TableEntry}
+     * 
+     * @param entry
+     *            {@link TableEntry}
      */
     public void addEntry(TableEntry entry) {
         tableModel.addRow(entry);
@@ -87,7 +94,9 @@ public class Table extends JTable {
 
     /**
      * Get the {@link TableEntry} at specific index.
-     * @param index The index.
+     * 
+     * @param index
+     *            The index.
      * @return {@link TableEntry}
      */
     public TableEntry getEntry(int index) {
@@ -96,7 +105,9 @@ public class Table extends JTable {
 
     /**
      * Get the {@link TableEntry} by row index.
-     * @param index The row index.
+     * 
+     * @param index
+     *            The row index.
      * @return {@link TableEntry}
      */
     public TableEntry getEntryByRow(int index) {

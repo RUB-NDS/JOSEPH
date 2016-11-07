@@ -26,12 +26,13 @@ import java.util.ArrayList;
 public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
     private static final Logger loggerInstance = Logger.getInstance();
     private ArrayList<BleichenbacherPkcs1TableEntry> tableEntries;
-    private String[] columnName = {"#", "Payload type", "Payload", "Status", "Length", "Time", "PKCS1 Conform?"};
-
+    private String[] columnName = { "#", "Payload type", "Payload", "Status", "Length", "Time", "PKCS1 Conform?" };
 
     /**
      * Construct a new table helper
-     * @param tableEntries A list of table entries.
+     * 
+     * @param tableEntries
+     *            A list of table entries.
      */
     public BleichenbacherPkcs1TableModel(ArrayList<BleichenbacherPkcs1TableEntry> tableEntries) {
         this.tableEntries = tableEntries;
@@ -39,6 +40,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
 
     /**
      * Get the tableEntries list.
+     * 
      * @return The list of {@link BleichenbacherPkcs1TableEntry}.
      */
     public ArrayList<BleichenbacherPkcs1TableEntry> getTableEntries() {
@@ -47,7 +49,9 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
 
     /**
      * Add a row to the tableEntries list.
-     * @param entry The new table row.
+     * 
+     * @param entry
+     *            The new table row.
      * @return True if successful, false otherwise.
      */
     public boolean addRow(BleichenbacherPkcs1TableEntry entry) {
@@ -63,6 +67,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
 
     /**
      * Remove all entries from the tableEntries list.
+     * 
      * @return True if all entries cleared, false otherwise.
      */
     public boolean clear() {
@@ -77,6 +82,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
 
     /**
      * Get the number of rows.
+     * 
      * @return Number of rows.
      */
     @Override
@@ -86,6 +92,7 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
 
     /**
      * Get the number of columns
+     * 
      * @return Number of columns.
      */
     @Override
@@ -95,7 +102,9 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
 
     /**
      * Get the name of the column at a specific index.
-     * @param columnIndex Index of the column.
+     * 
+     * @param columnIndex
+     *            Index of the column.
      * @return The name of the column.
      */
     @Override
@@ -110,7 +119,9 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
 
     /**
      * Get the class of the column value at a specific index.
-     * @param column Index of the column.
+     * 
+     * @param column
+     *            Index of the column.
      * @return The class of the column value.
      */
     @Override
@@ -146,8 +157,11 @@ public class BleichenbacherPkcs1TableModel extends AbstractTableModel {
 
     /**
      * Get the value at a position.
-     * @param rowIndex The row.
-     * @param columnIndex The column.
+     * 
+     * @param rowIndex
+     *            The row.
+     * @param columnIndex
+     *            The column.
      * @return Value for the specified entry. Null if not found.
      */
     @Override

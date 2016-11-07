@@ -31,6 +31,7 @@ import java.util.List;
 
 /**
  * Help functions to perform cryptographic operations.
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -39,8 +40,11 @@ public class Crypto {
 
     /**
      * Get MAC algorithm name for Java by JOSE algorithm name
-     * @param algorithm Algorithm name as string
-     * @param fallback Fallback return value if none of the defined match
+     * 
+     * @param algorithm
+     *            Algorithm name as string
+     * @param fallback
+     *            Fallback return value if none of the defined match
      * @return MAC algorithm name as used by Java
      */
     public static String getMacAlgorithmByJoseAlgorithm(String algorithm, String fallback) {
@@ -58,8 +62,11 @@ public class Crypto {
 
     /**
      * Get key length needed for JOSE operation by JOSE algorithm name
-     * @param algorithm Algorithm name as string
-     * @param fallback Fallback return value if none of the defined match
+     * 
+     * @param algorithm
+     *            Algorithm name as string
+     * @param fallback
+     *            Fallback return value if none of the defined match
      * @return Key length for JOSE operation
      */
     public static int getJoseKeyLengthByJoseAlgorithm(String algorithm, int fallback) {
@@ -82,8 +89,11 @@ public class Crypto {
 
     /**
      * Get key length needed for AES operation by JOSE algorithm name
-     * @param algorithm Algorithm name as string
-     * @param fallback Fallback return value if none of the defined match
+     * 
+     * @param algorithm
+     *            Algorithm name as string
+     * @param fallback
+     *            Fallback return value if none of the defined match
      * @return Key length for AES operation
      */
     public static int getAesKeyLengthByJoseAlgorithm(String algorithm, int fallback) {
@@ -104,9 +114,13 @@ public class Crypto {
 
     /**
      * Generate MAC
-     * @param algorithm Algorithm name as string
-     * @param key Symmetric key as byte array
-     * @param message Input message as byte array
+     * 
+     * @param algorithm
+     *            Algorithm name as string
+     * @param key
+     *            Symmetric key as byte array
+     * @param message
+     *            Input message as byte array
      * @return Key length for JOSE operation
      */
     public static byte[] generateMac(String algorithm, byte[] key, byte[] message) {
@@ -123,11 +137,17 @@ public class Crypto {
 
     /**
      * Decrypt AES ciphertext
-     * @param header JOSE header
-     * @param key Symmetric key as byte array
-     * @param iv Initialization Vector as byte array
-     * @param cipherBytes Ciphertext as byte array
-     * @param authTag Authentication tag as byte array
+     * 
+     * @param header
+     *            JOSE header
+     * @param key
+     *            Symmetric key as byte array
+     * @param iv
+     *            Initialization Vector as byte array
+     * @param cipherBytes
+     *            Ciphertext as byte array
+     * @param authTag
+     *            Authentication tag as byte array
      * @throws DecryptionFailedException
      * @return Decrypted message as byte array
      */
@@ -162,14 +182,14 @@ public class Crypto {
                 throw new DecryptionFailedException("Could not determine encryption algorithm or it is not supported");
         }
 
-
         byte[] keyBytes = Arrays.copyOfRange(key, key.length - keyLen, key.length);
 
         SecretKey aesKey = new SecretKeySpec(keyBytes, "AES");
         Cipher cipher;
 
         try {
-            // Change isRestricted value of JceSecurity to allow AES key length > 128
+            // Change isRestricted value of JceSecurity to allow AES key length
+            // > 128
             Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
             field.setAccessible(true);
             field.set(null, java.lang.Boolean.FALSE);

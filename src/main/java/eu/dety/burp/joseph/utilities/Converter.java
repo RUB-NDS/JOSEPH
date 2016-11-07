@@ -36,6 +36,7 @@ import java.util.List;
 
 /**
  * Help functions to convert JSON Web Key to RSA PublicKey
+ * 
  * @author Dennis Detering
  * @version 1.0
  */
@@ -44,13 +45,16 @@ public class Converter {
 
     /**
      * Get RSA PublicKey list by JWK JSON input
-     * @param input JSON Web Key {@link JSONObject}
+     * 
+     * @param input
+     *            JSON Web Key {@link JSONObject}
      * @return List of {@link PublicKey}
      */
     public static List<PublicKey> getRsaPublicKeysByJwk(final Object input) {
         List<PublicKey> keys = new ArrayList<>();
 
-        if (!(input instanceof JSONObject)) return keys;
+        if (!(input instanceof JSONObject))
+            return keys;
 
         JSONObject inputJsonObject = (JSONObject) input;
 
@@ -63,24 +67,28 @@ public class Converter {
 
                 PublicKey key = getRsaPublicKeyByJwk(keyJson);
 
-                if (key != null) keys.add(key);
+                if (key != null)
+                    keys.add(key);
             }
         } else {
             PublicKey key = getRsaPublicKeyByJwk(inputJsonObject);
 
-            if (key != null) keys.add(key);
+            if (key != null)
+                keys.add(key);
         }
 
         return keys;
     }
 
     /**
-     * Get RSA PublicKey by PublicKey HashMap input.
-     * Create a dialog popup with a combobox to choose the correct JWK to use.
-     * @param publicKeys HashMap containing a PublicKey and related describing string
+     * Get RSA PublicKey by PublicKey HashMap input. Create a dialog popup with a combobox to choose the correct JWK to use.
+     * 
+     * @param publicKeys
+     *            HashMap containing a PublicKey and related describing string
      * @throws AttackPreparationFailedException
      * @return Selected {@link PublicKey}
      */
+    @SuppressWarnings("unchecked")
     public static PublicKey getRsaPublicKeyByJwkSelectionPanel(HashMap<String, PublicKey> publicKeys) throws AttackPreparationFailedException {
         // TODO: Move to other class?
         JPanel selectionPanel = new JPanel();
@@ -115,13 +123,16 @@ public class Converter {
 
     /**
      * Get RSA PublicKey list by JWK JSON input with an identifying string
-     * @param input JSON Web Key {@link JSONObject}
+     * 
+     * @param input
+     *            JSON Web Key {@link JSONObject}
      * @return HashMap of {@link PublicKey} with identifying string as key
      */
     public static HashMap<String, PublicKey> getRsaPublicKeysByJwkWithId(final Object input) {
         HashMap<String, PublicKey> keys = new HashMap<>();
 
-        if (!(input instanceof JSONObject)) return keys;
+        if (!(input instanceof JSONObject))
+            return keys;
 
         JSONObject inputJsonObject = (JSONObject) input;
 
@@ -137,18 +148,24 @@ public class Converter {
 
                 String id = "#" + counter;
 
-                if (keyJson.containsKey("kty")) id += "_" + keyJson.get("kty");
-                if (keyJson.containsKey("alg")) id += "_" + keyJson.get("alg");
-                if (keyJson.containsKey("use")) id += "_" + keyJson.get("use");
-                if (keyJson.containsKey("kid")) id += "_" + keyJson.get("kid");
+                if (keyJson.containsKey("kty"))
+                    id += "_" + keyJson.get("kty");
+                if (keyJson.containsKey("alg"))
+                    id += "_" + keyJson.get("alg");
+                if (keyJson.containsKey("use"))
+                    id += "_" + keyJson.get("use");
+                if (keyJson.containsKey("kid"))
+                    id += "_" + keyJson.get("kid");
 
-                if (key != null) keys.put(id , key);
+                if (key != null)
+                    keys.put(id, key);
                 counter++;
             }
         } else {
             PublicKey key = getRsaPublicKeyByJwk(inputJsonObject);
 
-            if (key != null) keys.put("#1", key);
+            if (key != null)
+                keys.put("#1", key);
         }
 
         return keys;
@@ -156,21 +173,27 @@ public class Converter {
 
     /**
      * Get RSA PublicKey by JWK JSON input
-     * @param input JSON Web Key {@link JSONObject}
+     * 
+     * @param input
+     *            JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
      */
     private static PublicKey getRsaPublicKeyByJwk(JSONObject input) {
-        if (!input.containsKey("kty")) return null;
+        if (!input.containsKey("kty"))
+            return null;
         String kty = (String) input.get("kty");
 
-        if (kty.equals("RSA")) return buildRsaPublicKeyByJwk(input);
+        if (kty.equals("RSA"))
+            return buildRsaPublicKeyByJwk(input);
 
         return null;
     }
 
     /**
      * Build RSA {@link PublicKey} from RSA JWK JSON object
-     * @param input RSA JSON Web Key {@link JSONObject}
+     * 
+     * @param input
+     *            RSA JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
      */
     private static PublicKey buildRsaPublicKeyByJwk(JSONObject input) {
@@ -187,7 +210,9 @@ public class Converter {
 
     /**
      * Build {@link RSAPublicKey} from PublicKey PEM string
-     * @param pemInput PublicKey PEM string
+     * 
+     * @param pemInput
+     *            PublicKey PEM string
      * @return {@link RSAPublicKey} or null
      */
     public static RSAPublicKey getRsaPublicKeyByPemString(String pemInput) {
@@ -202,7 +227,8 @@ public class Converter {
             X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             publicKey = (RSAPublicKey) keyFactory.generatePublic(spec);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         // PKCS1
         try {
@@ -212,10 +238,10 @@ public class Converter {
             X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             publicKey = (RSAPublicKey) keyFactory.generatePublic(spec);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         return publicKey;
     }
-
 
 }
