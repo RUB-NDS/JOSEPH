@@ -135,36 +135,59 @@ public class KeyConfusionInfo implements IAttackInfo {
         switch (publicKeyFormat) {
         // JWK (JSON)
             case 1:
+                // TODO: Refactor to test every key at once? Requires change of HashMap key
+
                 loggerInstance.log(getClass(), "Key format is JWK:  " + publicKeyValue, Logger.LogLevel.DEBUG);
+
+                HashMap<String, PublicKey> publicKeys;
+                PublicKey selectedPublicKey;
 
                 try {
                     Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
 
-                    List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
+                    publicKeys = Converter.getRsaPublicKeysByJwkWithId(publickKeyValueJson);
+                } catch (Exception e) {
+                    loggerInstance.log(getClass(), "Error in prepareAttack (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);
+                    throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
+                }
 
-                    for (PublicKey publicKey : publicKeys) {
-                        loggerInstance.log(getClass(),
-                                "Encoded PubKey: " + Base64.encodeBase64String(publicKey.getEncoded()) + "\nFormat: " + publicKey.getFormat(),
-                                Logger.LogLevel.DEBUG);
+                switch (publicKeys.size()) {
+                // No suitable JWK in JWK Set found
+                    case 0:
+                        loggerInstance.log(getClass(), "Error in prepareAttack (JWK): No suitable JWK", Logger.LogLevel.ERROR);
+                        throw new AttackPreparationFailedException(bundle.getString("NO_SUITABLE_JWK"));
 
-                        // PKCS#8 / X.509
-                        publicKeyVariations.put(PayloadType.PKCS8, transformKeyByPayload(PayloadType.PKCS8, publicKey));
+                        // Exactly one suitable JWK found
+                    case 1:
+                        selectedPublicKey = publicKeys.entrySet().iterator().next().getValue();
+                        break;
 
-                        // With header/footer
-                        publicKeyVariations.put(PayloadType.PKCS8_WITH_HEADER_FOOTER, transformKeyByPayload(PayloadType.PKCS8_WITH_HEADER_FOOTER, publicKey));
+                    // More than one suitable JWK found. Provide dialog to select one.
+                    default:
+                        selectedPublicKey = Converter.getRsaPublicKeyByJwkSelectionPanel(publicKeys);
+                }
 
-                        // With line feeds
-                        publicKeyVariations.put(PayloadType.PKCS8_WITH_LF, transformKeyByPayload(PayloadType.PKCS8_WITH_LF, publicKey));
+                try {
+                    loggerInstance.log(getClass(), "Encoded PubKey: " + Base64.encodeBase64String(selectedPublicKey.getEncoded()) + "\nFormat: "
+                            + selectedPublicKey.getFormat(), Logger.LogLevel.DEBUG);
 
-                        // With line feeds and header/footer
-                        publicKeyVariations.put(PayloadType.PKCS8_WITH_HEADER_FOOTER_LF,
-                                transformKeyByPayload(PayloadType.PKCS8_WITH_HEADER_FOOTER_LF, publicKey));
+                    // PKCS#8 / X.509
+                    publicKeyVariations.put(PayloadType.PKCS8, transformKeyByPayload(PayloadType.PKCS8, selectedPublicKey));
 
-                        // With line feeds and header/footer and additional line
-                        // feed at end
-                        publicKeyVariations.put(PayloadType.PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF,
-                                transformKeyByPayload(PayloadType.PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF, publicKey));
-                    }
+                    // With header/footer
+                    publicKeyVariations.put(PayloadType.PKCS8_WITH_HEADER_FOOTER,
+                            transformKeyByPayload(PayloadType.PKCS8_WITH_HEADER_FOOTER, selectedPublicKey));
+
+                    // With line feeds
+                    publicKeyVariations.put(PayloadType.PKCS8_WITH_LF, transformKeyByPayload(PayloadType.PKCS8_WITH_LF, selectedPublicKey));
+
+                    // With line feeds and header/footer
+                    publicKeyVariations.put(PayloadType.PKCS8_WITH_HEADER_FOOTER_LF,
+                            transformKeyByPayload(PayloadType.PKCS8_WITH_HEADER_FOOTER_LF, selectedPublicKey));
+
+                    // With line feeds and header/footer and additional line feed at end
+                    publicKeyVariations.put(PayloadType.PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF,
+                            transformKeyByPayload(PayloadType.PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF, selectedPublicKey));
 
                 } catch (Exception e) {
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
@@ -290,7 +313,9 @@ public class KeyConfusionInfo implements IAttackInfo {
         extraPanel.add(publicKeySelection, constraints);
 
         constraints.gridy = 2;
-        extraPanel.add(publicKey, constraints);
+        JScrollPane jScrollPane = new javax.swing.JScrollPane();
+        jScrollPane.setViewportView(publicKey);
+        extraPanel.add(jScrollPane, constraints);
 
         return true;
     }
@@ -328,13 +353,39 @@ public class KeyConfusionInfo implements IAttackInfo {
             case 1:
                 loggerInstance.log(getClass(), "Key format is JWK:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
+                HashMap<String, PublicKey> publicKeys;
+                PublicKey selectedPublicKey;
+
                 try {
                     Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
-                    modifiedKey = transformKeyByPayload(payloadTypeId, Converter.getRsaPublicKeysByJwk(publickKeyValueJson).get(0));
 
+                    publicKeys = Converter.getRsaPublicKeysByJwkWithId(publickKeyValueJson);
                 } catch (Exception e) {
                     loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
+                }
+
+                switch (publicKeys.size()) {
+                // No suitable JWK in JWK Set found
+                    case 0:
+                        loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK): No suitable JWK", Logger.LogLevel.ERROR);
+                        throw new AttackPreparationFailedException(bundle.getString("NO_SUITABLE_JWK"));
+
+                        // Exactly one suitable JWK found
+                    case 1:
+                        selectedPublicKey = publicKeys.entrySet().iterator().next().getValue();
+                        break;
+
+                    // More than one suitable JWK found. Provide dialog to select one.
+                    default:
+                        selectedPublicKey = Converter.getRsaPublicKeyByJwkSelectionPanel(publicKeys);
+                }
+
+                try {
+                    modifiedKey = transformKeyByPayload(payloadTypeId, selectedPublicKey);
+                } catch (Exception e) {
+                    loggerInstance.log(getClass(), "Error in updateValuesByPayload (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);
+                    throw new AttackPreparationFailedException(bundle.getString("ATTACK_PREPARATION_FAILED"));
                 }
 
                 break;

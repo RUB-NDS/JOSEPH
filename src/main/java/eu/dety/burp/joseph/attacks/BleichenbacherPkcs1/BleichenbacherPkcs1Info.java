@@ -138,14 +138,31 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
             case 1:
                 loggerInstance.log(getClass(), "Key format is JWK:  " + publicKeyValue, Logger.LogLevel.DEBUG);
 
+                HashMap<String, PublicKey> publicKeys;
+
                 try {
                     Object publickKeyValueJson = new JSONParser().parse(publicKeyValue);
-                    List<PublicKey> publicKeys = Converter.getRsaPublicKeysByJwk(publickKeyValueJson);
-                    pubKey = (RSAPublicKey) publicKeys.get(0);
 
+                    publicKeys = Converter.getRsaPublicKeysByJwkWithId(publickKeyValueJson);
                 } catch (Exception e) {
-                    loggerInstance.log(getClass(), "Error on transforming to RSAPublicKey:  " + e.getMessage(), Logger.LogLevel.ERROR);
+                    loggerInstance.log(getClass(), "Error in prepareAttack (JWK):  " + e.getMessage(), Logger.LogLevel.ERROR);
                     throw new AttackPreparationFailedException(bundle.getString("NOT_VALID_JWK"));
+                }
+
+                switch (publicKeys.size()) {
+                // No suitable JWK in JWK Set found
+                    case 0:
+                        loggerInstance.log(getClass(), "Error in prepareAttack (JWK): No suitable JWK", Logger.LogLevel.ERROR);
+                        throw new AttackPreparationFailedException(bundle.getString("NO_SUITABLE_JWK"));
+
+                        // Exactly one suitable JWK found
+                    case 1:
+                        pubKey = (RSAPublicKey) publicKeys.entrySet().iterator().next().getValue();
+                        break;
+
+                    // More than one suitable JWK found. Provide dialog to select one.
+                    default:
+                        pubKey = (RSAPublicKey) Converter.getRsaPublicKeyByJwkSelectionPanel(publicKeys);
                 }
 
                 break;
@@ -225,7 +242,9 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         extraPanel.add(publicKeySelection, constraints);
 
         constraints.gridy = 2;
-        extraPanel.add(publicKey, constraints);
+        JScrollPane jScrollPane = new javax.swing.JScrollPane();
+        jScrollPane.setViewportView(publicKey);
+        extraPanel.add(jScrollPane, constraints);
 
         return true;
     }

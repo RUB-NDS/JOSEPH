@@ -18,18 +18,20 @@
  */
 package eu.dety.burp.joseph.utilities;
 
+import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.swing.*;
+import java.awt.*;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -73,6 +75,97 @@ public class Converter {
 
             if (key != null)
                 keys.add(key);
+        }
+
+        return keys;
+    }
+
+    /**
+     * Get RSA PublicKey by PublicKey HashMap input. Create a dialog popup with a combobox to choose the correct JWK to use.
+     * 
+     * @param publicKeys
+     *            HashMap containing a PublicKey and related describing string
+     * @throws AttackPreparationFailedException
+     * @return Selected {@link PublicKey}
+     */
+    @SuppressWarnings("unchecked")
+    public static PublicKey getRsaPublicKeyByJwkSelectionPanel(HashMap<String, PublicKey> publicKeys) throws AttackPreparationFailedException {
+        // TODO: Move to other class?
+        JPanel selectionPanel = new JPanel();
+        selectionPanel.setLayout(new java.awt.GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+
+        constraints.gridy = 0;
+        selectionPanel.add(new JLabel("Multiple JWKs found. Please choose one:"), constraints);
+
+        JComboBox jwkSetKeySelection = new JComboBox<>();
+        DefaultComboBoxModel<String> jwkSetKeySelectionModel = new DefaultComboBoxModel<>();
+
+        for (Map.Entry<String, PublicKey> publicKey : publicKeys.entrySet()) {
+            jwkSetKeySelectionModel.addElement(publicKey.getKey());
+        }
+
+        jwkSetKeySelection.setModel(jwkSetKeySelectionModel);
+
+        constraints.gridy = 1;
+        selectionPanel.add(jwkSetKeySelection, constraints);
+
+        int resultButton = JOptionPane.showConfirmDialog(null, selectionPanel, "Select JWK", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (resultButton == JOptionPane.CANCEL_OPTION) {
+            throw new AttackPreparationFailedException("No JWK from JWK Set selected!");
+        }
+
+        loggerInstance.log(Converter.class, "Key selected: " + jwkSetKeySelection.getSelectedIndex(), Logger.LogLevel.DEBUG);
+        return publicKeys.get(jwkSetKeySelection.getSelectedItem());
+    }
+
+    /**
+     * Get RSA PublicKey list by JWK JSON input with an identifying string
+     * 
+     * @param input
+     *            JSON Web Key {@link JSONObject}
+     * @return HashMap of {@link PublicKey} with identifying string as key
+     */
+    public static HashMap<String, PublicKey> getRsaPublicKeysByJwkWithId(final Object input) {
+        HashMap<String, PublicKey> keys = new HashMap<>();
+
+        if (!(input instanceof JSONObject))
+            return keys;
+
+        JSONObject inputJsonObject = (JSONObject) input;
+
+        // Multiple keys existent
+        if (inputJsonObject.containsKey("keys")) {
+            loggerInstance.log(Converter.class, "Key array found...", Logger.LogLevel.DEBUG);
+
+            int counter = 1;
+            for (final Object value : (JSONArray) inputJsonObject.get("keys")) {
+                JSONObject keyJson = (JSONObject) value;
+
+                PublicKey key = getRsaPublicKeyByJwk(keyJson);
+
+                String id = "#" + counter;
+
+                if (keyJson.containsKey("kty"))
+                    id += "_" + keyJson.get("kty");
+                if (keyJson.containsKey("alg"))
+                    id += "_" + keyJson.get("alg");
+                if (keyJson.containsKey("use"))
+                    id += "_" + keyJson.get("use");
+                if (keyJson.containsKey("kid"))
+                    id += "_" + keyJson.get("kid");
+
+                if (key != null)
+                    keys.put(id, key);
+                counter++;
+            }
+        } else {
+            PublicKey key = getRsaPublicKeyByJwk(inputJsonObject);
+
+            if (key != null)
+                keys.put("#1", key);
         }
 
         return keys;
