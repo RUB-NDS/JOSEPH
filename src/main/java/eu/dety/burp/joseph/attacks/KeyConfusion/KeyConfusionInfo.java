@@ -93,15 +93,13 @@ public class KeyConfusionInfo implements IAttackInfo {
         PKCS8_WITH_HEADER_FOOTER_LF_ENDING_LF,
     }
 
-    // Hashmap of available payloads with a verbose name (including the
-    // PayloadType)
-    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {
-        {
-            for (PayloadType payload : PayloadType.values()) {
-                put(String.format("Public key transformation %02d   (0x%02X)", payload.ordinal(), payload.ordinal()), payload);
-            }
+    // Hashmap of available payloads with a verbose name (including the PayloadType)
+    private static final HashMap<String, PayloadType> payloads = new HashMap<>();
+    static {
+        for (PayloadType payload : PayloadType.values()) {
+            payloads.put(String.format("Public key transformation %02d   (0x%02X)", payload.ordinal(), payload.ordinal()), payload);
         }
-    };
+    }
 
     // List of prepared requests with payload info
     private List<KeyConfusionAttackRequest> requests = new ArrayList<>();
