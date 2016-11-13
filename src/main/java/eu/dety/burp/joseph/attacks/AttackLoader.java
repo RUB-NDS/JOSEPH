@@ -19,9 +19,9 @@
 package eu.dety.burp.joseph.attacks;
 
 import burp.IBurpExtenderCallbacks;
-import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1Info;
-import eu.dety.burp.joseph.attacks.KeyConfusion.KeyConfusionInfo;
-import eu.dety.burp.joseph.attacks.SignatureExclusion.SignatureExclusionInfo;
+import eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1.BleichenbacherPkcs1Info;
+import eu.dety.burp.joseph.attacks.key_confusion.KeyConfusionInfo;
+import eu.dety.burp.joseph.attacks.signature_exclusion.SignatureExclusionInfo;
 import eu.dety.burp.joseph.utilities.Logger;
 
 import java.util.HashMap;

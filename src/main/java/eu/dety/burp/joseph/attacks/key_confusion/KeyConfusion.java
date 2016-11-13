@@ -16,7 +16,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package eu.dety.burp.joseph.attacks.SignatureExclusion;
+package eu.dety.burp.joseph.attacks.key_confusion;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
@@ -32,23 +32,22 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Signature Exclusion Attack
+ * Key Confusion Attack
  * <p>
- * Perform a signature exclusion attack by changing the algorithm value of the header to the "none" algorithm and cutting away the signature
- * value.
+ * Perform a key confusion attack by using an RSA public key as MAC secret.
  * 
  * @author Dennis Detering
  * @version 1.0
  */
-public class SignatureExclusion implements IAttack {
+public class KeyConfusion implements IAttack {
     private static final Logger loggerInstance = Logger.getInstance();
-    private SignatureExclusionInfo attackInfo;
+    private KeyConfusionInfo attackInfo;
     private IBurpExtenderCallbacks callbacks;
     private AttackerResultWindow attackerResultWindow;
     private List<IHttpRequestResponse> responses = new ArrayList<>();
     private IHttpService httpService;
 
-    public SignatureExclusion(IBurpExtenderCallbacks callbacks, SignatureExclusionInfo attackInfo) {
+    public KeyConfusion(IBurpExtenderCallbacks callbacks, KeyConfusionInfo attackInfo) {
         this.callbacks = callbacks;
         this.attackInfo = attackInfo;
         this.httpService = this.attackInfo.getRequestResponse().getHttpService();
@@ -63,7 +62,7 @@ public class SignatureExclusion implements IAttack {
         attackerResultWindow.addEntry(new TableEntry(0, -1, "", attackInfo.getRequestResponse(), callbacks));
 
         // Create new AttackExecutor thread for each prepared request
-        for (SignatureExclusionAttackRequest attackRequest : this.attackInfo.getRequests()) {
+        for (KeyConfusionAttackRequest attackRequest : this.attackInfo.getRequests()) {
             AttackExecutor attackRequestExecutor = new AttackExecutor(attackRequest);
             attackRequestExecutor.execute();
         }
@@ -75,9 +74,9 @@ public class SignatureExclusion implements IAttack {
      * Performs the actual request and updates related widgets
      */
     private class AttackExecutor extends SwingWorker<IHttpRequestResponse, Integer> {
-        private SignatureExclusionAttackRequest attackRequest;
+        private KeyConfusionAttackRequest attackRequest;
 
-        AttackExecutor(SignatureExclusionAttackRequest attackRequest) {
+        AttackExecutor(KeyConfusionAttackRequest attackRequest) {
             this.attackRequest = attackRequest;
         }
 
@@ -91,11 +90,12 @@ public class SignatureExclusion implements IAttack {
         // Add response to response list, add new entry to attacker result
         // window table and update process bar
         protected void done() {
+
             IHttpRequestResponse requestResponse;
             try {
                 requestResponse = get();
             } catch (InterruptedException | ExecutionException e) {
-                loggerInstance.log(SignatureExclusion.class, "Failed to get request result: " + e.getMessage(), Logger.LogLevel.ERROR);
+                loggerInstance.log(KeyConfusion.class, "Failed to get request result: " + e.getMessage(), Logger.LogLevel.ERROR);
                 return;
             }
 
@@ -103,14 +103,15 @@ public class SignatureExclusion implements IAttack {
             responses.add(requestResponse);
 
             // Add new entry to result table
-            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), "Alg: " + attackRequest.getPayload(),
-                    requestResponse, callbacks));
+            String payload = "Alg: " + attackRequest.getAlgorithm() + " KeyLen: " + attackRequest.getKeyLength();
+            attackerResultWindow.addEntry(new TableEntry(responses.size(), attackRequest.getPayloadType(), payload, requestResponse, callbacks));
 
             // Update the progress bar
             attackerResultWindow.setProgressBarValue(responses.size(), attackInfo.getAmountRequests());
 
             loggerInstance.log(getClass(), "Attack done, amount responses: " + String.valueOf(responses.size()), Logger.LogLevel.DEBUG);
         }
+
     }
 
 }

@@ -17,14 +17,13 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
+package eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1.gui;
 
-import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.BleichenbacherPkcs1;
+import eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1.BleichenbacherPkcs1;
 import eu.dety.burp.joseph.utilities.*;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;

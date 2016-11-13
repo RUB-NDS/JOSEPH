@@ -16,13 +16,13 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1;
+package eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.IHttpRequestResponse;
 import burp.IHttpService;
-import eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui.BleichenbacherPkcs1DecryptionAttackPanel;
+import eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1.gui.BleichenbacherPkcs1DecryptionAttackPanel;
 import eu.dety.burp.joseph.utilities.Decoder;
 import eu.dety.burp.joseph.utilities.JoseParameter;
 import eu.dety.burp.joseph.utilities.Logger;

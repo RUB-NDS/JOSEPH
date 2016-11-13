@@ -22,7 +22,7 @@
  * @see <a href="https://github.com/RUB-NDS/WS-Attacker">https://github.com/RUB-NDS/WS-Attacker</a>
  * (C) 2013 Dennis Kupser
  */
-package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1;
+package eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1;
 
 import java.math.BigInteger;
 

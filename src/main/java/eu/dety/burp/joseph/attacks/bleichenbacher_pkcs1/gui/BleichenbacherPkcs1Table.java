@@ -1,4 +1,4 @@
-package eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui;
+package eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1.gui;
 
 /**
  * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
