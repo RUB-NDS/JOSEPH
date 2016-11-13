@@ -59,24 +59,22 @@ public class SignatureExclusionInfo implements IAttackInfo {
             + "In order to perform filter evasion, different capitalization is used as algorithm value.</html>";
 
     // Hashmap of "none" algorithm type variations
-    private static final HashMap<PayloadType, String> noneAlgVariations = new HashMap<PayloadType, String>() {
-        {
-            put(PayloadType.LOWERCASE, "none");
-            put(PayloadType.CAPITALIZED, "None");
-            put(PayloadType.UPPERCASE, "NONE");
-            put(PayloadType.MIXED, "nOnE");
-        }
-    };
+    private static final HashMap<PayloadType, String> noneAlgVariations = new HashMap<>();
+    static {
+        noneAlgVariations.put(PayloadType.LOWERCASE, "none");
+        noneAlgVariations.put(PayloadType.CAPITALIZED, "None");
+        noneAlgVariations.put(PayloadType.UPPERCASE, "NONE");
+        noneAlgVariations.put(PayloadType.MIXED, "nOnE");
+    }
 
     // Hashmap of available payloads with a verbose name (including the
     // PayloadType)
-    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {
-        {
-            for (Map.Entry<PayloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
-                put(String.format("Alg: %s (0x%02X)", noneAlgVariation.getValue(), noneAlgVariation.getKey().ordinal()), noneAlgVariation.getKey());
-            }
+    private static final HashMap<String, PayloadType> payloads = new HashMap<>();
+    static {
+        for (Map.Entry<PayloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
+            payloads.put(String.format("Alg: %s (0x%02X)", noneAlgVariation.getValue(), noneAlgVariation.getKey().ordinal()), noneAlgVariation.getKey());
         }
-    };
+    }
 
     // Amount of requests needed
     private static final int amountRequests = noneAlgVariations.size();

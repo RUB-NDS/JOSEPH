@@ -90,20 +90,20 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
     // Hashmap of available payloads with a verbose name (including the
     // PayloadType)
-    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {
-        {
-            put(String.format("No Null Byte (0x%02X)", PayloadType.NO_NULL_BYTE.ordinal()), PayloadType.NO_NULL_BYTE);
-            put(String.format("Null Byte in Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PADDING);
-            put(String.format("Null Byte in PKCS Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PKCS_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PKCS_PADDING);
-            put(String.format("Symmetric Key of Size 8 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_8.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_8);
-            put(String.format("Symmetric Key of Size 16 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_16.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_16);
-            put(String.format("Symmetric Key of Size 24 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_24.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_24);
-            put(String.format("Symmetric Key of Size 32 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_32.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_32);
-            put(String.format("Symmetric Key of Size 40 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_40.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_40);
-            put(String.format("Wrong First Byte (0x%02X)", PayloadType.WRONG_FIRST_BYTE.ordinal()), PayloadType.WRONG_FIRST_BYTE);
-            put(String.format("Wrong Second Byte (0x%02X)", PayloadType.WRONG_SECOND_BYTE.ordinal()), PayloadType.WRONG_SECOND_BYTE);
-        }
-    };
+    private static final HashMap<String, PayloadType> payloads = new HashMap<>();
+    static {
+        payloads.put(String.format("No Null Byte (0x%02X)", PayloadType.NO_NULL_BYTE.ordinal()), PayloadType.NO_NULL_BYTE);
+        payloads.put(String.format("Null Byte in Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PADDING.ordinal()), PayloadType.NULL_BYTE_IN_PADDING);
+        payloads.put(String.format("Null Byte in PKCS Padding (0x%02X)", PayloadType.NULL_BYTE_IN_PKCS_PADDING.ordinal()),
+                PayloadType.NULL_BYTE_IN_PKCS_PADDING);
+        payloads.put(String.format("Symmetric Key of Size 8 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_8.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_8);
+        payloads.put(String.format("Symmetric Key of Size 16 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_16.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_16);
+        payloads.put(String.format("Symmetric Key of Size 24 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_24.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_24);
+        payloads.put(String.format("Symmetric Key of Size 32 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_32.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_32);
+        payloads.put(String.format("Symmetric Key of Size 40 (0x%02X)", PayloadType.SYMMETRIC_KEY_OF_SIZE_40.ordinal()), PayloadType.SYMMETRIC_KEY_OF_SIZE_40);
+        payloads.put(String.format("Wrong First Byte (0x%02X)", PayloadType.WRONG_FIRST_BYTE.ordinal()), PayloadType.WRONG_FIRST_BYTE);
+        payloads.put(String.format("Wrong Second Byte (0x%02X)", PayloadType.WRONG_SECOND_BYTE.ordinal()), PayloadType.WRONG_SECOND_BYTE);
+    }
 
     // List of prepared requests with payload info
     private List<BleichenbacherPkcs1AttackRequest> requests = new ArrayList<>();

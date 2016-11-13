@@ -54,13 +54,12 @@ public class AttackTemplateInfo implements IAttackInfo {
 
     // Hashmap of available payloads with a verbose name (including the
     // PayloadType)
-    private static final HashMap<String, PayloadType> payloads = new HashMap<String, PayloadType>() {
-        {
-            /*
-             * ADD YOUR ATTACK PAYLOADS HERE
-             */
-        }
-    };
+    private static final HashMap<String, PayloadType> payloads = new HashMap<>();
+    static {
+        /*
+         * ADD YOUR ATTACK PAYLOADS HERE
+         */
+    }
 
     // Amount of requests needed
     private static final int amountRequests = 0;
