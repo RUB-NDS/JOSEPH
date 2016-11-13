@@ -1,10 +1,10 @@
 burp
 eu.dety.burp.joseph.attacks
-eu.dety.burp.joseph.attacks.BleichenbacherPkcs1
-eu.dety.burp.joseph.attacks.BleichenbacherPkcs1.gui
-eu.dety.burp.joseph.attacks.KeyConfusion
-eu.dety.burp.joseph.attacks.SignatureExclusion
-eu.dety.burp.joseph.attacks.__AttackTemplate
+eu.dety.burp.joseph.attacks.__attack_template
+eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1
+eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1.gui
+eu.dety.burp.joseph.attacks.key_confusion
+eu.dety.burp.joseph.attacks.signature_exclusion
 eu.dety.burp.joseph.editor
 eu.dety.burp.joseph.gui
 eu.dety.burp.joseph.gui.table
