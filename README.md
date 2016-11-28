@@ -2,13 +2,21 @@
 ![licence](https://img.shields.io/badge/License-GPLv2-brightgreen.svg)
 [![release](https://img.shields.io/badge/Release-v1.0.0-blue.svg)](https://github.com/RUB-NDS/JOSEPH/releases)
 ![status](https://img.shields.io/badge/Status-beta-yellow.svg)
+[![travis](https://travis-ci.org/RUB-NDS/JOSEPH.svg?branch=master)](https://travis-ci.org/RUB-NDS/JOSEPH)
 
 ## JavaScript Object Signing and Encryption Pentesting Helper
 
 JOSEPH is a Burp Suite extension and has been developed as part of a master thesis by [Dennis Detering](https://github.com/merenon) at the [Ruhr-University Bochum](http://rub.de) in cooperation with the [CSPi GmbH](http://www.cspi.com/).
 
 ## Features
-
+- Recognition and marking
+- JWS/JWE editors
+- (Semi-)Automated attacks
+    * Bleichenbacher MMA
+    * Key Confusion (aka Algorithm Substitution)
+    * Signature Exclusion
+- Base64url en-/decoder
+- Easy extensibility of new attacks
 
 ## Build
 To compile the JOSEPH extension from source, it is necessary to have Apache Maven installed and to run the following command:
