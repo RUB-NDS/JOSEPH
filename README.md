@@ -9,7 +9,14 @@
 JOSEPH is a Burp Suite extension and has been developed as part of a master thesis by [Dennis Detering](https://github.com/merenon) at the [Ruhr-University Bochum](http://rub.de) in cooperation with the [CSPi GmbH](http://www.cspi.com/).
 
 ## Features
-
+- Recognition and marking
+- JWS/JWE editors
+- (Semi-)Automated attacks
+    * Bleichenbacher MMA
+    * Key Confusion (aka Algorithm Substitution)
+    * Signature Exclusion
+- Base64url en-/decoder
+- Easy extensibility of new attacks
 
 ## Build
 To compile the JOSEPH extension from source, it is necessary to have Apache Maven installed and to run the following command:
