@@ -26,21 +26,23 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Help functions to perform cryptographic operations.
- * 
+ *
  * @author Dennis Detering
  * @version 1.0
  */
 public class Crypto {
+
     public static final List<String> JWS_HMAC_ALGS = Arrays.asList("HS256", "HS384", "HS512");
 
     /**
      * Get MAC algorithm name for Java by JOSE algorithm name
-     * 
+     *
      * @param algorithm
      *            Algorithm name as string
      * @param fallback
@@ -62,7 +64,7 @@ public class Crypto {
 
     /**
      * Get key length needed for JOSE operation by JOSE algorithm name
-     * 
+     *
      * @param algorithm
      *            Algorithm name as string
      * @param fallback
@@ -89,7 +91,7 @@ public class Crypto {
 
     /**
      * Get key length needed for AES operation by JOSE algorithm name
-     * 
+     *
      * @param algorithm
      *            Algorithm name as string
      * @param fallback
@@ -114,7 +116,7 @@ public class Crypto {
 
     /**
      * Generate MAC
-     * 
+     *
      * @param algorithm
      *            Algorithm name as string
      * @param key
@@ -137,7 +139,7 @@ public class Crypto {
 
     /**
      * Decrypt AES ciphertext
-     * 
+     *
      * @param header
      *            JOSE header
      * @param key
@@ -190,9 +192,16 @@ public class Crypto {
         try {
             // Change isRestricted value of JceSecurity to allow AES key length
             // > 128
-            Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
-            field.setAccessible(true);
-            field.set(null, java.lang.Boolean.FALSE);
+            Field isRestricted = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
+            isRestricted.setAccessible(true);
+            if (Boolean.TRUE.equals(isRestricted.get(null))) {
+                if (Modifier.isFinal(isRestricted.getModifiers())) {
+                    Field modifiers = Field.class.getDeclaredField("modifiers");
+                    modifiers.setAccessible(true);
+                    modifiers.setInt(isRestricted, isRestricted.getModifiers() & ~Modifier.FINAL);
+                }
+                isRestricted.setBoolean(null, false); // isRestricted = false;
+            }
 
             cipher = Cipher.getInstance(cipherInstance, new BouncyCastleProvider());
             cipher.init(Cipher.DECRYPT_MODE, aesKey, new IvParameterSpec(iv));
