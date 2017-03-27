@@ -27,6 +27,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -190,18 +191,8 @@ public class Crypto {
         Cipher cipher;
 
         try {
-            // Change isRestricted value of JceSecurity to allow AES key length
-            // > 128
-            Field isRestricted = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
-            isRestricted.setAccessible(true);
-            if (Boolean.TRUE.equals(isRestricted.get(null))) {
-                if (Modifier.isFinal(isRestricted.getModifiers())) {
-                    Field modifiers = Field.class.getDeclaredField("modifiers");
-                    modifiers.setAccessible(true);
-                    modifiers.setInt(isRestricted, isRestricted.getModifiers() & ~Modifier.FINAL);
-                }
-                isRestricted.setBoolean(null, false); // isRestricted = false;
-            }
+            // TODO move this to some general library initialization code
+            removeCryptoStrengthRestriction();
 
             cipher = Cipher.getInstance(cipherInstance, new BouncyCastleProvider());
             cipher.init(Cipher.DECRYPT_MODE, aesKey, new IvParameterSpec(iv));
@@ -225,5 +216,33 @@ public class Crypto {
 
         return decryptedContent;
 
+    }
+
+    /**
+     * Removes JDK crypto restriction.
+     *
+     * Partially taken from:
+     * https://github.com/jruby/jruby/blob/0c345e1b186bd457ebd96143c0816abe93b18fdf/core/src/main/java/org/jruby/util/SecurityHelper.java
+     */
+    public static void removeCryptoStrengthRestriction() {
+        try {
+            if (Cipher.getMaxAllowedKeyLength("AES") < 256) {
+                Class jceSecurity = Class.forName("javax.crypto.JceSecurity");
+                Field isRestricted = jceSecurity.getDeclaredField("isRestricted");
+                if (Modifier.isFinal(isRestricted.getModifiers())) {
+                    Field modifiers = Field.class.getDeclaredField("modifiers");
+                    modifiers.setAccessible(true);
+                    modifiers.setInt(isRestricted, isRestricted.getModifiers() & ~Modifier.FINAL);
+                    modifiers.setAccessible(false);
+                }
+                isRestricted.setAccessible(true);
+                isRestricted.setBoolean(null, false);
+                isRestricted.setAccessible(false);
+            }
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | NoSuchAlgorithmException | NoSuchFieldException
+                | SecurityException ex) {
+            throw new SecurityException("It is not possible to use unrestricted policy with this JDK, " + "consider reconfiguration: "
+                    + ex.getLocalizedMessage(), ex);
+        }
     }
 }
