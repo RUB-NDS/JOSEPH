@@ -18,7 +18,13 @@
  */
 package eu.dety.burp.joseph.utilities;
 
+import java.security.InvalidKeyException;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -161,6 +167,17 @@ public class CryptoTest {
                 (byte) 97, (byte) 116, (byte) 105, (byte) 111, (byte) 110, (byte) 46 };
 
         assertArrayEquals(expectedContent, content);
+    }
+
+    @Test
+    public void testAES256() throws Exception {
+        Crypto.removeCryptoStrengthRestriction();
+
+        Cipher encryptCipher = Cipher.getInstance("AES/CBC/NoPadding", new BouncyCastleProvider());
+        IvParameterSpec encryptIv = new IvParameterSpec(new byte[16]);
+        SecretKey encryptKey = new SecretKeySpec(new byte[32], "AES");
+        encryptCipher.init(Cipher.ENCRYPT_MODE, encryptKey, encryptIv);
+
     }
 
 }
