@@ -24,7 +24,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 /**
  * Simple class implementing {@link IBurpExtenderCallbacks} to mock Burp's behavior for extender callbacks to be able to write according
@@ -53,7 +54,27 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
+    public void printOutput(String s) {
+
+    }
+
+    @Override
+    public void printError(String s) {
+
+    }
+
+    @Override
     public void registerExtensionStateListener(IExtensionStateListener iExtensionStateListener) {
+
+    }
+
+    @Override
+    public List<IExtensionStateListener> getExtensionStateListeners() {
+        return null;
+    }
+
+    @Override
+    public void removeExtensionStateListener(IExtensionStateListener iExtensionStateListener) {
 
     }
 
@@ -63,7 +84,27 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
+    public List<IHttpListener> getHttpListeners() {
+        return null;
+    }
+
+    @Override
+    public void removeHttpListener(IHttpListener iHttpListener) {
+
+    }
+
+    @Override
     public void registerProxyListener(IProxyListener iProxyListener) {
+
+    }
+
+    @Override
+    public List<IProxyListener> getProxyListeners() {
+        return null;
+    }
+
+    @Override
+    public void removeProxyListener(IProxyListener iProxyListener) {
 
     }
 
@@ -73,7 +114,27 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
+    public List<IScannerListener> getScannerListeners() {
+        return null;
+    }
+
+    @Override
+    public void removeScannerListener(IScannerListener iScannerListener) {
+
+    }
+
+    @Override
     public void registerScopeChangeListener(IScopeChangeListener iScopeChangeListener) {
+
+    }
+
+    @Override
+    public List<IScopeChangeListener> getScopeChangeListeners() {
+        return null;
+    }
+
+    @Override
+    public void removeScopeChangeListener(IScopeChangeListener iScopeChangeListener) {
 
     }
 
@@ -83,7 +144,27 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
+    public List<IContextMenuFactory> getContextMenuFactories() {
+        return null;
+    }
+
+    @Override
+    public void removeContextMenuFactory(IContextMenuFactory iContextMenuFactory) {
+
+    }
+
+    @Override
     public void registerMessageEditorTabFactory(IMessageEditorTabFactory iMessageEditorTabFactory) {
+
+    }
+
+    @Override
+    public List<IMessageEditorTabFactory> getMessageEditorTabFactories() {
+        return null;
+    }
+
+    @Override
+    public void removeMessageEditorTabFactory(IMessageEditorTabFactory iMessageEditorTabFactory) {
 
     }
 
@@ -93,7 +174,27 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
+    public List<IScannerInsertionPointProvider> getScannerInsertionPointProviders() {
+        return null;
+    }
+
+    @Override
+    public void removeScannerInsertionPointProvider(IScannerInsertionPointProvider iScannerInsertionPointProvider) {
+
+    }
+
+    @Override
     public void registerScannerCheck(IScannerCheck iScannerCheck) {
+
+    }
+
+    @Override
+    public List<IScannerCheck> getScannerChecks() {
+        return null;
+    }
+
+    @Override
+    public void removeScannerCheck(IScannerCheck iScannerCheck) {
 
     }
 
@@ -103,12 +204,42 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
+    public List<IIntruderPayloadGeneratorFactory> getIntruderPayloadGeneratorFactories() {
+        return null;
+    }
+
+    @Override
+    public void removeIntruderPayloadGeneratorFactory(IIntruderPayloadGeneratorFactory iIntruderPayloadGeneratorFactory) {
+
+    }
+
+    @Override
     public void registerIntruderPayloadProcessor(IIntruderPayloadProcessor iIntruderPayloadProcessor) {
 
     }
 
     @Override
+    public List<IIntruderPayloadProcessor> getIntruderPayloadProcessors() {
+        return null;
+    }
+
+    @Override
+    public void removeIntruderPayloadProcessor(IIntruderPayloadProcessor iIntruderPayloadProcessor) {
+
+    }
+
+    @Override
     public void registerSessionHandlingAction(ISessionHandlingAction iSessionHandlingAction) {
+
+    }
+
+    @Override
+    public List<ISessionHandlingAction> getSessionHandlingActions() {
+        return null;
+    }
+
+    @Override
+    public void removeSessionHandlingAction(ISessionHandlingAction iSessionHandlingAction) {
 
     }
 
@@ -169,6 +300,11 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
 
     @Override
     public void sendToIntruder(String s, int i, boolean b, byte[] bytes, java.util.List<int[]> list) {
+
+    }
+
+    @Override
+    public void sendToComparer(byte[] bytes) {
 
     }
 
@@ -278,6 +414,16 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
+    public String saveConfigAsJson(String... strings) {
+        return null;
+    }
+
+    @Override
+    public void loadConfigFromJson(String s) {
+
+    }
+
+    @Override
     public void setProxyInterceptionEnabled(boolean b) {
 
     }
@@ -285,6 +431,16 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     @Override
     public String[] getBurpVersion() {
         return new String[0];
+    }
+
+    @Override
+    public String getExtensionFilename() {
+        return null;
+    }
+
+    @Override
+    public boolean isExtensionBapp() {
+        return false;
     }
 
     @Override
@@ -315,6 +471,11 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     @Override
     public void addScanIssue(IScanIssue iScanIssue) {
 
+    }
+
+    @Override
+    public IBurpCollaboratorClientContext createBurpCollaboratorClientContext() {
+        return null;
     }
 
     @Override
