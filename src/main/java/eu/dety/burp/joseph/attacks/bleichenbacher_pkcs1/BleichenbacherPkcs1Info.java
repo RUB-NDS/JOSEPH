@@ -312,17 +312,17 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
 
         try {
             // create plain padded key and encrypt them
-            encryptedKeys.put(PayloadType.NO_NULL_BYTE, encryptPlainRsa(getEK_NoNullByte(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PADDING, encryptPlainRsa(getEK_NullByteInPadding(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PKCS_PADDING, encryptPlainRsa(getEK_NullByteInPkcsPadding(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_16, encryptPlainRsa(getEK_SymmetricKeyOfSize16(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_24, encryptPlainRsa(getEK_SymmetricKeyOfSize24(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_32, encryptPlainRsa(getEK_SymmetricKeyOfSize32(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_40, encryptPlainRsa(getEK_SymmetricKeyOfSize40(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_8, encryptPlainRsa(getEK_SymmetricKeyOfSize8(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.WRONG_FIRST_BYTE, encryptPlainRsa(getEK_WrongFirstByte(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.WRONG_SECOND_BYTE, encryptPlainRsa(getEK_WrongSecondByte(rsaKeyLength, keyBytes), publicKey, keySize));
-            encryptedKeys.put(PayloadType.ORIGINAL, encryptPlainRsa(getPaddedKey(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.NO_NULL_BYTE, encryptPlainRsa(getEK_NoNullByte(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PADDING, encryptPlainRsa(getEK_NullByteInPadding(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PKCS_PADDING, encryptPlainRsa(getEK_NullByteInPkcsPadding(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_16, encryptPlainRsa(getEK_SymmetricKeyOfSize16(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_24, encryptPlainRsa(getEK_SymmetricKeyOfSize24(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_32, encryptPlainRsa(getEK_SymmetricKeyOfSize32(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_40, encryptPlainRsa(getEK_SymmetricKeyOfSize40(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_8, encryptPlainRsa(getEK_SymmetricKeyOfSize8(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.WRONG_FIRST_BYTE, encryptPlainRsa(getEK_WrongFirstByte(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.WRONG_SECOND_BYTE, encryptPlainRsa(getEK_WrongSecondByte(rsaKeyLength, keyBytes), publicKey));
+            encryptedKeys.put(PayloadType.ORIGINAL, encryptPlainRsa(getPaddedKey(rsaKeyLength, keyBytes), publicKey));
 
         } catch (IllegalBlockSizeException e) {
             loggerInstance.log(getClass(), "Error during key encryption: " + e.getMessage(), Logger.LogLevel.ERROR);
@@ -338,17 +338,15 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
      *            Plaintext
      * @param publicKey
      *            Public key
-     * @param keySize
-     *            Key size
      * @return Input encrypted with the public key and "RSA/NONE/NoPadding"
      */
-    private byte[] encryptPlainRsa(byte[] input, RSAPublicKey publicKey, int keySize) throws IllegalBlockSizeException {
+    private byte[] encryptPlainRsa(byte[] input, RSAPublicKey publicKey) throws IllegalBlockSizeException {
         BigInteger biInput = new BigInteger(input);
         if (biInput.compareTo(publicKey.getModulus()) == 1) {
             throw new IllegalBlockSizeException("Trying to encrypt more Data than moduls Size!");
         }
         BigInteger biEncrypted = biInput.modPow(publicKey.getPublicExponent(), publicKey.getModulus());
-        byte[] encrypted = new byte[keySize];
+        byte[] encrypted = new byte[publicKey.getModulus().bitLength() / 8];
         byte[] tmp = biEncrypted.toByteArray();
         // this ensures that the encrypted value does not contain any sign byte
         // and is of correct length
