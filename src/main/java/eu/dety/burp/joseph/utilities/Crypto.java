@@ -18,8 +18,6 @@
  */
 package eu.dety.burp.joseph.utilities;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -28,8 +26,10 @@ import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 import java.util.List;
+import javax.crypto.spec.GCMParameterSpec;
 
 /**
  * Help functions to perform cryptographic operations.
@@ -161,25 +161,20 @@ public class Crypto {
 
         int keyLen = getAesKeyLengthByJoseAlgorithm(encAlg, 32);
         String cipherInstance;
+        AlgorithmParameterSpec parameterSpec;
 
         switch (encAlg) {
             case "A128CBC-HS256":
-                cipherInstance = "AES/CBC/PKCS5Padding";
-                break;
             case "A192CBC-HS384":
-                cipherInstance = "AES/CBC/PKCS5Padding";
-                break;
             case "A256CBC-HS512":
                 cipherInstance = "AES/CBC/PKCS5Padding";
+                parameterSpec = new IvParameterSpec(iv);
                 break;
             case "A128GCM":
-                cipherInstance = "AES/GCM/NoPadding";
-                break;
             case "A192GCM":
-                cipherInstance = "AES/GCM/NoPadding";
-                break;
             case "A256GCM":
                 cipherInstance = "AES/GCM/NoPadding";
+                parameterSpec = new GCMParameterSpec(authTag.length * 8, iv);
                 break;
             default:
                 throw new DecryptionFailedException("Could not determine encryption algorithm or it is not supported");
@@ -194,8 +189,8 @@ public class Crypto {
             // TODO move this to some general library initialization code
             removeCryptoStrengthRestriction();
 
-            cipher = Cipher.getInstance(cipherInstance, new BouncyCastleProvider());
-            cipher.init(Cipher.DECRYPT_MODE, aesKey, new IvParameterSpec(iv));
+            cipher = Cipher.getInstance(cipherInstance);
+            cipher.init(Cipher.DECRYPT_MODE, aesKey, parameterSpec);
 
             if (encAlg.contains("GCM")) {
                 cipher.updateAAD(header.getBytes());

@@ -22,7 +22,6 @@ import burp.*;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.utilities.*;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.simple.parser.JSONParser;
 
 import javax.crypto.BadPaddingException;
@@ -31,10 +30,10 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.Security;
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 import java.util.List;
@@ -309,32 +308,55 @@ public class BleichenbacherPkcs1Info implements IAttackInfo {
         random.nextBytes(keyBytes);
 
         int rsaKeyLength = publicKey.getModulus().bitLength() / 8;
-
         HashMap<PayloadType, byte[]> encryptedKeys = new HashMap<>();
 
         try {
-            Security.addProvider(new BouncyCastleProvider());
-            Cipher rsa = Cipher.getInstance("RSA/NONE/NoPadding");
-            rsa.init(Cipher.ENCRYPT_MODE, publicKey);
-
             // create plain padded key and encrypt them
-            encryptedKeys.put(PayloadType.NO_NULL_BYTE, rsa.doFinal(getEK_NoNullByte(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PADDING, rsa.doFinal(getEK_NullByteInPadding(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PKCS_PADDING, rsa.doFinal(getEK_NullByteInPkcsPadding(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_16, rsa.doFinal(getEK_SymmetricKeyOfSize16(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_24, rsa.doFinal(getEK_SymmetricKeyOfSize24(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_32, rsa.doFinal(getEK_SymmetricKeyOfSize32(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_40, rsa.doFinal(getEK_SymmetricKeyOfSize40(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_8, rsa.doFinal(getEK_SymmetricKeyOfSize8(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.WRONG_FIRST_BYTE, rsa.doFinal(getEK_WrongFirstByte(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.WRONG_SECOND_BYTE, rsa.doFinal(getEK_WrongSecondByte(rsaKeyLength, keyBytes)));
-            encryptedKeys.put(PayloadType.ORIGINAL, rsa.doFinal(getPaddedKey(rsaKeyLength, keyBytes)));
+            encryptedKeys.put(PayloadType.NO_NULL_BYTE, encryptPlainRsa(getEK_NoNullByte(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PADDING, encryptPlainRsa(getEK_NullByteInPadding(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.NULL_BYTE_IN_PKCS_PADDING, encryptPlainRsa(getEK_NullByteInPkcsPadding(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_16, encryptPlainRsa(getEK_SymmetricKeyOfSize16(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_24, encryptPlainRsa(getEK_SymmetricKeyOfSize24(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_32, encryptPlainRsa(getEK_SymmetricKeyOfSize32(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_40, encryptPlainRsa(getEK_SymmetricKeyOfSize40(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.SYMMETRIC_KEY_OF_SIZE_8, encryptPlainRsa(getEK_SymmetricKeyOfSize8(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.WRONG_FIRST_BYTE, encryptPlainRsa(getEK_WrongFirstByte(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.WRONG_SECOND_BYTE, encryptPlainRsa(getEK_WrongSecondByte(rsaKeyLength, keyBytes), publicKey, keySize));
+            encryptedKeys.put(PayloadType.ORIGINAL, encryptPlainRsa(getPaddedKey(rsaKeyLength, keyBytes), publicKey, keySize));
 
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+        } catch (IllegalBlockSizeException e) {
             loggerInstance.log(getClass(), "Error during key encryption: " + e.getMessage(), Logger.LogLevel.ERROR);
         }
 
         return encryptedKeys;
+    }
+
+    /**
+     * "RSA/NONE/NoPadding" is only accessible in BouncyCastle. This function re-implements "RSA/NONE/NoPadding" using plain big integers.
+     * 
+     * @param input
+     *            Plaintext
+     * @param publicKey
+     *            Public key
+     * @param keySize
+     *            Key size
+     * @return Input encrypted with the public key and "RSA/NONE/NoPadding"
+     */
+    private byte[] encryptPlainRsa(byte[] input, RSAPublicKey publicKey, int keySize) throws IllegalBlockSizeException {
+        BigInteger biInput = new BigInteger(input);
+        if (biInput.compareTo(publicKey.getModulus()) == 1) {
+            throw new IllegalBlockSizeException("Trying to encrypt more Data than moduls Size!");
+        }
+        BigInteger biEncrypted = biInput.modPow(publicKey.getPublicExponent(), publicKey.getModulus());
+        byte[] encrypted = new byte[keySize];
+        byte[] tmp = biEncrypted.toByteArray();
+        // this ensures that the encrypted value does not contain any sign byte
+        // and is of correct length
+        int min = (encrypted.length < tmp.length) ? encrypted.length : tmp.length;
+        for (int i = 1; i <= min; i++) {
+            encrypted[encrypted.length - i] = tmp[tmp.length - i];
+        }
+        return encrypted;
     }
 
     /**
