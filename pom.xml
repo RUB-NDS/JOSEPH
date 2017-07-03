@@ -58,6 +58,11 @@
             <artifactId>simmetrics-core</artifactId>
             <version>4.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-debug-jdk15on</artifactId>
+            <version>1.56</version>
+        </dependency>
     </dependencies>
 
     <properties>

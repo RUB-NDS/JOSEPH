@@ -26,10 +26,12 @@ import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 import java.util.List;
 import javax.crypto.spec.GCMParameterSpec;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Help functions to perform cryptographic operations.
@@ -188,6 +190,7 @@ public class Crypto {
         try {
             // TODO move this to some general library initialization code
             removeCryptoStrengthRestriction();
+            Security.addProvider(new BouncyCastleProvider());
 
             cipher = Cipher.getInstance(cipherInstance);
             cipher.init(Cipher.DECRYPT_MODE, aesKey, parameterSpec);
