@@ -62,7 +62,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         String time = dateFormat.format(calObj.getTime());
         stdout.println("+---------------------------------------------------------+");
         stdout.println("|                         JOSEPH                          |");
-        stdout.println("|                     Version 1.0.0                       |");
+        stdout.println("|                     Version 1.0.1                       |");
         stdout.println("|                   Started @ " + time + "                    |");
         stdout.println("+---------------------------------------------------------+");
 
