@@ -160,6 +160,23 @@ public class KeyConfusionTest {
     }
 
     @Test
+    public void checktransformKeyByPayloadReturnsCorrectValueForOriginalAdditionalLfayload() throws UnsupportedEncodingException {
+        IBurpExtenderCallbacks callbacks = new BurpExtenderCallbacksMock();
+
+        KeyConfusionInfo keyConfusionInfo = new KeyConfusionInfo(callbacks);
+
+        String expected = "-----BEGIN PUBLIC KEY-----\n" + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n"
+                + "vRrHmG4R/Dp+JBrJrQIDAQAB\n" + "-----END PUBLIC KEY-----\n";
+
+        String input = "-----BEGIN PUBLIC KEY-----\n" + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR4Lk6znT+VhxNC0Z9cTYd8AV+\n"
+                + "smAuCX7Dz12IVJHEiYa1ZG1JYpsd+RloQI+5RS6kDiYqS4kKkU3bNhrYM92WI5P+\n" + "Ty73mN2P/vPTzxVI9aAZGeraAnb5TfD1gW68X4ZdjcSPI2FFNp6yQMfz6Mhh7Z8n\n"
+                + "vRrHmG4R/Dp+JBrJrQIDAQAB\n" + "-----END PUBLIC KEY-----";
+
+        assertEquals(expected, keyConfusionInfo.transformKeyByPayload(KeyConfusionInfo.PayloadType.ORIGINAL_ADDITIONAL_LF, input));
+    }
+
+    @Test
     public void checktransformKeyByPayloadReturnsCorrectValueForPkcs1Payload() {
         IBurpExtenderCallbacks callbacks = new BurpExtenderCallbacksMock();
 
