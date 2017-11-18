@@ -45,3 +45,6 @@ If this issue arises, please perform the following step(s):
 - Copy the Bouncy Castle JAR-file `bcprov-jdk15on-1.54.jar` from JOSEPH's `lib` folder into the `/[PATH_TO_JVM]/jre/lib/ext` directory.
 
 - In some cases, it is necessary to additionally amend the `/[PATH_TO_JVM]/jre/lib/security/java.security` file and add the following line (preferably directly below the other provider definitions): `security.provider.9=org.bouncycastle.jce.provider.BouncyCastleProvider`. The `9` in this case specifies the priority and should be adjusted to fit into existing definitions.
+
+
+Alternatively, use `target/JOSEPH-1.0.0.jar` and load the `target/lib` folder to your Java Environment under `Extender/Options`.
