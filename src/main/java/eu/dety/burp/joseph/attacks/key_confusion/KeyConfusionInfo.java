@@ -80,6 +80,8 @@ public class KeyConfusionInfo implements IAttackInfo {
         ORIGINAL_NO_HEADER_FOOTER,
         ORIGINAL_NO_LF,
         ORIGINAL_NO_HEADER_FOOTER_LF,
+        ORIGINAL_ADDITIONAL_LF,
+
         PKCS1,
         PKCS1_NO_HEADER_FOOTER,
         PKCS1_NO_LF,
@@ -215,6 +217,8 @@ public class KeyConfusionInfo implements IAttackInfo {
                     // Without header/footer and line feeds/carriage returns
                     publicKeyVariations.put(PayloadType.ORIGINAL_NO_HEADER_FOOTER_LF,
                             transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER_LF, publicKeyValue));
+
+                    publicKeyVariations.put(PayloadType.ORIGINAL_ADDITIONAL_LF, transformKeyByPayload(PayloadType.ORIGINAL_ADDITIONAL_LF, publicKeyValue));
 
                     // PKCS#1, easy but hacky transformation
                     publicKeyVariations.put(PayloadType.PKCS1, transformKeyByPayload(PayloadType.PKCS1, publicKeyValue));
@@ -451,6 +455,10 @@ public class KeyConfusionInfo implements IAttackInfo {
 
             case ORIGINAL_NO_HEADER_FOOTER_LF:
                 modifiedKey = transformKeyByPayload(PayloadType.ORIGINAL_NO_LF, transformKeyByPayload(PayloadType.ORIGINAL_NO_HEADER_FOOTER, key));
+                break;
+
+            case ORIGINAL_ADDITIONAL_LF:
+                modifiedKey = key + "\n";
                 break;
 
             case PKCS1:
