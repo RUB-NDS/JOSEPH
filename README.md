@@ -1,6 +1,6 @@
 # ![JOSEPH](http://img.dety.eu/joseph.png)
 ![licence](https://img.shields.io/badge/License-GPLv2-brightgreen.svg)
-[![release](https://img.shields.io/badge/Release-v1.0.0-blue.svg)](https://github.com/RUB-NDS/JOSEPH/releases)
+[![release](https://img.shields.io/badge/Release-v1.0.1-blue.svg)](https://github.com/RUB-NDS/JOSEPH/releases)
 ![status](https://img.shields.io/badge/Status-beta-yellow.svg)
 [![travis](https://travis-ci.org/RUB-NDS/JOSEPH.svg?branch=master)](https://travis-ci.org/RUB-NDS/JOSEPH)
 
@@ -47,4 +47,4 @@ If this issue arises, please perform the following step(s):
 - In some cases, it is necessary to additionally amend the `/[PATH_TO_JVM]/jre/lib/security/java.security` file and add the following line (preferably directly below the other provider definitions): `security.provider.9=org.bouncycastle.jce.provider.BouncyCastleProvider`. The `9` in this case specifies the priority and should be adjusted to fit into existing definitions.
 
 
-Alternatively, use `target/JOSEPH-1.0.0.jar` and load the `target/lib` folder to your Java Environment under `Extender/Options`.
+Alternatively, use `target/JOSEPH-1.0.1.jar` and load the `target/lib` folder to your Java Environment under `Extender/Options`.
