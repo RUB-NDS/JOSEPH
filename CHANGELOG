@@ -1,4 +1,13 @@
 ============
+2019-01-09
+============
+
+1.0.2
+Fixing double base64 encoding bug for the signature value within the manual tab
+Issue: https://github.com/RUB-NDS/JOSEPH/issues/20
+
+
+============
 2017-11-14
 ============
 
