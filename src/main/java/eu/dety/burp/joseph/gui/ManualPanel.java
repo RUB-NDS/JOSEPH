@@ -294,7 +294,7 @@ public class ManualPanel extends javax.swing.JPanel {
                         + updatedValues.get("signature"), Logger.LogLevel.DEBUG);
 
                 String output = Decoder.concatComponents(new String[] { Decoder.base64UrlEncode(updatedValues.get("header").getBytes()),
-                        Decoder.base64UrlEncode(updatedValues.get("payload").getBytes()), Decoder.base64UrlEncode(updatedValues.get("signature").getBytes()) });
+                        Decoder.base64UrlEncode(updatedValues.get("payload").getBytes()), updatedValues.get("signature") });
 
                 outputValue.setText(output);
                 jScrollPane2.setVisible(true);
