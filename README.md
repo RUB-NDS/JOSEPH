@@ -1,4 +1,4 @@
-# ![JOSEPH](http://img.dety.eu/joseph.png)
+# JOSEPH
 ![licence](https://img.shields.io/badge/License-GPLv2-brightgreen.svg)
 [![release](https://img.shields.io/badge/Release-v1.0.2-blue.svg)](https://github.com/RUB-NDS/JOSEPH/releases)
 ![status](https://img.shields.io/badge/Status-beta-yellow.svg)
@@ -6,7 +6,7 @@
 
 ## JavaScript Object Signing and Encryption Pentesting Helper
 
-JOSEPH is a Burp Suite extension and has been developed as part of a master thesis by [Dennis Detering](https://github.com/merenon) at the [Ruhr-University Bochum](http://rub.de) in cooperation with the [CSPi GmbH](http://www.cspi.com/).
+JOSEPH is a Burp Suite extension and has been developed as part of a master thesis by [Dennis Detering](https://github.com/merenon) at the [Ruhr-University Bochum](http://rub.de) in cooperation with the [Spike Reply GmbH](https://reply.de) (formerly [CSPi GmbH](https://www.cspi.com/)).
 
 ## Features
 - Recognition and marking
@@ -18,6 +18,9 @@ JOSEPH is a Burp Suite extension and has been developed as part of a master thes
 - Base64url en-/decoder
 - Easy extensibility of new attacks
 
+## Burp Suite BApp Store
+This Burp Suite extension can be downloaded directly from the BApp Store [JSON Web Token Attacker](https://portswigger.net/bappstore/82d6c60490b540369d6d5d01822bdf61)
+
 ## Build
 To compile the JOSEPH extension from source, it is necessary to have Apache Maven installed and to run the following command:
 ```bash
@@ -28,8 +31,6 @@ To skip the (unit) tests, use the following command:
 ```bash
 $ mvn clean package -DskipTests
 ```
-
-JOSEPH has been tested with Java 1.7 and 1.8.
 
 ### Troubleshooting
 
