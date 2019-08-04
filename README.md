@@ -13,6 +13,7 @@ JOSEPH is a Burp Suite extension and has been developed as part of a master thes
 - JWS/JWE editors
 - (Semi-)Automated attacks
     * Bleichenbacher MMA
+    * Invalid Curve
     * Key Confusion (aka Algorithm Substitution)
     * Signature Exclusion
 - Base64url en-/decoder
