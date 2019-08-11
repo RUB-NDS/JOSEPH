@@ -40,6 +40,12 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
         </dependency>
+        <!-- Apache Commons CSV-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.6</version>
+        </dependency>
         <!-- RSyntaxTextArea -->
         <dependency>
             <groupId>com.fifesoft</groupId>
@@ -56,7 +62,8 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.54</version>
+            <version>1.61</version>
+            <!--<version>1.54</version>-->
         </dependency>
         <dependency>
             <groupId>com.github.mpkorstanje</groupId>
@@ -76,8 +83,16 @@
             <resource>
                 <directory>src/main/java/eu/dety/burp/joseph/resources/</directory>
             </resource>
+            <resource>
+                <directory>src/main/java/eu/dety/burp/joseph/attacks/invalid_curve/resources/</directory>
+            </resource>
         </resources>
-
+        <testResources>
+            <testResource>
+                <directory>src/test/java/eu/dety/burp/joseph/attacks/invalid_curve/resources/</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <!-- Copy dependencies to lib folder -->
             <plugin>
@@ -120,14 +135,25 @@
                 </executions>
             </plugin>
             <!-- compile sources -->
+            <!--
+                        <plugin>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            <version>3.6.0</version>
+                            <configuration>
+                                <source>1.7</source>
+                                <target>1.7</target>
+                            </configuration>
+                        </plugin>
+            -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
+
             <!-- include dependencies in jar -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
