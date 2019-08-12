@@ -20,25 +20,38 @@ package eu.dety.burp.joseph.utilities;
 
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.interfaces.ECPublicKey;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECParameterSpec;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
+import org.bouncycastle.math.ec.ECFieldElement;
+import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.math.ec.custom.sec.*;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 import java.util.List;
 
 /**
- * Help functions to convert JSON Web Key to RSA PublicKey
+ * Help functions to convert JSON Web Key to RSA/EC PublicKey
  * 
- * @author Dennis Detering
- * @version 1.0
+ * @author Dennis Detering, Vincent Unsel
+ * @version 1.1
  */
 public class Converter {
     private static final Logger loggerInstance = Logger.getInstance();
@@ -242,6 +255,126 @@ public class Converter {
         }
 
         return publicKey;
+    }
+
+    /**
+     * Get EC PublicKey by JWK JSON input
+     *
+     * @param input
+     *            JSON Web Key {@link Object}
+     * @return {@link PublicKey} or null
+     */
+    public static ECPublicKey getECPublicKeyByJwk(Object input) {
+        if (!(input instanceof JSONObject)) {
+            loggerInstance.log(Converter.class, "Input not JSONObject.", Logger.LogLevel.ERROR);
+            return null;
+        }
+        String kty;
+        ECPublicKey result = null;
+        JSONObject jsonInput = (JSONObject) input;
+        if (jsonInput.containsKey("kty")) {
+            kty = jsonInput.get("kty").toString();
+            if (kty.equals("EC")) {
+                result = buildECPublicKeyByJwk(jsonInput);
+            }
+        } else if (jsonInput.containsKey("epk")) {
+            JSONObject innerJsonArray = (JSONObject) jsonInput.get("epk");
+            kty = (String) innerJsonArray.get("kty");
+            if (kty.equals("EC"))
+                result = buildECPublicKeyByJwk(innerJsonArray);
+        } else {
+            loggerInstance.log(Converter.class, "JSONObject does not contain kty.", Logger.LogLevel.ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * Build EC {@link ECPublicKey} from EC JWK JSON object
+     *
+     * @param input
+     *            EC JSON Web Key {@link JSONObject}
+     * @return {@link ECPublicKey} or null
+     */
+    private static ECPublicKey buildECPublicKeyByJwk(JSONObject input) {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        try {
+            String crv = input.get("crv").toString();
+            BigInteger x = Base64.decodeInteger(input.get("x").toString().getBytes());
+            BigInteger y = Base64.decodeInteger(input.get("y").toString().getBytes());
+            KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+            ECParameterSpec ecParameterSpec = ECNamedCurveTable.getParameterSpec(crv);
+            ECPoint ecPoint;
+
+            switch (crv) {
+                case "P-256": {
+                    ECFieldElement fex = new SecP256R1FieldElement(x);
+                    ECFieldElement fey = new SecP256R1FieldElement(y);
+                    ecPoint = new SecP256R1Point(ecParameterSpec.getCurve(), fex, fey);
+                    break;
+                }
+                case "P-384": {
+                    ECFieldElement fex = new SecP384R1FieldElement(x);
+                    ECFieldElement fey = new SecP384R1FieldElement(y);
+                    ecPoint = new SecP384R1Point(ecParameterSpec.getCurve(), fex, fey);
+                    break;
+                }
+                case "P-521": {
+                    ECFieldElement fex = new SecP521R1FieldElement(x);
+                    ECFieldElement fey = new SecP521R1FieldElement(y);
+                    ecPoint = new SecP521R1Point(ecParameterSpec.getCurve(), fex, fey);
+                    break;
+                }
+                default:
+                    return null;
+            }
+
+            ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(ecPoint, ecParameterSpec);
+            PublicKey result = keyFactory.generatePublic(ecPublicKeySpec);
+            return (ECPublicKey) result;
+        } catch (InvalidKeySpecException e) {
+            loggerInstance.log(Converter.class, "ERROR InvalidKeySpecException: " + e.getMessage(), Logger.LogLevel.ERROR);
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            loggerInstance.log(Converter.class, "ERROR NoSuchAlgorithmException: " + e.getMessage(), Logger.LogLevel.ERROR);
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            loggerInstance.log(Converter.class, "ERROR NoSuchProviderException: " + e.getMessage(), Logger.LogLevel.ERROR);
+            e.printStackTrace();
+        } catch (Exception e) {
+            loggerInstance.log(Converter.class, "ERROR Exception: " + e.getMessage(), Logger.LogLevel.ERROR);
+            e.printStackTrace();
+        }
+        return null;
+    }
+    /**
+     * Get EC {@link PublicKey} from EC PEM String
+     *
+     * @param pemString
+     * @return {@link PublicKey} or null
+     */
+    public static PublicKey getECPublicKeyByPemString(String pemString) {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        Reader reader = new StringReader(pemString);
+        PemObject pemObject;
+        try {
+            pemObject = new PemReader(reader).readPemObject();
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(pemObject.getContent());
+            return KeyFactory.getInstance("EC", "BC").generatePublic(keySpec);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
