@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 /**
  * Point implementation to represent Elliptic Curve points with BigIntegers.
+ * 
  * @author Vincent Unsel
  * @version 1.0
  */

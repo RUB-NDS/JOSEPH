@@ -20,6 +20,7 @@ package eu.dety.burp.joseph.attacks;
 
 import burp.IBurpExtenderCallbacks;
 import eu.dety.burp.joseph.attacks.bleichenbacher_pkcs1.BleichenbacherPkcs1Info;
+import eu.dety.burp.joseph.attacks.invalid_curve.InvalidCurveInfo;
 import eu.dety.burp.joseph.attacks.key_confusion.KeyConfusionInfo;
 import eu.dety.burp.joseph.attacks.signature_exclusion.SignatureExclusionInfo;
 import eu.dety.burp.joseph.utilities.Logger;
@@ -36,7 +37,7 @@ public class AttackLoader {
 
     /**
      * Get new list of new instances of all registered attacks
-     * 
+     *
      * @param callbacks
      *            {@link IBurpExtenderCallbacks} instance
      * @return HashMap with the name of the attack as string and a new instance of the attack's info class
@@ -58,6 +59,11 @@ public class AttackLoader {
         BleichenbacherPkcs1Info bleichenbacherPkcs1Info = new BleichenbacherPkcs1Info(callbacks);
         registeredAttackInstances.put(bleichenbacherPkcs1Info.getName(), bleichenbacherPkcs1Info);
         loggerInstance.log(AttackLoader.class, "Attack registered: Bleichenbacher PKCS#1 v1.5", Logger.LogLevel.INFO);
+
+        /* Invalid Curve Attack on Elliptic Curves */
+        InvalidCurveInfo invalidCurveInfo = new InvalidCurveInfo(callbacks);
+        registeredAttackInstances.put(invalidCurveInfo.getName(), invalidCurveInfo);
+        loggerInstance.log(AttackLoader.class, "Attack registered: Invalid Curve", Logger.LogLevel.INFO);
 
         /* Attack Template Attack */
         // AttackTemplateInfo attackTemplateInfo = new AttackTemplateInfo(callbacks);

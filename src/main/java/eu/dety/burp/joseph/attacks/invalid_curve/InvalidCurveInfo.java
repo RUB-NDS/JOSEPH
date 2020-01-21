@@ -7,12 +7,10 @@ import burp.IRequestInfo;
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import eu.dety.burp.joseph.attacks.IAttackInfo;
 import eu.dety.burp.joseph.utilities.*;
-
 import org.apache.commons.csv.CSVRecord;
 import org.bouncycastle.jce.interfaces.ECPrivateKey;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -24,9 +22,10 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Invalid Curve Attack Info is used for the preparation of the Invalid Curve attack. It is holding meta data and all necessary parameter.
@@ -46,12 +45,12 @@ public class InvalidCurveInfo implements IAttackInfo {
     private static final String[] encryption = { "A128GCM", "A192GCM", "A256GCM", "A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512" }; // supported
 
     private static final String[] algorithms = { "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW" };// Supported algorithm
-    private static final String[] curves = { "P-256", "P-384", "P-512" };// Supported curves
+    private static final String[] curves = { "P-256", "P-384", "P-521" };// Supported curves
     private static final String description = "<html>The <em>"
             + name
             + "</em> attack exploits a vulnerability where the "
             + "<em>Elliptic Curve Diffie-Hellman Key Exchange</em> is done using points on different curves.<br/>"
-            + "Such a vulnerability occurs, if the validation of the given point or of resulted computations on the curve is missing."
+            + "Such a vulnerability occurs, if the validation of the given point or of resulted computations on the curve is missing. "
             + "Note that the target is not vulnerable, if no further response matches the first and only ECDH in the table. Therefore, it is recommended to cancel the attack, as the targets secret key will never be calculated without the vulnerability! </html>"; // Attack
     // description
 
@@ -164,8 +163,8 @@ public class InvalidCurveInfo implements IAttackInfo {
                 break;
         }
         loggerInstance.log(getClass(), "Generate first valid request. ", Logger.LogLevel.DEBUG);
-        generateRequest(generateValidKey());
-        String resourceFile = "invalidPoints" + curveSelection.getSelectedItem() + "_unshorted.csv";
+        generateRequest(generateValidKey());// _unshorted
+        String resourceFile = "invalidPoints" + curveSelection.getSelectedItem() + ".csv";
         setCSVReader(new CSVReader(resourceFile));
         loggerInstance.log(getClass(), "Preparation done. " + publicKeyValue, Logger.LogLevel.DEBUG);
         return new InvalidCurve(callbacks, this);

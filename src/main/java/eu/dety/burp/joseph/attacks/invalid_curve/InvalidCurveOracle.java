@@ -43,7 +43,6 @@ public class InvalidCurveOracle {
      */
     public boolean matchValid(byte[] response) {
         float actual = metric.compare(helpers.bytesToString(response), validResponse);
-        loggerInstance.log(this.getClass(), "Metric compare for " + helpers.bytesToString(response) + " was:" + actual, Logger.LogLevel.DEBUG);
         if (actual >= COMPARE_THRESHOLD) {
             return true;
         }

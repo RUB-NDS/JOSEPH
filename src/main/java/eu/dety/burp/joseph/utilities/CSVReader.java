@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * Chinese Remainder implementation to calculate the targets private key.
+ * 
  * @author Vincent Unsel
  * @version 1.0
  */
@@ -69,8 +70,10 @@ public class CSVReader {
             e.printStackTrace();
         }
     }
+
     /**
      * Checks, whether the file contains another record.
+     * 
      * @return hasNext
      */
     public boolean hasNext() {
@@ -79,6 +82,7 @@ public class CSVReader {
 
     /**
      * Get the next line and increment the current record.
+     * 
      * @return currentLineRecord
      */
     public Iterable<String> next() {
@@ -88,6 +92,7 @@ public class CSVReader {
 
     /**
      * Get the current record.
+     * 
      * @return currentLineRecord
      */
     public Iterable<String> getCurrentRecord() {
@@ -96,9 +101,12 @@ public class CSVReader {
         }
         return currentLineRecord;
     }
+
     /**
      * Get all lines that equal the next value in the specified column.
-     * @param column comma separated value column
+     * 
+     * @param column
+     *            comma separated value column
      * @return listOfLineRecords
      */
     public List<? super Iterable<String>> getEqualLinesFromColumn(int column) {
@@ -113,8 +121,10 @@ public class CSVReader {
         }
         return result;
     }
+
     /**
      * Get all lines that equal the next value in the first column.
+     * 
      * @return listOfLineRecords
      */
     public List<? super Iterable<String>> getEqualLinesFirstColumn() {

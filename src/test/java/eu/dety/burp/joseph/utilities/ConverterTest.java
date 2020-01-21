@@ -18,23 +18,39 @@
  */
 package eu.dety.burp.joseph.utilities;
 
+import org.apache.commons.codec.binary.Base64;
+
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.interfaces.ECPublicKey;
+import org.bouncycastle.jce.spec.ECKeySpec;
+import org.bouncycastle.jce.spec.ECParameterSpec;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
+import org.bouncycastle.math.ec.ECFieldElement;
+import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.math.ec.custom.sec.SecP256R1FieldElement;
+import org.bouncycastle.math.ec.custom.sec.SecP256R1Point;
+
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 import org.junit.Test;
 
 import java.math.BigInteger;
+
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ConverterTest {
 
@@ -110,7 +126,7 @@ public class ConverterTest {
     }
 
     @Test
-    public void getRsaPublicKeyByPkcs8PemStringReturnsCorrectRsaPublicKeyObject() throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException {
+    public void getRsaPublicKeyByPkcs8PemStringReturnsCorrectRsaPublicKeyObject() throws NoSuchAlgorithmException, InvalidKeySpecException {
         String pemString = "-----BEGIN PUBLIC KEY-----\n" + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqNyaO8jKmo/vfcFmxVNx\n"
                 + "mJD4s+pJah9v/y7TxT1EGLLHZhAjZji7cZ+tyu5XDX6X9Mv3Cw5teQu9cdlTbdFp\n" + "rS9jRasnMlOfqI0V7jc7MOpa3n7AOeAYW9kFCL0qykKEs5B1f+F4zNAxp0hdE3eQ\n"
                 + "KYCbCprXjHKF1CfH28C0Qk+GUtaRJbLaUybBoGvQ7vW/fdVUkuk3lOgnzF9dgrm0\n" + "8u11QLQpkF5glpC9ydiuWPNEKuOzTOGcgT3kA9XxliBLmuXO6OjDxxzzoDokMg82\n"
@@ -128,7 +144,7 @@ public class ConverterTest {
     }
 
     @Test
-    public void getRsaPublicKeyByPkcs1PemStringReturnsCorrectRsaPublicKeyObject() throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException {
+    public void getRsaPublicKeyByPkcs1PemStringReturnsCorrectRsaPublicKeyObject() throws NoSuchAlgorithmException, InvalidKeySpecException {
         String pemString = "-----BEGIN PUBLIC KEY-----\n" + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr0uGtoAbxPPnkWcuT31D\n"
                 + "VX6skQBLs+FdxpcrnPi3DQg5ZVdUcp/vFeJts9HBBUjIXhhRqhqeauTNRrRpT6hZ\n" + "cZ0GwGajgIiGPyNxjlhkW1kXvKei//dr7z51A1x+Nzr/VTpsHD3luw/oL6gmFpeZ\n"
                 + "fZ+cC5WlwrQGORDfOgjtIaKRMsbByU8nVay9OjalfcdHpAJzWm68ONo7eAEDSaf9\n" + "LqrdMvqY6pgMh4PdvpqSU1uhsd7VBKbWtEs7sj6PsH6qIAZv+AYtNGd0Fzhkj6xa\n"
@@ -173,5 +189,61 @@ public class ConverterTest {
         assertEquals(publicKeyList.size(), 2);
         assertEquals(publicKey, publicKeyList.get("#1_RSA_sig"));
         assertEquals(publicKey2, publicKeyList.get("#2_RSA_RS256_2011-04-29"));
+    }
+
+    @Test
+    public void getECPublicKeyByJwkInputNotJSONObjcet() {
+        Object input = new Object();
+        assertNull(Converter.getECPublicKeyByJwk(input));
+    }
+
+    @Test
+    public void getECPublicKeyByJwkInputIsJSONObjcetWithoutKty() {
+        JSONObject input = new JSONObject();
+        assertNull(Converter.getECPublicKeyByJwk(input));
+    }
+
+    @Test
+    public void getECPublicKeyByJwkInputIsJSONObjcetWithKtyNotEC() throws ParseException {
+        Object input = new JSONParser()
+                .parse("{\"kty\": \"RSA\", \"use\": \"sig\", \"n\": \"AK9LhraAG8Tz55FnLk99Q1V-rJEAS7PhXcaXK5z4tw0IOWVXVHKf7xXibbPRwQVIyF4YUaoanmrkzUa0aU-oWXGdBsBmo4CIhj8jcY5YZFtZF7ynov_3a-8-dQNcfjc6_1U6bBw95bsP6C-oJhaXmX2fnAuVpcK0BjkQ3zoI7SGikTLGwclPJ1WsvTo2pX3HR6QCc1puvDjaO3gBA0mn_S6q3TL6mOqYDIeD3b6aklNbobHe1QSm1rRLO7I-j7B-qiAGb_gGLTRndBc4ZI-sWkwQGOkZeEugJukgspmWAmFYd821RXQ9M8egqCYsVM7FsEm_raKvSG2ehxFo7ZSVbLM\", \"e\": \"AQAB\"}");
+        assertNull(Converter.getECPublicKeyByJwk(input));
+    }
+
+    @Test
+    public void getECPublicKeyByJwkInputIsJSONObjcetWrongCurve() throws ParseException {
+        Object input = new JSONParser()
+                .parse("{\"kty\":\"EC\", \"crv\":\"P-257\", \"x\":\"_h70D5NdAGyh8-maXO-fzVfaZAYsyNQGcXelJII1DRw\", \"y\":\"jIAYcIcTcGaDX75BFF5pPRopo1lpRq3XpM4d31Wzaa0\", \"use\":\"enc\", \"kid\":\"1\"}");
+        assertNull(Converter.getECPublicKeyByJwk(input));
+    }
+
+    @Test
+    public void getECPublicKeyByJwkInputReturnsECPublicKeyObjects() throws ParseException, NoSuchAlgorithmException, InvalidKeySpecException,
+            NoSuchProviderException {
+        // Object jwk = new
+        // JSONParser().parse("{\"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"use\":\"enc\", \"kid\":\"1\"}");
+        Object jwk = new JSONParser()
+                .parse("{\"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"_h70D5NdAGyh8-maXO-fzVfaZAYsyNQGcXelJII1DRw\", \"y\":\"jIAYcIcTcGaDX75BFF5pPRopo1lpRq3XpM4d31Wzaa0\", \"use\":\"enc\", \"kid\":\"1\"}");
+
+        BigInteger x = Base64.decodeInteger("_h70D5NdAGyh8-maXO-fzVfaZAYsyNQGcXelJII1DRw".getBytes());
+        BigInteger y = Base64.decodeInteger("jIAYcIcTcGaDX75BFF5pPRopo1lpRq3XpM4d31Wzaa0".getBytes());
+        ECFieldElement fex = new SecP256R1FieldElement(x);
+        ECFieldElement fey = new SecP256R1FieldElement(y);
+
+        KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+        ECParameterSpec ecParameterSpec = ECNamedCurveTable.getParameterSpec("P-256");
+        ECPoint ecpublicKeyTest = new SecP256R1Point(ecParameterSpec.getCurve(), fex, fey);
+        ECKeySpec ecpks = new ECPublicKeySpec(ecpublicKeyTest, ecParameterSpec);
+        ECPublicKey publicKey = (ECPublicKey) keyFactory.generatePublic(ecpks);
+        ECPublicKey publicKeyToTest = Converter.getECPublicKeyByJwk(jwk);
+        assertEquals(publicKey, publicKeyToTest);
+    }
+
+    @Test
+    public void getECPublicKeyByJwkInput() throws ParseException {
+        Object jwk = new JSONParser().parse("{" + "\"enc\": \"A128CBC-HS256\"," + "\"alg\": \"ECDH-ES+A128KW\"," + "\"epk\": {" + "\"kty\": \"EC\","
+                + "\"x\": \"acJ36kKjdhB3eE53fgpdO1QLj3206LKDwmHu1zp_vlg\"," + "\"y\": \"dWOKHC2CaCi_u8SVNPRZU0NkErgiSbeM4ZMUE65Stjs\","
+                + "\"crv\": \"P-256\"}}");
+        ECPublicKey publicKeyToTest = Converter.getECPublicKeyByJwk(jwk);
     }
 }

@@ -53,7 +53,7 @@ public class InvalidCurve implements IAttack, Observer {
         this.crt = ChineseRemainder.getInstance();
         this.crt.addObserver(this);
         this.resultWindow = new InvalidCurveAttackerResultWindow(attackInfo.getName(), callbacks);
-        this.resultWindow.setResultDescribtion("\nCould not validate result: ");
+        this.resultWindow.setResultDescription("\nSending requests: ");
         loggerInstance.log(getClass(), "ResultView done.", Logger.LogLevel.DEBUG);
         loggerInstance.log(getClass(), "Construction done.", Logger.LogLevel.DEBUG);
     }
@@ -85,7 +85,7 @@ public class InvalidCurve implements IAttack, Observer {
                         List<AttackExecutor> workers = nextPhase();
                         for (AttackExecutor worker : workers) {
                             try {
-                                if (crt.isFound() || crt.collectedBoth() || resultWindow.isCanceled()) {
+                                if (crt.isFound() || crt.pointCollected() || resultWindow.isCanceled()) {
                                     worker.cancel(true);
                                 }
                                 worker.get(10, TimeUnit.SECONDS);
@@ -116,10 +116,12 @@ public class InvalidCurve implements IAttack, Observer {
      */
     public void doFinal() {
         if (crt.isFound()) {
-            resultWindow.setResultDescribtion("\nFound private key: ");
-            resultWindow.setProgressBarValue(requestsFired, requestsFired);
+            resultWindow.setResultDescription("\nFound private key: ");
+            resultWindow.setProgressBarValue(responses.size(), responses.size());
+            resultWindow.setResultText(crt.getCalculated().toString());
+        } else {
+            resultWindow.nextSpin();
         }
-        resultWindow.setResultText(crt.getCalculated().toString());
     }
 
     /**
@@ -175,7 +177,6 @@ public class InvalidCurve implements IAttack, Observer {
          * @return requestResponse
          */
         @Override
-        // Fire prepared request and return responses as IHttpRequestResponse
         protected IHttpRequestResponse doInBackground() {
             return callbacks.makeHttpRequest(httpService, attackRequest.getRequest());
         }

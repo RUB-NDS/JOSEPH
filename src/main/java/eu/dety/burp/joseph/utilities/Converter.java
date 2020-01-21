@@ -44,12 +44,12 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
- * Help functions to convert JSON Web Key to RSA/EC PublicKey
- * 
+ * Help functions to convert JSON Web Key to RSA or EC PublicKey
+ *
  * @author Dennis Detering, Vincent Unsel
  * @version 1.1
  */
@@ -58,7 +58,7 @@ public class Converter {
 
     /**
      * Get RSA PublicKey list by JWK JSON input
-     * 
+     *
      * @param input
      *            JSON Web Key {@link JSONObject}
      * @return List of {@link PublicKey}
@@ -95,11 +95,11 @@ public class Converter {
 
     /**
      * Get RSA PublicKey by PublicKey HashMap input. Create a dialog popup with a combobox to choose the correct JWK to use.
-     * 
+     *
      * @param publicKeys
      *            HashMap containing a PublicKey and related describing string
-     * @throws AttackPreparationFailedException
      * @return Selected {@link PublicKey}
+     * @throws AttackPreparationFailedException
      */
     @SuppressWarnings("unchecked")
     public static PublicKey getRsaPublicKeyByJwkSelectionPanel(HashMap<String, PublicKey> publicKeys) throws AttackPreparationFailedException {
@@ -136,7 +136,7 @@ public class Converter {
 
     /**
      * Get RSA PublicKey list by JWK JSON input with an identifying string
-     * 
+     *
      * @param input
      *            JSON Web Key {@link JSONObject}
      * @return HashMap of {@link PublicKey} with identifying string as key
@@ -186,7 +186,7 @@ public class Converter {
 
     /**
      * Get RSA PublicKey by JWK JSON input
-     * 
+     *
      * @param input
      *            JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
@@ -204,7 +204,7 @@ public class Converter {
 
     /**
      * Build RSA {@link PublicKey} from RSA JWK JSON object
-     * 
+     *
      * @param input
      *            RSA JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
@@ -223,7 +223,7 @@ public class Converter {
 
     /**
      * Build {@link RSAPublicKey} from PublicKey PEM string
-     * 
+     *
      * @param pemInput
      *            PublicKey PEM string
      * @return {@link RSAPublicKey} or null
@@ -348,6 +348,7 @@ public class Converter {
         }
         return null;
     }
+
     /**
      * Get EC {@link PublicKey} from EC PEM String
      *
@@ -376,5 +377,4 @@ public class Converter {
         }
         return null;
     }
-
 }

@@ -19,7 +19,9 @@
 package eu.dety.burp.joseph.utilities;
 
 import eu.dety.burp.joseph.attacks.invalid_curve.Point;
-import org.bouncycastle.crypto.*;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DerivationParameters;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.ECDHCBasicAgreement;
 import org.bouncycastle.crypto.agreement.kdf.ConcatenationKDFGenerator;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -33,7 +35,6 @@ import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.util.BigIntegers;
 
 import javax.crypto.*;
-import javax.crypto.Mac;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
@@ -573,7 +574,7 @@ public class Crypto {
      *            Empty octet byte
      */
     public static byte[] concatKDF(byte[] sharedSecret, int keyLength, byte[] algorithmID, byte[] partyUInfo, byte[] partyVInfo, byte[] suppPubInfo,
-                                   byte[] suppPrivInfo) {
+            byte[] suppPrivInfo) {
         byte[] result;
         byte[] fixedInfo = getFixedInfo(algorithmID, partyUInfo, partyVInfo, suppPubInfo, suppPrivInfo);
         result = concatKDF(sharedSecret, keyLength, fixedInfo);

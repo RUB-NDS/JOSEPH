@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 /**
  * Help functions to encode and decode JOSE values from different representations.
- * 
+ *
  * @author Dennis Detering
  * @version 1.0
  */
@@ -36,7 +36,7 @@ public class Decoder {
 
     /**
      * Safe URL encode a byte array to a String
-     * 
+     *
      * @param input
      *            byte array input
      * @return base64url encoded string
@@ -47,7 +47,7 @@ public class Decoder {
 
     /**
      * Split JOSE value into its separate parts
-     * 
+     *
      * @param input
      *            Compact serialization JOSE value
      * @return string array with the separate parts
@@ -58,7 +58,7 @@ public class Decoder {
 
     /**
      * Split JOSE value into its separate parts with fixed length
-     * 
+     *
      * @param input
      *            Compact serialization JOSE value
      * @param assureLength
@@ -83,7 +83,7 @@ public class Decoder {
 
     /**
      * Join separate parts to JOSE value
-     * 
+     *
      * @param input
      *            string array of JOSE values in compact serialization
      * @return single string with concatenated components
@@ -94,7 +94,7 @@ public class Decoder {
 
     /**
      * Decode from base64url representation to string
-     * 
+     *
      * @param input
      *            base64url encoded value
      * @return string representation of the base64 decoded value
@@ -113,7 +113,7 @@ public class Decoder {
 
     /**
      * Decode from base64url representation to JSONObject
-     * 
+     *
      * @param input
      *            base64url encoded value
      * @return JSONObject of the parsed value
@@ -137,7 +137,7 @@ public class Decoder {
 
     /**
      * Get value by base64url string input and key name
-     * 
+     *
      * @param input
      *            base64url string
      * @param key
@@ -157,7 +157,7 @@ public class Decoder {
 
     /**
      * Decode from jose value to JSONObject array
-     * 
+     *
      * @param input
      *            base64url encoded jose value string
      * @return JSONObject array of the parsed value
@@ -175,7 +175,7 @@ public class Decoder {
 
     /**
      * Encode from JSON string to base64url representation
-     * 
+     *
      * @param input
      *            JSON byte array
      * @return base64url representation of the JSON string
@@ -194,7 +194,7 @@ public class Decoder {
 
     /**
      * Encode from JSON string to base64url representation
-     * 
+     *
      * @param input
      *            JSON string
      * @return base64url representation of the JSON string
@@ -215,7 +215,7 @@ public class Decoder {
 
     /**
      * Convert byte array to hex string
-     * 
+     *
      * @param bytes
      *            Byte array input
      * @return Hex string
@@ -236,7 +236,7 @@ public class Decoder {
 
     /**
      * Convert hex string to byte array
-     * 
+     *
      * @param str
      *            Hex formatted string
      * @return Byte array
@@ -255,5 +255,15 @@ public class Decoder {
         }
 
         return data;
+    }
+
+    public static String byteArrayValueToString(byte[] array) {
+        String result = "";
+        if (array.length == 0)
+            return result;
+        for (byte value : array) {
+            result += Integer.valueOf(value).toString() + ", ";
+        }
+        return result.substring(0, result.length() - 2);
     }
 }
