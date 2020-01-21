@@ -1,3 +1,21 @@
+/**
+ * JOSEPH - JavaScript Object Signing and Encryption Pentesting Helper
+ * Copyright (C) 2016 Dennis Detering
+ * <p>
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * <p>
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
 package eu.dety.burp.joseph.attacks.invalid_curve;
 
 import eu.dety.burp.joseph.utilities.Logger;
@@ -25,7 +43,6 @@ public class ChineseRemainder implements Subject {
     private ECPublicKey ecPublicKey;
     private ECParameterSpec ecParameterSpec;
     private List<Point> pointList;
-    // private List<Point> pointList2;
     private List<Observer> observerList;
     private volatile boolean found = false;
     private boolean pointCollected = false;
@@ -33,7 +50,7 @@ public class ChineseRemainder implements Subject {
 
     private ChineseRemainder() {
         pointList = new ArrayList<>();
-        // pointList2 = new ArrayList<>();
+
     }
 
     public static ChineseRemainder getInstance() {
@@ -98,21 +115,6 @@ public class ChineseRemainder implements Subject {
         checkResult(calculateSquaredCR(pointList));
     }
 
-    // public synchronized void addPoint(Point point) {
-    // if (!pointList.contains(point)) {
-    // pointList.add(point);
-    // // modulus = modulus.multiply(point.getOrder());
-    //
-    // } else if (!pointList2.contains(point)) {
-    // pointList2.add(point);
-    // pointCollected = true;
-    // checkResultThreaded(calculateSquaredCR(pointList2));
-    // }
-    // if (this.isEnough()) {
-    // loggerInstance.log(this.getClass(), "Enough point values collected. ", Logger.LogLevel.DEBUG);
-    // checkResultThreaded(calculateSquaredCR(pointList));
-    // }
-    // }
 
     public void lastTry() {
         if (pointList.isEmpty())
