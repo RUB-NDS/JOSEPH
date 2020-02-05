@@ -88,12 +88,16 @@ public class InvalidCurve implements IAttack, Observer {
         IHttpRequestResponse response = null;
         try {
             response = validExecutor.get();
+            loggerInstance.log(getClass(), "Collected reference response.", Logger.LogLevel.DEBUG);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            loggerInstance.log(getClass(), "Collecting reference response failed." + e.getMessage(), Logger.LogLevel.ERROR);
         } catch (ExecutionException e) {
             e.printStackTrace();
+            loggerInstance.log(getClass(), "Collecting reference response failed." + e.getMessage(), Logger.LogLevel.ERROR);
         }
         oracle = new InvalidCurveOracle(callbacks, new InvalidCurveTableEntry(responses.size(), validRequest.getPoint(), response, callbacks));
+        oracle.setThreshold(this.attackInfo.getThreshold());
         loggerInstance.log(getClass(), "Oracle done.", Logger.LogLevel.DEBUG);
         Thread phaseWaiter = new Thread() {
             @Override
@@ -108,13 +112,16 @@ public class InvalidCurve implements IAttack, Observer {
                                 }
                                 worker.get(10, TimeUnit.SECONDS);
                             } catch (CancellationException e) {
-
+                                loggerInstance.log(getClass(), "ExecutionWorker was canceled.", Logger.LogLevel.DEBUG);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
+                                loggerInstance.log(getClass(), "ExecutionWorker was interrupted.", Logger.LogLevel.ERROR);
                             } catch (ExecutionException e) {
                                 e.printStackTrace();
+                                loggerInstance.log(getClass(), "ExecutionWorker failed execution.", Logger.LogLevel.ERROR);
                             } catch (TimeoutException e) {
                                 worker.cancel(true);
+                                loggerInstance.log(getClass(), "Collecting response of ExecutionWorker expired.", Logger.LogLevel.DEBUG);
                             }
                         }
                     }

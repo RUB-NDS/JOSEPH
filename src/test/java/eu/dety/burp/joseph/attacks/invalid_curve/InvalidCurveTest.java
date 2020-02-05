@@ -33,10 +33,4 @@ class InvalidCurveTest {
         invalidCurveInfo = new InvalidCurveInfo(callbacks);
         invalidCurve = new InvalidCurve(callbacks, invalidCurveInfo);
     }
-
-    // @Test
-    // public void performAttackTest() {
-    // invalidCurve.performAttack();
-    // }
-
 }

@@ -34,7 +34,7 @@ import org.simmetrics.metrics.StringMetrics;
 public class InvalidCurveOracle {
     private static final Logger loggerInstance = Logger.getInstance();
     private IExtensionHelpers helpers;
-    private static final double COMPARE_THRESHOLD = 0.9;
+    private double compareThreshold = 0.9;
     private StringMetric metric = StringMetrics.dice();
     private String validResponse;
 
@@ -61,10 +61,15 @@ public class InvalidCurveOracle {
      */
     public boolean matchValid(byte[] response) {
         float actual = metric.compare(helpers.bytesToString(response), validResponse);
-        if (actual >= COMPARE_THRESHOLD) {
+        if (actual >= compareThreshold) {
             return true;
         }
         return false;
+    }
+
+    public void setThreshold(double threshold) {
+        this.compareThreshold = threshold;
+        loggerInstance.log(getClass(), "Changed compare threshold.", Logger.LogLevel.DEBUG);
     }
 
 }

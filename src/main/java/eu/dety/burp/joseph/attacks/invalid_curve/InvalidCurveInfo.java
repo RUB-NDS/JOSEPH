@@ -99,6 +99,7 @@ public class InvalidCurveInfo implements IAttackInfo {
     private JTextArea apuTextArea;
     private JTextArea apvTextArea;
     private JTextArea plainTextArea;
+    private JSpinner thresholdSelection;
 
     /**
      * Initializes the InvalidCurveInfo
@@ -108,8 +109,8 @@ public class InvalidCurveInfo implements IAttackInfo {
      */
     public InvalidCurveInfo(IBurpExtenderCallbacks callbacks) {
         initGUI();
-        this.initializationVector[0] = new byte[8]; // = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
-        this.initializationVector[1] = new byte[12]; // = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
+        this.initializationVector[0] = new byte[8];
+        this.initializationVector[1] = new byte[12];
         this.encryptionKey[0] = this.initializationVector[1];
         this.encryptionKey[1] = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8 };
         this.encryptionKey[2] = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
@@ -222,31 +223,29 @@ public class InvalidCurveInfo implements IAttackInfo {
     private void initGUI() {
         algorithmSelection = new JComboBox<>();
         DefaultComboBoxModel<String> algorithmSelectionListModel = new DefaultComboBoxModel<>();
-        // algorithmTextArea = new JTextArea(10, 50);
-        // algorithmTextArea.setLineWrap(true);
         for (String algorithm : algorithms) {
             algorithmSelectionListModel.addElement(algorithm);
         }
-
         algorithmSelection.setModel(algorithmSelectionListModel);
 
         encryptionSelection = new JComboBox<>();
-        // encryptionTextArea = new JTextArea(10, 50);
         DefaultComboBoxModel<String> encryptionSelectionListModel = new DefaultComboBoxModel<>();
-        // encryptionTextArea.setLineWrap(true);
         for (String encryption : encryption) {
             encryptionSelectionListModel.addElement(encryption);
         }
         encryptionSelection.setModel(encryptionSelectionListModel);
 
         curveSelection = new JComboBox<>();
-        // encryptionTextArea = new JTextArea(10, 50);
         DefaultComboBoxModel<String> curveSelectionListModel = new DefaultComboBoxModel<>();
-        // curveTextArea.setLineWrap(true);
         for (String curve : curves) {
             curveSelectionListModel.addElement(curve);
         }
         curveSelection.setModel(curveSelectionListModel);
+
+        SpinnerNumberModel model = new SpinnerNumberModel(0.9, 0.1, 1.0, 0.05);
+        thresholdSelection = new JSpinner(model);
+        // ((JSpinner.DefaultEditor)thresholdSelection.getEditor()).getTextField().setEditable(false);
+
     }
 
     /**
@@ -340,6 +339,13 @@ public class InvalidCurveInfo implements IAttackInfo {
         extraPanel.add(curveLabel, constraints);
         constraints.gridy = 16;
         extraPanel.add(curveSelection, constraints);
+
+        /* Threshold selection */
+        JLabel thresholdLabel = new JLabel("Select compare threshold:");
+        constraints.gridy = 17;
+        extraPanel.add(thresholdLabel, constraints);
+        constraints.gridy = 18;
+        extraPanel.add(thresholdSelection, constraints);
         return true;
     }
 
@@ -361,6 +367,10 @@ public class InvalidCurveInfo implements IAttackInfo {
     @Override
     public HashMap<String, ? extends Enum> getPayloadList() {
         return null;
+    }
+
+    public double getThreshold() {
+        return (double) this.thresholdSelection.getValue();
     }
 
     /**
@@ -444,21 +454,13 @@ public class InvalidCurveInfo implements IAttackInfo {
      *            targets public key
      */
     private void generateRequest(Point headerPoint, Point dhPoint, ECPublicKey ecPublicKey) {
-        // loggerInstance.log(getClass(), "GenerateRequest from values.", Logger.LogLevel.DEBUG);
-        String[] components;// = Decoder.getComponents(this.parameter.getJoseValue());
+        String[] components;
         components = generateJWE(headerPoint, dhPoint, ecPublicKey);
         byte[] request = this.requestResponse.getRequest();
         String token = Decoder.concatComponents(components);
-        // loggerInstance.log(getClass(), "Concat components.", Logger.LogLevel.DEBUG);
         byte[] tmpRequest = JoseParameter.updateRequest(request, this.parameter, helpers, token);
-        // loggerInstance.log(getClass(), "Update request.", Logger.LogLevel.DEBUG);
-        // loggerInstance.log(getClass(), "Component part 1: " + Decoder.getDecoded(components[0]), Logger.LogLevel.DEBUG);
-        // loggerInstance.log(getClass(), "Component part 2: " + components[1], Logger.LogLevel.DEBUG);
-        // loggerInstance.log(getClass(), "Component part 3: " + components[2], Logger.LogLevel.DEBUG);
-        // loggerInstance.log(getClass(), "Component part 4: " + components[3], Logger.LogLevel.DEBUG);
-        // loggerInstance.log(getClass(), "Component part 5: " + components[4], Logger.LogLevel.DEBUG);
         requests.add(new InvalidCurveAttackRequest(tmpRequest, dhPoint));
-        // loggerInstance.log(getClass(), "Generated request: " + token, Logger.LogLevel.DEBUG);
+        loggerInstance.log(getClass(), "Generated request: " + token, Logger.LogLevel.DEBUG);
         this.setAmountRequests(requests.size());
     }
 
@@ -478,20 +480,12 @@ public class InvalidCurveInfo implements IAttackInfo {
             KeyPairGenerator generator = KeyPairGenerator.getInstance("EC", "BC");
             generator.initialize(ecGenSpec, new SecureRandom());
             KeyPair pair = generator.generateKeyPair();
-            // loggerInstance.log(getClass(), "Return ECPubKey.", Logger.LogLevel.DEBUG);
             ChineseRemainder.startInstance(this.getEcPublicKey(), ((ECPrivateKey) pair.getPrivate()).getParameters());
             return pair;
-        } catch (InvalidAlgorithmParameterException e) {
-            loggerInstance.log(getClass(), "Error: InvalidAlgorithmParameterException " + e.getMessage(), Logger.LogLevel.ERROR);
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            loggerInstance.log(getClass(), "Error: NoSuchAlgorithmException " + e.getMessage(), Logger.LogLevel.ERROR);
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            loggerInstance.log(getClass(), "Error: NoSuchProviderException " + e.getMessage(), Logger.LogLevel.ERROR);
-            e.printStackTrace();
+            loggerInstance.log(getClass(), "Failed generating valid public key." + e.getMessage(), Logger.LogLevel.ERROR);
         }
-        loggerInstance.log(getClass(), "Failed generating valid public key.", Logger.LogLevel.ERROR);
         return null;
     }
 

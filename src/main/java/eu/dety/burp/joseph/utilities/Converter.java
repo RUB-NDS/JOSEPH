@@ -333,17 +333,8 @@ public class Converter {
             ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(ecPoint, ecParameterSpec);
             PublicKey result = keyFactory.generatePublic(ecPublicKeySpec);
             return (ECPublicKey) result;
-        } catch (InvalidKeySpecException e) {
-            loggerInstance.log(Converter.class, "ERROR InvalidKeySpecException: " + e.getMessage(), Logger.LogLevel.ERROR);
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            loggerInstance.log(Converter.class, "ERROR NoSuchAlgorithmException: " + e.getMessage(), Logger.LogLevel.ERROR);
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            loggerInstance.log(Converter.class, "ERROR NoSuchProviderException: " + e.getMessage(), Logger.LogLevel.ERROR);
-            e.printStackTrace();
         } catch (Exception e) {
-            loggerInstance.log(Converter.class, "ERROR Exception: " + e.getMessage(), Logger.LogLevel.ERROR);
+            loggerInstance.log(Converter.class, "Failed building ECPublicKey from JWK: " + e.getMessage(), Logger.LogLevel.ERROR);
             e.printStackTrace();
         }
         return null;
@@ -365,14 +356,8 @@ public class Converter {
             pemObject = new PemReader(reader).readPemObject();
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(pemObject.getContent());
             return KeyFactory.getInstance("EC", "BC").generatePublic(keySpec);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
+        } catch (Exception e) {
+            loggerInstance.log(Converter.class, "Failed building ECPublicKey from PEM: " + e.getMessage(), Logger.LogLevel.ERROR);
             e.printStackTrace();
         }
         return null;

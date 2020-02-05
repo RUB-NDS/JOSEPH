@@ -68,10 +68,6 @@ public class ChineseRemainder implements Subject {
         return instance;
     }
 
-    public boolean isEnough() {
-        return modulus.compareTo(nSquare) > 0;
-    }
-
     public BigInteger calculateModulus(List<Point> moduli) {
         BigInteger n = BigInteger.ONE;
         for (Point modulus : moduli) {
@@ -114,7 +110,6 @@ public class ChineseRemainder implements Subject {
             return;
         checkResult(calculateSquaredCR(pointList));
     }
-
 
     public void lastTry() {
         if (pointList.isEmpty())
@@ -199,7 +194,7 @@ public class ChineseRemainder implements Subject {
                 continue;
             n = (n.add(point.getD().multiply(mi.modInverse(point.getOrder())).multiply(mi))).mod(modulus);
         }
-        // loggerInstance.log(instance.getClass(), "Calculated CR: " + n.toString(), Logger.LogLevel.DEBUG);
+        loggerInstance.log(instance.getClass(), "Calculated CR: " + n.toString(), Logger.LogLevel.DEBUG);
         return n.mod(modulus);
     }
 

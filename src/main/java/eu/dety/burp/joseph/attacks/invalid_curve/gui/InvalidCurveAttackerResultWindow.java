@@ -38,7 +38,7 @@ public class InvalidCurveAttackerResultWindow extends JFrame {
     private JLabel resultDescriptionField = new JLabel();
     private boolean canceled = false;
     private byte spinner = 0;
-    private char[] icons = { '◴', '◷', '◶', '◵' }; // { '/', '|', '\\' };
+    private char[] icons = { '◴', '◷', '◶', '◵' };
 
     public InvalidCurveAttackerResultWindow(String caption, final IBurpExtenderCallbacks callbacks) {
         super(caption);
@@ -48,7 +48,6 @@ public class InvalidCurveAttackerResultWindow extends JFrame {
         // Create request and response viewer editors
         final IMessageEditor requestViewer;
         final IMessageEditor responseViewer;
-
         requestViewer = callbacks.createMessageEditor(null, false);
         responseViewer = callbacks.createMessageEditor(null, false);
 
@@ -56,11 +55,7 @@ public class InvalidCurveAttackerResultWindow extends JFrame {
         table = new InvalidCurveTable(new InvalidCurveTableModel(new ArrayList<>()));
 
         // Add selection changed listener to update request and response viewer
-        // editors
         table.getSelectionModel().addListSelectionListener(evt -> {
-//            loggerInstance.log(table.getClass(), "Selection changed", Logger.LogLevel.DEBUG);
-
-            // Check boundary of array index
             if (table.getSelectedRow() < 0)
                 return;
 
@@ -69,33 +64,6 @@ public class InvalidCurveAttackerResultWindow extends JFrame {
             requestViewer.setMessage(entry.getMessage().getRequest(), true);
             responseViewer.setMessage(entry.getMessage().getResponse(), false);
         });
-
-
-        // Add table model listener to perform action on valid checkbox change
-//        table.getModel().addTableModelListener(evt -> {
-//            int row = evt.getFirstRow();
-//            int column = evt.getColumn();
-//
-//            if (column == 6) {
-//                TableModel model = table.getTableModel();
-//                Boolean checked = (Boolean) model.getValueAt(row, column);
-//
-//                InvalidCurveTableEntry entry = table.getEntry(row);
-//
-//                if (checked) {
-//                    validEntries.add(entry);
-//                    InvalidCurveAttackerResultWindow.this.setTabEnabled(1, true);
-//
-//                } else {
-//                    validEntries.remove(entry);
-//
-//                    if (validEntries.size() == 0) {
-//                        InvalidCurveAttackerResultWindow.this.setTabEnabled(1, false);
-//                    }
-//
-//                }
-//            }
-//        });
 
         // Create context menu
         JPopupMenu menu = new JPopupMenu();
@@ -216,9 +184,6 @@ public class InvalidCurveAttackerResultWindow extends JFrame {
         splitPane.setLeftComponent(viewScrollPane);
         splitPane.setRightComponent(bottomPanel);
 
-//        topTabs = new JTabbedPane();
-//        topTabs.addTab("Validation", null, splitPane, null);
-//
         this.add(splitPane);
         this.setVisible(true);
     }

@@ -55,6 +55,7 @@ import java.util.List;
  */
 public class Crypto {
     public static final List<String> JWS_HMAC_ALGS = Arrays.asList("HS256", "HS384", "HS512");
+    private static final Logger loggerInstance = Logger.getInstance();
 
     /**
      * Get MAC algorithm name for Java by JOSE algorithm name
@@ -367,7 +368,7 @@ public class Crypto {
      *            Plaintext as byte array
      * @param aad
      *            Additional authentication data as byte array
-     * @return Decrypted message and authentication tag as byte array
+     * @return Encrypted message and authentication tag as byte array
      */
     public static byte[][] getAeadCbcHmac(String macAlgorithm, byte[] key, byte[] iv, byte[] plainText, byte[] aad) {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -383,20 +384,9 @@ public class Crypto {
             cipher = Cipher.getInstance(cipherInstance, BouncyCastleProvider.PROVIDER_NAME);
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, parameters);
             result[0] = cipher.doFinal(plainText);
-        } catch (NoSuchProviderException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            loggerInstance.log(Crypto.class, "Failed to encrypt with AEAD CBC HMAC. " + e.getMessage(), Logger.LogLevel.ERROR);
         }
         byte[] mac = generateMac(macAlgorithm, splittedKeys[0], getMacInput(aad, iv, result[0]));
         result[1] = getAuthenticationTag(mac);
@@ -414,7 +404,7 @@ public class Crypto {
      *            Plaintext as byte array
      * @param aad
      *            Additional authentication data as byte array
-     * @return Decrypted message and authentication tag as byte array
+     * @return Encrypted message and authentication tag as byte array
      */
     public static byte[][] getAeadGcm(byte[] key, byte[] iv, byte[] plainText, byte[] aad) {
         byte[][] result = { null, null };
@@ -429,8 +419,9 @@ public class Crypto {
         int offset = gcmBlockCipher.processBytes(plainText, 0, plainText.length, output, 0);
         try {
             offset += gcmBlockCipher.doFinal(output, offset);
-        } catch (InvalidCipherTextException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            loggerInstance.log(Crypto.class, "Failed to encrypt with AEAD GCM. " + e.getMessage(), Logger.LogLevel.ERROR);
         }
         result[0] = new byte[offset - macLength];
         System.arraycopy(output, 0, result[0], 0, result[0].length);
@@ -450,7 +441,7 @@ public class Crypto {
      *            Initialization Vector as byte array
      * @param plainText
      *            Plaintext as byte array
-     * @return Decrypted message and authentication tag as byte array
+     * @return Encrypted message and authentication tag as byte array
      */
     public static byte[][] getAead(byte[] header, byte[] key, byte[] iv, byte[] plainText) throws NoSuchAlgorithmException {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -507,16 +498,9 @@ public class Crypto {
             cipher.init(Cipher.WRAP_MODE, kek);
             result = cipher.wrap(wrappedKey);
             return result;
-        } catch (NoSuchAlgorithmException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
+            loggerInstance.log(Crypto.class, "Failed to encrypt with AES key wrapper. " + e.getMessage(), Logger.LogLevel.ERROR);
         }
         return null;
     }
@@ -657,6 +641,7 @@ public class Crypto {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            loggerInstance.log(Crypto.class, "Failed concatenating byte arrays. " + e.getMessage(), Logger.LogLevel.ERROR);
         }
         return byteArrayOutputStream.toByteArray();
     }
