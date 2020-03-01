@@ -93,7 +93,7 @@ public class FinderTest {
     public void checkJwsPatternWithInvalidEncodedHeaderJwsInputReturnsNull() {
         String token = "SW52YWxpZCBIZWFkZXI.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg";
 
-        assertEquals(null, Finder.getJoseValue(token));
+        assertNull(Finder.getJoseValue(token));
     }
 
     @Test

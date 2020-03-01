@@ -299,7 +299,7 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
-    public void sendToIntruder(String s, int i, boolean b, byte[] bytes, java.util.List<int[]> list) {
+    public void sendToIntruder(String s, int i, boolean b, byte[] bytes, List<int[]> list) {
 
     }
 
@@ -319,7 +319,7 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
-    public IScanQueueItem doActiveScan(String s, int i, boolean b, byte[] bytes, java.util.List<int[]> list) {
+    public IScanQueueItem doActiveScan(String s, int i, boolean b, byte[] bytes, List<int[]> list) {
         return null;
     }
 
@@ -379,7 +379,7 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
-    public java.util.List<ICookie> getCookieJarContents() {
+    public List<ICookie> getCookieJarContents() {
         return null;
     }
 
@@ -459,7 +459,7 @@ public class BurpExtenderCallbacksMock implements IBurpExtenderCallbacks {
     }
 
     @Override
-    public IHttpRequestResponseWithMarkers applyMarkers(IHttpRequestResponse iHttpRequestResponse, java.util.List<int[]> list, java.util.List<int[]> list1) {
+    public IHttpRequestResponseWithMarkers applyMarkers(IHttpRequestResponse iHttpRequestResponse, List<int[]> list, List<int[]> list1) {
         return null;
     }
 

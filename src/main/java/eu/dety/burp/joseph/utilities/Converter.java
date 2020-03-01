@@ -20,32 +20,45 @@ package eu.dety.burp.joseph.utilities;
 
 import eu.dety.burp.joseph.attacks.AttackPreparationFailedException;
 import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.interfaces.ECPublicKey;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECParameterSpec;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
+import org.bouncycastle.math.ec.ECFieldElement;
+import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.math.ec.custom.sec.*;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
- * Help functions to convert JSON Web Key to RSA PublicKey
- * 
- * @author Dennis Detering
- * @version 1.0
+ * Help functions to convert JSON Web Key to RSA or EC PublicKey
+ *
+ * @author Dennis Detering, Vincent Unsel
+ * @version 1.1
  */
 public class Converter {
     private static final Logger loggerInstance = Logger.getInstance();
 
     /**
      * Get RSA PublicKey list by JWK JSON input
-     * 
+     *
      * @param input
      *            JSON Web Key {@link JSONObject}
      * @return List of {@link PublicKey}
@@ -82,11 +95,11 @@ public class Converter {
 
     /**
      * Get RSA PublicKey by PublicKey HashMap input. Create a dialog popup with a combobox to choose the correct JWK to use.
-     * 
+     *
      * @param publicKeys
      *            HashMap containing a PublicKey and related describing string
-     * @throws AttackPreparationFailedException
      * @return Selected {@link PublicKey}
+     * @throws AttackPreparationFailedException
      */
     @SuppressWarnings("unchecked")
     public static PublicKey getRsaPublicKeyByJwkSelectionPanel(HashMap<String, PublicKey> publicKeys) throws AttackPreparationFailedException {
@@ -123,7 +136,7 @@ public class Converter {
 
     /**
      * Get RSA PublicKey list by JWK JSON input with an identifying string
-     * 
+     *
      * @param input
      *            JSON Web Key {@link JSONObject}
      * @return HashMap of {@link PublicKey} with identifying string as key
@@ -173,7 +186,7 @@ public class Converter {
 
     /**
      * Get RSA PublicKey by JWK JSON input
-     * 
+     *
      * @param input
      *            JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
@@ -191,7 +204,7 @@ public class Converter {
 
     /**
      * Build RSA {@link PublicKey} from RSA JWK JSON object
-     * 
+     *
      * @param input
      *            RSA JSON Web Key {@link JSONObject}
      * @return {@link PublicKey} or null
@@ -210,7 +223,7 @@ public class Converter {
 
     /**
      * Build {@link RSAPublicKey} from PublicKey PEM string
-     * 
+     *
      * @param pemInput
      *            PublicKey PEM string
      * @return {@link RSAPublicKey} or null
@@ -244,4 +257,97 @@ public class Converter {
         return publicKey;
     }
 
+    /**
+     * Get EC PublicKey by JWK JSON input
+     *
+     * @param input
+     *            JSON Web Key {@link Object}
+     * @return {@link PublicKey} or null
+     */
+    public static ECPublicKey getECPublicKeyByJwk(Object input) {
+        if (!(input instanceof JSONObject)) {
+            loggerInstance.log(Converter.class, "Input not JSONObject.", Logger.LogLevel.ERROR);
+            return null;
+        }
+        String kty;
+        ECPublicKey result = null;
+        JSONObject jsonInput = (JSONObject) input;
+        if (jsonInput.containsKey("kty")) {
+            kty = jsonInput.get("kty").toString();
+            if (kty.equals("EC")) {
+                result = buildECPublicKeyByJwk(jsonInput);
+            }
+        } else if (jsonInput.containsKey("epk")) {
+            JSONObject innerJsonArray = (JSONObject) jsonInput.get("epk");
+            kty = (String) innerJsonArray.get("kty");
+            if (kty.equals("EC"))
+                result = buildECPublicKeyByJwk(innerJsonArray);
+        } else {
+            loggerInstance.log(Converter.class, "JSONObject does not contain kty.", Logger.LogLevel.ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * Build EC {@link ECPublicKey} from EC JWK JSON object
+     *
+     * @param input
+     *            EC JSON Web Key {@link JSONObject}
+     * @return {@link ECPublicKey} or null
+     */
+    private static ECPublicKey buildECPublicKeyByJwk(JSONObject input) {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        try {
+            String crv = input.get("crv").toString();
+            BigInteger x = Base64.decodeInteger(input.get("x").toString().getBytes());
+            BigInteger y = Base64.decodeInteger(input.get("y").toString().getBytes());
+            KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+            ECParameterSpec ecParameterSpec = ECNamedCurveTable.getParameterSpec(crv);
+            ECPoint ecPoint;
+
+            switch (crv) {
+                case "P-256":
+                case "P-384":
+                case "P-521": {
+                    ecPoint = ecParameterSpec.getCurve().createPoint(x, y);
+                    break;
+                }
+                default:
+                    return null;
+            }
+
+            ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(ecPoint, ecParameterSpec);
+            PublicKey result = keyFactory.generatePublic(ecPublicKeySpec);
+            return (ECPublicKey) result;
+        } catch (Exception e) {
+            loggerInstance.log(Converter.class, "Failed building ECPublicKey from JWK: " + e.getMessage(), Logger.LogLevel.ERROR);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Get EC {@link PublicKey} from EC PEM String
+     *
+     * @param pemString
+     * @return {@link PublicKey} or null
+     */
+    public static PublicKey getECPublicKeyByPemString(String pemString) {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        Reader reader = new StringReader(pemString);
+        PemObject pemObject;
+        try {
+            pemObject = new PemReader(reader).readPemObject();
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(pemObject.getContent());
+            return KeyFactory.getInstance("EC", "BC").generatePublic(keySpec);
+        } catch (Exception e) {
+            loggerInstance.log(Converter.class, "Failed building ECPublicKey from PEM: " + e.getMessage(), Logger.LogLevel.ERROR);
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
