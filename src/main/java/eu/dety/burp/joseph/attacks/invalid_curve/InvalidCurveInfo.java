@@ -546,7 +546,7 @@ public class InvalidCurveInfo implements IAttackInfo {
     protected byte[][] getComponents(Point headerPoint, Point dhPoint, ECPublicKey ecPublicKey) throws NoSuchAlgorithmException {
         String partyUInfo = apuTextArea == null ? "" : apuTextArea.getText();
         String partyVInfo = apvTextArea == null ? "" : apvTextArea.getText();
-        String plainText = plainTextArea.getText();
+        String plainText = plainTextArea == null ? "" : plainTextArea.getText();
         return getComponents(headerPoint, dhPoint, partyUInfo, partyVInfo, plainText, ecPublicKey);
     }
 

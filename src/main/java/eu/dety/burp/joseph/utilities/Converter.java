@@ -308,22 +308,10 @@ public class Converter {
             ECPoint ecPoint;
 
             switch (crv) {
-                case "P-256": {
-                    ECFieldElement fex = new SecP256R1FieldElement(x);
-                    ECFieldElement fey = new SecP256R1FieldElement(y);
-                    ecPoint = new SecP256R1Point(ecParameterSpec.getCurve(), fex, fey);
-                    break;
-                }
-                case "P-384": {
-                    ECFieldElement fex = new SecP384R1FieldElement(x);
-                    ECFieldElement fey = new SecP384R1FieldElement(y);
-                    ecPoint = new SecP384R1Point(ecParameterSpec.getCurve(), fex, fey);
-                    break;
-                }
+                case "P-256":
+                case "P-384":
                 case "P-521": {
-                    ECFieldElement fex = new SecP521R1FieldElement(x);
-                    ECFieldElement fey = new SecP521R1FieldElement(y);
-                    ecPoint = new SecP521R1Point(ecParameterSpec.getCurve(), fex, fey);
+                    ecPoint = ecParameterSpec.getCurve().createPoint(x, y);
                     break;
                 }
                 default:
