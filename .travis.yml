@@ -10,11 +10,11 @@ jdk:
   - openjdk8
   - openjdk11
 
-matrix:
+jobs:
   include:
     - jdk: openjdk11
       before_install:
-        - echo "security.provider.20=org.bouncycastle.jce.provider.BouncyCastleProvider" >> "${JAVA_HOME}/conf/security/java.security"
+        - echo "security.provider.13=org.bouncycastle.jce.provider.BouncyCastleProvider" >> "${JAVA_HOME}/conf/security/java.security"
 
 branches:
   only:
