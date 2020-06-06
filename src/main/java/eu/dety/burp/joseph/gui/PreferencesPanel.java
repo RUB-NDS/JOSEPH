@@ -35,7 +35,7 @@ import java.util.List;
 
 /**
  * Preference tab to customize some behaviour
- * 
+ *
  * @author Dennis Detering
  * @version 1.0
  */
@@ -46,7 +46,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
     // Configuration options
     private static int logLevel = 1;
     private static boolean highlighting = true;
-    private static final List<String> defaultParameterNames = Arrays.asList("access_token", "token", "Authorization");
+    private static final List<String> defaultParameterNames = Arrays.asList("access_token", "id_token", "token", "Authorization", "payload");
 
     private static DefaultListModel<String> parameterNamesListModel = new DefaultListModel<>();
 
@@ -96,7 +96,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
     /**
      * Get the log level 0 = ERROR, 1 = INFO, 2 = DEBUG
-     * 
+     *
      * @return The Log level.
      */
     public static int getLogLevel() {
@@ -112,7 +112,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
     /**
      * Get the highlighting option value
-     * 
+     *
      * @return The highlighting option value.
      */
     public static boolean getHighlighting() {
@@ -128,7 +128,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
     /**
      * Get the parameter names
-     * 
+     *
      * @return The parameter names string list.
      */
     public static List<Object> getParameterNames() {
