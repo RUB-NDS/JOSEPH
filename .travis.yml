@@ -1,7 +1,6 @@
 language: java
 
-sudo: false
-
+os: linux
 dist: trusty
 
 jdk:
