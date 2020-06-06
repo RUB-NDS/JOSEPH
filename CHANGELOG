@@ -1,9 +1,20 @@
 ============
+2020-06-06
+============
+
+1.0.3
+Additional signature exclusion test cases, where the original signature is _not_ removed.
+Issue: https://github.com/RUB-NDS/JOSEPH/issues/14
+
+OpenJDK11 support for automated TravisCI tests. Refactoring converter test setup to not need manual security provider configuration.
+
+
+============
 2019-01-09
 ============
 
 1.0.2
-Fixing double base64 encoding bug for the signature value within the manual tab
+Fixing double base64 encoding bug for the signature value within the manual tab.
 Issue: https://github.com/RUB-NDS/JOSEPH/issues/20
 
 

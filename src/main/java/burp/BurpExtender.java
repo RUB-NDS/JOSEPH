@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 
 /**
  * The Burp Extender to register the JOSEPH extension
- * 
+ *
  * @author Dennis Detering
  * @version 1.0
  */
@@ -62,7 +62,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         String time = dateFormat.format(calObj.getTime());
         stdout.println("+---------------------------------------------------------+");
         stdout.println("|                         JOSEPH                          |");
-        stdout.println("|                     Version 1.0.2                       |");
+        stdout.println("|                     Version 1.0.3                       |");
         stdout.println("|                   Started @ " + time + "                    |");
         stdout.println("+---------------------------------------------------------+");
 
@@ -101,7 +101,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
     /**
      * Get a {@link java.io.PrintWriter} to the standard output of Burp.
-     * 
+     *
      * @return The standard output
      */
     public static PrintWriter getStdOut() {
@@ -110,7 +110,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
     /**
      * Get a {@link java.io.PrintWriter} to the standard error output of Burp.
-     * 
+     *
      * @return The standard error output
      */
     public static PrintWriter getStdErr() {
